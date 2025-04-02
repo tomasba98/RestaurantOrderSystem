@@ -1,0 +1,19 @@
+# Archivos de configuración de Visual Studio
+.vs/
+*.suo
+.cache/
+
+# Archivos compilados y generados
+obj/
+bin/
+
+# Archivos de configuración del entorno
+Restaurant-Backend/Properties/launchSettings.json
+*.csproj.user
+
+# Archivos sensibles
+appsettings.Development.json
+appsettings.json
+
+# Archivos temporales y de pruebas
+*.http
