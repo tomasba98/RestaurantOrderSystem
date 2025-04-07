@@ -55,4 +55,4 @@ public interface IGenericDao<TEntity> where TEntity : EntityBase
     Task SaveAsync();
 }
 
-}
+
