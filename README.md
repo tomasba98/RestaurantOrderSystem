@@ -43,7 +43,7 @@ Este es un sistema de gestión de comandas para restaurantes desarrollado con **
 
 ---
 
-## 📍 Estado actual del proyecto
+<!-- ## 📍 Estado actual del proyecto
 - ✅ Funcionalidad básica de pedidos y cocina
 
 - ✅ Módulo de productos
@@ -52,4 +52,4 @@ Este es un sistema de gestión de comandas para restaurantes desarrollado con **
 
 - 🔜 Reportes de ventas
 
-- 🔜 Interfaz para celulares o tablets
+- 🔜 Interfaz para celulares o tablets --!>
