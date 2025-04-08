@@ -1,4 +1,4 @@
-# 🍽️ Restaurant Order System
+# 🍽️ Restaurant Order System ( En progreso..)
 
 Este es un sistema de gestión de comandas para restaurantes desarrollado con **ASP.NET Core**. Permite que mozos y cajeros carguen pedidos desde distintas terminales, y que cocina reciba las órdenes en tiempo real en una pantalla.
 
