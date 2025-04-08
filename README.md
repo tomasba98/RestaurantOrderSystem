@@ -37,7 +37,7 @@ Este es un sistema de gestión de comandas para restaurantes desarrollado con **
 📁 Restaurant-Backend<br/>
 ├── Controllers/         → Controladores de la API<br/>
 ├── Entities/            → Modelos de dominio<br/>
-├── Services/            → Lógica de negocio - inyeccion de dependecia<br/>
+├── Services/            → Lógica de negocio (inyeccion de dependecia)<br/>
 ├── appsettings.json     → Configuración<br/>
 └── Program.cs / Startup.cs<br/>
 
