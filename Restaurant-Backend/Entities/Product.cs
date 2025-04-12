@@ -1,5 +1,11 @@
-﻿namespace Restaurant_Backend.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace Restaurant_Backend.Entities;
+
+/// <summary>
+/// Represents a product of the restaurant.
+/// </summary>
+[Table("Products")]
 public class Product : EntityBase
 {
     public string Name { get; set; } = string.Empty;
