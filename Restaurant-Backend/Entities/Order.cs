@@ -14,6 +14,8 @@ public class Order : EntityBase
     public bool IsPaid { get; set; }
     public List<OrderDetail> Items { get; set; }
     public OrderStatus Status { get; set; }
+    public Guid TableSessionId { get; set; }
+    public TableSession TableSession { get; set; }
 }
 
 public enum OrderStatus
