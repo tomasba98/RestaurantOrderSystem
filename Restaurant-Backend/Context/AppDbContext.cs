@@ -15,4 +15,5 @@ public class AppDbContext : DbContext
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
     public virtual DbSet<Product> Products { get; set; }
+    public virtual DbSet<TableSession> TableSessions { get; set; }
 }

@@ -10,6 +10,12 @@ namespace Restaurant_Backend.Services.DataAccessLayer;
 public interface IGenericService<TEntity> where TEntity : EntityBase
 {
     /// <summary>
+    /// Asynchronously get a single entity from the database.
+    /// </summary>
+    /// <param name="entity">The entity to get.</param>
+    Task<TEntity> GetAsync(TEntity entity);
+
+    /// <summary>
     /// Asynchronously inserts a single entity into the database.
     /// </summary>
     /// <param name="entity">The entity to insert.</param>

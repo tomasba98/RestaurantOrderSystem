@@ -13,6 +13,11 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
         GenericDao = new GenericDao<TEntity>(context);
     }
 
+    public async Task<TEntity> GetAsync(TEntity entity)
+    {
+        return await GenericDao.GetAsync(entity);
+    }
+
     public async Task InsertAsync(TEntity entity)
     {
         await GenericDao.InsertAsync(entity);
