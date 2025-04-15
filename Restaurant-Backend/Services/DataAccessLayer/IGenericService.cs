@@ -12,6 +12,12 @@ public interface IGenericService<TEntity> where TEntity : EntityBase
     /// <summary>
     /// Asynchronously get a single entity from the database.
     /// </summary>
+    /// <param name="entityId">The entity id to get.</param>
+    Task<TEntity?> GetByIdAsync(Guid entityId);
+
+    /// <summary>
+    /// Asynchronously get a single entity from the database.
+    /// </summary>
     /// <param name="entity">The entity to get.</param>
     Task<TEntity> GetAsync(TEntity entity);
 
@@ -26,6 +32,12 @@ public interface IGenericService<TEntity> where TEntity : EntityBase
     /// </summary>
     /// <param name="entity">The entity to delete.</param>
     Task DeleteAsync(TEntity entity);
+
+    /// <summary>
+    /// Asynchronously deletes a single entity from the database.
+    /// </summary>
+    /// <param name="entityId">The entity id to delete.</param>
+    //Task DeleteByIdAsync(Guid entityId);
 
     /// <summary>
     /// Asynchronously updates a single entity in the database.

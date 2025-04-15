@@ -21,8 +21,7 @@ public class TableSessionService : ITableSessionService
     }
     public async Task CloseSession(Guid tableSessionId)
     {
-        TableSession session = await _tableGenericService.GetAsync(new TableSession { Id = tableSessionId }) 
-                                                                    ?? throw new InvalidOperationException("TableSession not found.");
+        TableSession session = await _tableGenericService.GetAsync(new TableSession { Id = tableSessionId }) ?? throw new InvalidOperationException("TableSession not found.");
         session.EndTime = DateTime.UtcNow;
         await _tableGenericService.UpdateAsync(session);
     }

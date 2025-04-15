@@ -1,4 +1,5 @@
-﻿using Restaurant_Backend.Context;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
 using System.Linq.Expressions;
 
@@ -13,6 +14,12 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
         GenericDao = new GenericDao<TEntity>(context);
     }
 
+    public async Task<TEntity?> GetByIdAsync(Guid entityId)
+    {
+        return await GenericDao
+                        .Where(entity => entity.Id == entityId)
+                        .FirstOrDefaultAsync();
+    }
     public async Task<TEntity> GetAsync(TEntity entity)
     {
         return await GenericDao.GetAsync(entity);

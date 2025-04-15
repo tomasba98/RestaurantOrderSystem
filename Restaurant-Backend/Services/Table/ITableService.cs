@@ -5,7 +5,14 @@ public interface ITableService
 {
     Table CreateTable(Table product);
 
-    Table? GetTableById(Guid productId);
+    Task<Table?> GetTableById(Guid productId);
 
     Task<IEnumerable<Table>> GetAllTables();
+
+    Task UpdateTable(Table table);       
+    
+    Task DeleteTable(Table table);         
+    
+    Task<bool> IsTableAvailable(Guid tableId);    
+
 }

@@ -16,19 +16,10 @@ public class ProductService : IProductService
         _productGenericService.InsertAsync(product);
         return product;
     }
-    public Product? GetProductById(Guid productId)
+    public async Task<Product?> GetProductById(Guid productId)
     {
-        return _productGenericService
-            .FilterByExpressionLinq(product => product.Id == productId)
-            .FirstOrDefault();
-    }
-
-    public IEnumerable<Product> GetProductsWithId(Guid productId)
-    {
-        return _productGenericService
-            .FilterByExpressionLinq(product => product.Id == productId)
-            .ToList();
-    }
+        return await _productGenericService.GetByIdAsync(productId);
+    }    
 
     public Task<IEnumerable<Product>> GetAllProducts()
     {

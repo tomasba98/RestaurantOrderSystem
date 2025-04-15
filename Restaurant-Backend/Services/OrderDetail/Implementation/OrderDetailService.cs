@@ -16,11 +16,9 @@ public class OrderDetailService : IOrderDetailService
         return orderDetail;
     }
 
-    public OrderDetail? GetOrderDetailById(Guid orderDetailId)
+    public async Task<OrderDetail?> GetOrderDetailById(Guid orderDetailId)
     {
-        return orderDetailGenericService
-            .FilterByExpressionLinq(orderDetail => orderDetail.Id == orderDetailId)
-            .FirstOrDefault();
+        return await orderDetailGenericService.GetByIdAsync(orderDetailId);
     }
 
     public IEnumerable<OrderDetail> GetAllOrdersDetailsFromOrder(Guid orderId)

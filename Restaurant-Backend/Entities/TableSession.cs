@@ -1,5 +1,11 @@
-﻿namespace Restaurant_Backend.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
+namespace Restaurant_Backend.Entities;
+
+/// <summary>
+/// Represents a sessions/customers of each table from the restaurant.
+/// </summary>
+[Table("TableSessions")]
 public class TableSession : EntityBase
 {
     public Guid TableId { get; set; }

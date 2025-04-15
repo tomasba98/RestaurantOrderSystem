@@ -1,5 +1,5 @@
-﻿
-using Restaurant_Backend.Services.DataAccessLayer;
+﻿using Restaurant_Backend.Services.DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
 
 namespace Restaurant_Backend.Services.Table.Implementation;
 
@@ -16,16 +16,29 @@ public class TableService : ITableService
         _tableGenericService.InsertAsync(table);
         return table;
     }
-    public Table? GetTableById(Guid tableId)
+    public async Task<Table?> GetTableById(Guid tableId)
     {
-        return _tableGenericService
-            .FilterByExpressionLinq(table => table.Id == tableId)
-            .FirstOrDefault();
+        return await _tableGenericService.GetByIdAsync(tableId);
     }
 
     public Task<IEnumerable<Table>> GetAllTables()
     {
         return _tableGenericService.FindAllAsync();
     }
+
+    public Task UpdateTable(Table table)
+    {
+        return _tableGenericService .UpdateAsync(table);
+    }                 
+    public Task DeleteTable(Table table)
+    {
+        return _tableGenericService.DeleteAsync(table);
+    }                
+    public async Task<bool> IsTableAvailable(Guid tableId)
+    {
+        return await _tableGenericService
+            .FilterByExpressionLinq(table => table.IsOccupied == false)
+            .AnyAsync();
+    }     
 
 }

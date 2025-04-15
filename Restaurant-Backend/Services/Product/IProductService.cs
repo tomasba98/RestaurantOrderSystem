@@ -5,9 +5,7 @@ public interface IProductService
 {
     Product CreateProduct(Product product);
 
-    Product? GetProductById(Guid productId);
-
-    IEnumerable<Product> GetProductsWithId(Guid productId);
+    Task<Product?> GetProductById(Guid productId);
 
     Task<IEnumerable<Product>> GetAllProducts();
 }

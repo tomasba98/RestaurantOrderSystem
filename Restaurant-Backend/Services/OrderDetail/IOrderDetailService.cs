@@ -5,7 +5,7 @@ public interface IOrderDetailService
 {
     OrderDetail CreateOrderDetail(OrderDetail orderDetail);
 
-    OrderDetail? GetOrderDetailById(Guid orderDetailId);
+    Task<OrderDetail?> GetOrderDetailById(Guid orderDetailId);
 
     IEnumerable<OrderDetail> GetAllOrdersDetailsFromOrder(Guid orderId);
 
