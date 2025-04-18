@@ -16,19 +16,3 @@ public class OrderDetail : EntityBase
     public int Quantity { get; set; }
     public decimal UnitPrice { get; set; }
 }
-
-
-//public OrderDetail() 
-//{
-//    Order = new Order();
-//    Product = new Product();
-//}
-//public OrderDetail(Guid orderId, Order order, Guid productId, Product product, int quantity, decimal unitPrice)
-//{
-//    OrderId = orderId;
-//    Order = order;
-//    ProductId = productId;
-//    Product = product;
-//    Quantity = quantity;
-//    UnitPrice = unitPrice;
-//}

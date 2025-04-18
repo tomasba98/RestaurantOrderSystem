@@ -20,20 +20,28 @@ public class OrderService : IOrderService
 
     public async Task<Order?> GetOrderById(Guid orderId)
     {
-        return await _orderGenericService.GetByIdAsync(orderId);
+        return await _orderGenericService
+            .FilterByExpressionLinq(order => order.Id == orderId)
+            .Include(order => order.Items)
+            .ThenInclude(item => item.Product)
+            .FirstOrDefaultAsync();
     }
 
-    public IEnumerable<Order> GetTableOrders(Guid tableId, Guid orderId)
+    public IEnumerable<Order> GetTableOrders(Guid tableId)
     {
         return _orderGenericService
-            .FilterByExpressionLinq(order => order.TableId == tableId && order.Id == orderId)
+            .FilterByExpressionLinq(order => order.TableId == tableId )
+            .Include(order => order.Items)
+            .ThenInclude(item => item.Product)
             .ToList();
     }
 
-    public async Task<IEnumerable<Order>> GetTableOrdersBySession(Guid tableId, Guid tableSessionId)
+    public async Task<IEnumerable<Order>> GetSessionOrders(Guid tableId, Guid tableSessionId)
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId && order.TableSessionId == tableSessionId)
+            .Include(order => order.Items)
+            .ThenInclude(item => item.Product)
             .ToListAsync();
     }
 
@@ -82,6 +90,8 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
                         .FilterByExpressionLinq(order => order.Status == status)
+                        .Include(order => order.Items)
+                        .ThenInclude(item => item.Product)
                         .ToListAsync();
     }
 

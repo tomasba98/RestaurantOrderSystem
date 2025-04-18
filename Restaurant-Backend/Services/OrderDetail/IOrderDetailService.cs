@@ -10,4 +10,8 @@ public interface IOrderDetailService
     IEnumerable<OrderDetail> GetAllOrdersDetailsFromOrder(Guid orderId);
 
     IEnumerable<OrderDetail> GetAllOrdersDetailsFromProduct(Guid productId);
+
+    Task UpdateOrderDetailAsync(OrderDetail updatedDetail);
+
+    Task DeleteOrderDetailAsync(Guid orderDetailId);
 }

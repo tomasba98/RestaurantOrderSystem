@@ -12,7 +12,7 @@ public class Order : EntityBase
     public Table Table { get; set; }
     public DateTime CreatedAt { get; set; }
     public bool IsPaid { get; set; }
-    public List<OrderDetail> Items { get; set; }
+    public List<OrderDetail> Items { get; set; } = new List<OrderDetail>();
     public OrderStatus Status { get; set; }
     public Guid TableSessionId { get; set; }
     public TableSession TableSession { get; set; }

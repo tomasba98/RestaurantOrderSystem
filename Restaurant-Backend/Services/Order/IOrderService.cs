@@ -9,9 +9,9 @@ public interface IOrderService
 
     Task<Order?> GetOrderById(Guid orderId);
 
-    IEnumerable<Order> GetTableOrders(Guid tableId, Guid orderId);
+    IEnumerable<Order> GetTableOrders(Guid tableId);
 
-    Task<IEnumerable<Order>> GetTableOrdersBySession(Guid tableId, Guid tableSessionId);
+    Task<IEnumerable<Order>> GetSessionOrders(Guid tableId, Guid tableSessionId);
     
     Task UpdateOrderStatus(Guid orderId, OrderStatus newStatus);
     

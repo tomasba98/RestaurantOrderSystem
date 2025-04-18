@@ -13,6 +13,7 @@ public interface ITableService
     
     Task DeleteTable(Table table);         
     
-    Task<bool> IsTableAvailable(Guid tableId);    
+    Task<bool> IsTableAvailable(Guid tableId);
 
+    Task<IEnumerable<Table>> GetAvailableTablesAsync();
 }

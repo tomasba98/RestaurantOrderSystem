@@ -28,7 +28,7 @@ public class TableService : ITableService
 
     public Task UpdateTable(Table table)
     {
-        return _tableGenericService .UpdateAsync(table);
+        return _tableGenericService.UpdateAsync(table);
     }                 
     public Task DeleteTable(Table table)
     {
@@ -39,6 +39,13 @@ public class TableService : ITableService
         return await _tableGenericService
             .FilterByExpressionLinq(table => table.IsOccupied == false)
             .AnyAsync();
-    }     
+    }
+
+    public async Task<IEnumerable<Table>> GetAvailableTablesAsync()
+    {
+        return await _tableGenericService
+            .FilterByExpressionLinq(table => table.IsOccupied == false)
+            .ToListAsync();
+    }
 
 }

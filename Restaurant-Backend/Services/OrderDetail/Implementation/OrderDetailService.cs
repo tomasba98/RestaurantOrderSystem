@@ -34,4 +34,25 @@ public class OrderDetailService : IOrderDetailService
             .FilterByExpressionLinq(orderDetail => orderDetail.ProductId == productId)
             .ToList();
     }
+
+    public async Task UpdateOrderDetailAsync(OrderDetail updatedDetail)
+    {
+        await orderDetailGenericService.UpdateAsync(updatedDetail);
+    }
+
+    public async Task DeleteOrderDetailAsync(Guid orderDetailId)
+    {
+        OrderDetail? orderDetail = await orderDetailGenericService.GetByIdAsync(orderDetailId);
+
+        if (orderDetail is null) throw new InvalidOperationException("Order not found.");
+        
+        try
+        {
+            await orderDetailGenericService.DeleteAsync(orderDetail);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error deleting order {orderDetailId}: {ex.Message}");
+        }
+    }
 }
