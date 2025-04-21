@@ -35,10 +35,7 @@ public class ProductService : IProductService
 
     public async Task DeleteProduct(Guid productId)
     {
-        Product? product = await _productGenericService.GetByIdAsync(productId);
-
-        if(product is null) throw new InvalidOperationException("Product not found.");
-
+        Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
         try
         {
             await _productGenericService.DeleteAsync(product);
@@ -59,7 +56,7 @@ public class ProductService : IProductService
     public async Task<IEnumerable<Product>> SearchProductsByWord(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
-            return Enumerable.Empty<Product>();
+            return [];
 
         return await _productGenericService
             .FilterByExpressionLinq(product => product.Name.ToLower().Contains(keyword.ToLower()))
@@ -68,10 +65,7 @@ public class ProductService : IProductService
 
     public async Task SetProductAvailability(Guid productId, bool isAvailable)
     {
-        Product? product = await _productGenericService.GetByIdAsync(productId);
-
-        if (product is null) throw new InvalidOperationException("Product not found.");
-
+        Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
         product.IsAvailable = isAvailable;
 
         await _productGenericService.UpdateAsync(product);
