@@ -15,7 +15,6 @@ public class TableSessionService : ITableSessionService
     }
     public TableSession StartSession(TableSession tableSession)
     {
-        tableSession.StartTime = DateTime.UtcNow;
         _tableGenericService.InsertAsync(tableSession);
         return tableSession;
     }

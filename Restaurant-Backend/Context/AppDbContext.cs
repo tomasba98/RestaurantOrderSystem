@@ -9,6 +9,16 @@ public class AppDbContext : DbContext
     {
 
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Order>()
+            .HasMany(o => o.Items)
+            .WithOne(od => od.Order)
+            .HasForeignKey(od => od.OrderId)
+            .OnDelete(DeleteBehavior.Cascade); 
+    }
 
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Table> Tables { get; set; }

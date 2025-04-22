@@ -12,6 +12,8 @@ using Restaurant_Backend.Services.Product;
 using Restaurant_Backend.Services.Product.Implementation;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.Table.Implementation;
+using Restaurant_Backend.Services.TableSession;
+using Restaurant_Backend.Services.TableSession.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddScoped<IGenericService<Table>, GenericService<Table>>();
 builder.Services.AddScoped<ITableService, TableService>();
+
+builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
+builder.Services.AddScoped<ITableSessionService, TableSessionService>();
 
 
 //Connection to the data base
