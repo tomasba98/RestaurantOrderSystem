@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Order>()
-            .HasMany(o => o.Items)
+            .HasMany(o => o.ProductList)
             .WithOne(od => od.Order)
             .HasForeignKey(od => od.OrderId)
             .OnDelete(DeleteBehavior.Cascade); 

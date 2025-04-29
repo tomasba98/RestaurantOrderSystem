@@ -10,5 +10,5 @@ public class OrderResponse
     public DateTime CreatedAt { get; set; }      
     public bool IsPaid { get; set; }            
     public OrderStatus Status { get; set; }      
-    public List<OrderDetailResponse> Items { get; set; } = new();
+    public List<OrderDetailResponse> ProductList { get; set; } = [];
 }

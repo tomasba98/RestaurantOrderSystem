@@ -12,7 +12,7 @@ using Restaurant_Backend.Context;
 namespace Restaurant_Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250421234459_First Migration")]
+    [Migration("20250429041635_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -46,6 +46,9 @@ namespace Restaurant_Backend.Migrations
                     b.Property<Guid>("TableSessionId")
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("TotalAmountHistory")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TableId");
@@ -72,9 +75,6 @@ namespace Restaurant_Backend.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -206,7 +206,7 @@ namespace Restaurant_Backend.Migrations
             modelBuilder.Entity("Restaurant_Backend.Entities.OrderDetail", b =>
                 {
                     b.HasOne("Restaurant_Backend.Entities.Order", "Order")
-                        .WithMany("Items")
+                        .WithMany("ProductList")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -235,7 +235,7 @@ namespace Restaurant_Backend.Migrations
 
             modelBuilder.Entity("Restaurant_Backend.Entities.Order", b =>
                 {
-                    b.Navigation("Items");
+                    b.Navigation("ProductList");
                 });
 
             modelBuilder.Entity("Restaurant_Backend.Entities.TableSession", b =>

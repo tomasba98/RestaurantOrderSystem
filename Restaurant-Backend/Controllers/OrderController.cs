@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant_Backend.Services.Order;
 using Restaurant_Backend.Services.OrderDetail;
 using Restaurant_Backend.Services.Product;
+using Restaurant_Backend.Entities;
+using Restaurant_Backend.Models.Order;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -24,9 +26,35 @@ public class OrderController : ControllerBase
     }
 
 
+    [HttpGet("orders")]
+    public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
+    {
+        var orders = await _orderService.GetOrdersByStatus(status);
+        var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+        return Ok(ordersResponse);
+    }
 
 
-    //[HttpGet("users")]
-    //public ActionResult
+    [HttpGet("orders/{orderId}")]
+    public async Task<ActionResult> GetOrderById(Guid orderId)
+    {
+        var order = await _orderService.GetOrderById(orderId);
+        var orderResponse = _mapper.Map<IEnumerable<OrderResponse>>(order);
+        return Ok(orderResponse);
+    }
 
+    [HttpPost("orders")]
+    public async Task<ActionResult<OrderRequest>> CreateOrder(OrderRequest orderRequest)
+    {
+        var order = _mapper.Map<Order>(orderRequest);
+
+        order.Status = OrderStatus.Pending;
+
+        var createdOrder = await _orderService.CreateOrder(order);
+
+        var createdOrderRequest = _mapper.Map<OrderRequest>(createdOrder);
+
+        return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrderRequest);
+    }
 }
+

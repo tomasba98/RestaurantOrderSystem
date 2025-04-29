@@ -12,9 +12,10 @@ public class OrderService : IOrderService
     {
         _orderGenericService = orederGenericService;
     }
-    public Order CreateOrder(Order order)
+    public async Task<Order> CreateOrder(Order order)
     {
-        _orderGenericService.InsertAsync(order);
+        order.TotalAmountHistory = order.TotalAmount;
+        await _orderGenericService.InsertAsync(order);
         return order;
     }
 
@@ -22,7 +23,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.Id == orderId)
-            .Include(order => order.Items)
+            .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .FirstOrDefaultAsync();
     }
@@ -31,7 +32,7 @@ public class OrderService : IOrderService
     {
         return _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId )
-            .Include(order => order.Items)
+            .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .ToList();
     }
@@ -40,7 +41,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId && order.TableSessionId == tableSessionId)
-            .Include(order => order.Items)
+            .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .ToListAsync();
     }
@@ -90,7 +91,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
                         .FilterByExpressionLinq(order => order.Status == status)
-                        .Include(order => order.Items)
+                        .Include(order => order.ProductList)
                         .ThenInclude(item => item.Product)
                         .ToListAsync();
     }

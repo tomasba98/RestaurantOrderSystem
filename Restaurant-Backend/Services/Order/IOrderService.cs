@@ -5,7 +5,7 @@ using Restaurant_Backend.Entities;
 
 public interface IOrderService
 {
-    Order CreateOrder(Order order);
+    Task<Order> CreateOrder(Order order);
 
     Task<Order?> GetOrderById(Guid orderId);
 
