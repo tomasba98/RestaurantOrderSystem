@@ -11,30 +11,30 @@ public class TableService : ITableService
     {
         _tableGenericService = tableGenericService;
     }
-    public Table CreateTable(Table table)
+    public async Task<Table> CreateTableAsync(Table table)
     {
-        _tableGenericService.InsertAsync(table);
+        await _tableGenericService.InsertAsync(table);
         return table;
     }
-    public async Task<Table?> GetTableById(Guid tableId)
+    public async Task<Table?> GetTableByIdAsync(Guid tableId)
     {
         return await _tableGenericService.GetByIdAsync(tableId);
     }
 
-    public Task<IEnumerable<Table>> GetAllTables()
+    public async Task<IEnumerable<Table>> GetAllTablesAsync()
     {
-        return _tableGenericService.FindAllAsync();
+        return await _tableGenericService.FindAllAsync();
     }
 
-    public Task UpdateTable(Table table)
+    public async Task UpdateTableAsync(Table table)
     {
-        return _tableGenericService.UpdateAsync(table);
+        await _tableGenericService.UpdateAsync(table);
     }                 
-    public Task DeleteTable(Table table)
+    public async Task DeleteTableAsync(Table table)
     {
-        return _tableGenericService.DeleteAsync(table);
+        await _tableGenericService.DeleteAsync(table);
     }                
-    public async Task<bool> IsTableAvailable(Guid tableId)
+    public async Task<bool> IsTableAvailableAsync(Guid tableId)
     {
         return await _tableGenericService
             .FilterByExpressionLinq(table => table.IsOccupied == false)

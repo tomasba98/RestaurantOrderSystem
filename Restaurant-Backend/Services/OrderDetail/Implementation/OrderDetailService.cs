@@ -1,5 +1,6 @@
 ﻿namespace Restaurant_Backend.Services.OrderDetail.Implementation;
 
+using Microsoft.EntityFrameworkCore;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Services.DataAccessLayer;
 
@@ -10,29 +11,29 @@ public class OrderDetailService : IOrderDetailService
     {
         orderDetailGenericService = orederGenericService;
     }
-    public OrderDetail CreateOrderDetail(OrderDetail orderDetail)
+    public async Task<OrderDetail> CreateOrderDetailAsync(OrderDetail orderDetail)
     {
-        orderDetailGenericService.InsertAsync(orderDetail);
+        await orderDetailGenericService.InsertAsync(orderDetail);
         return orderDetail;
     }
 
-    public async Task<OrderDetail?> GetOrderDetailById(Guid orderDetailId)
+    public async Task<OrderDetail?> GetOrderDetailByIdAsync(Guid orderDetailId)
     {
         return await orderDetailGenericService.GetByIdAsync(orderDetailId);
     }
 
-    public IEnumerable<OrderDetail> GetAllOrdersDetailsFromOrder(Guid orderId)
+    public async Task<IEnumerable<OrderDetail>> GetAllOrdersDetailsFromOrderAsync(Guid orderId)
     {
-        return orderDetailGenericService
-            .FilterByExpressionLinq(orderDetail => orderDetail.OrderId == orderId)
-            .ToList();
+        return await orderDetailGenericService
+                    .FilterByExpressionLinq(orderDetail => orderDetail.OrderId == orderId)
+                    .ToListAsync();
     }
 
-    public IEnumerable<OrderDetail> GetAllOrdersDetailsFromProduct(Guid productId)
+    public async Task<IEnumerable<OrderDetail>> GetAllOrdersDetailsFromProductAsync(Guid productId)
     {
-        return orderDetailGenericService
-            .FilterByExpressionLinq(orderDetail => orderDetail.ProductId == productId)
-            .ToList();
+        return await orderDetailGenericService
+                    .FilterByExpressionLinq(orderDetail => orderDetail.ProductId == productId)
+                    .ToListAsync();
     }
 
     public async Task UpdateOrderDetailAsync(OrderDetail updatedDetail)
@@ -42,10 +43,8 @@ public class OrderDetailService : IOrderDetailService
 
     public async Task DeleteOrderDetailAsync(Guid orderDetailId)
     {
-        OrderDetail? orderDetail = await orderDetailGenericService.GetByIdAsync(orderDetailId);
+        OrderDetail? orderDetail = await orderDetailGenericService.GetByIdAsync(orderDetailId) ?? throw new InvalidOperationException("Order not found.");
 
-        if (orderDetail is null) throw new InvalidOperationException("Order not found.");
-        
         try
         {
             await orderDetailGenericService.DeleteAsync(orderDetail);

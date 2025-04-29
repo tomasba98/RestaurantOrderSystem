@@ -12,28 +12,28 @@ public class ProductService : IProductService
     {
         _productGenericService = productGenericService;
     }
-    public Product CreateProduct(Product product)
+    public async Task<Product> CreateProductAsync(Product product)
     {
-        _productGenericService.InsertAsync(product);
+        await _productGenericService.InsertAsync(product);
         return product;
     }
-    public async Task<Product?> GetProductById(Guid productId)
+    public async Task<Product?> GetProductByIdAsync(Guid productId)
     {
         return await _productGenericService.GetByIdAsync(productId);
     }    
 
-    public Task<IEnumerable<Product>> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        return _productGenericService.FindAllAsync();
+        return await _productGenericService.FindAllAsync();
     }
 
-    public async Task<Product> UpdateProduct(Product product)
+    public async Task<Product> UpdateProductAsync(Product product)
     {
         await _productGenericService.UpdateAsync(product);
         return product;
     }
 
-    public async Task DeleteProduct(Guid productId)
+    public async Task DeleteProductAsync(Guid productId)
     {
         Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
         try
@@ -46,14 +46,14 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<bool> IsProductAvailable(Guid productId)
+    public async Task<bool> IsProductAvailableAsync(Guid productId)
     {
         return await _productGenericService
             .FilterByExpressionLinq(product => product.Id == productId && product.IsAvailable)
             .AnyAsync();
     }
 
-    public async Task<IEnumerable<Product>> SearchProductsByWord(string keyword)
+    public async Task<IEnumerable<Product>> SearchProductsByWordAsync(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
             return [];
@@ -63,7 +63,7 @@ public class ProductService : IProductService
             .ToListAsync();
     }
 
-    public async Task SetProductAvailability(Guid productId, bool isAvailable)
+    public async Task SetProductAvailabilityAsync(Guid productId, bool isAvailable)
     {
         Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
         product.IsAvailable = isAvailable;

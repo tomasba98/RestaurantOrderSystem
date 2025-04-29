@@ -5,20 +5,20 @@ using Restaurant_Backend.Entities;
 
 public interface IOrderService
 {
-    Task<Order> CreateOrder(Order order);
+    Task<Order> CreateOrderAsync(Order order);
 
-    Task<Order?> GetOrderById(Guid orderId);
+    Task<Order?> GetOrderByIdAsync(Guid orderId);
 
-    IEnumerable<Order> GetTableOrders(Guid tableId);
+    Task<IEnumerable<Order>> GetTableOrdersAsync(Guid tableId);
 
-    Task<IEnumerable<Order>> GetSessionOrders(Guid tableId, Guid tableSessionId);
+    Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableId, Guid tableSessionId);
     
-    Task UpdateOrderStatus(Guid orderId, OrderStatus newStatus);
+    Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus);
     
-    Task MarkOrderAsPaid(Guid orderId);
+    Task MarkOrderAsPaidAsync(Guid orderId);
     
-    Task DeleteOrder(Guid orderId);
+    Task DeleteOrderAsync(Guid orderId);
     
-    Task<IEnumerable<Order>> GetOrdersByStatus(OrderStatus status);
+    Task<IEnumerable<Order>> GetOrdersByStatusAsync(OrderStatus status);
 
 }

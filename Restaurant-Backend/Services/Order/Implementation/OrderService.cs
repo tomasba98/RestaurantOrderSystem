@@ -12,14 +12,14 @@ public class OrderService : IOrderService
     {
         _orderGenericService = orederGenericService;
     }
-    public async Task<Order> CreateOrder(Order order)
+    public async Task<Order> CreateOrderAsync(Order order)
     {
         order.TotalAmountHistory = order.TotalAmount;
         await _orderGenericService.InsertAsync(order);
         return order;
     }
 
-    public async Task<Order?> GetOrderById(Guid orderId)
+    public async Task<Order?> GetOrderByIdAsync(Guid orderId)
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.Id == orderId)
@@ -28,16 +28,16 @@ public class OrderService : IOrderService
             .FirstOrDefaultAsync();
     }
 
-    public IEnumerable<Order> GetTableOrders(Guid tableId)
+    public async Task<IEnumerable<Order>> GetTableOrdersAsync(Guid tableId)
     {
-        return _orderGenericService
+        return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId )
             .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
-            .ToList();
+            .ToListAsync();
     }
 
-    public async Task<IEnumerable<Order>> GetSessionOrders(Guid tableId, Guid tableSessionId)
+    public async Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableId, Guid tableSessionId)
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId && order.TableSessionId == tableSessionId)
@@ -46,34 +46,25 @@ public class OrderService : IOrderService
             .ToListAsync();
     }
 
-    public async Task UpdateOrderStatus(Guid orderId, OrderStatus newStatus)
+    public async Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId);
-
-        if (order is null) throw new InvalidOperationException("Order not found.");
-
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
         order.Status = newStatus;
 
         await _orderGenericService.UpdateAsync(order);
     }
 
-    public async Task MarkOrderAsPaid(Guid orderId)
+    public async Task MarkOrderAsPaidAsync(Guid orderId)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId);
-
-        if (order is null) throw new InvalidOperationException("Order not found.");
-
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
         order.IsPaid = true;
 
         await _orderGenericService.UpdateAsync(order);
     }
 
-    public async Task DeleteOrder(Guid orderId)
+    public async Task DeleteOrderAsync(Guid orderId)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId);
-
-        if (order is null) throw new InvalidOperationException("Order not found.");
-                
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
         if (!order.IsPaid)
             throw new InvalidOperationException("Cannot delete a not paid order.");
 
@@ -87,7 +78,7 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<IEnumerable<Order>> GetOrdersByStatus(OrderStatus status)
+    public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(OrderStatus status)
     {
         return await _orderGenericService
                         .FilterByExpressionLinq(order => order.Status == status)

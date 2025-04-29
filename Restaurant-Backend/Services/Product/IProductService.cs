@@ -3,19 +3,19 @@
 using Restaurant_Backend.Entities;
 public interface IProductService
 {
-    Product CreateProduct(Product product);
+    Task<Product> CreateProductAsync(Product product);
 
-    Task<Product?> GetProductById(Guid productId);
+    Task<Product?> GetProductByIdAsync(Guid productId);
 
-    Task<IEnumerable<Product>> GetAllProducts();
+    Task<IEnumerable<Product>> GetAllProductsAsync();
 
-    Task<Product> UpdateProduct(Product product);
+    Task<Product> UpdateProductAsync(Product product);
 
-    Task DeleteProduct(Guid productId);
+    Task DeleteProductAsync(Guid productId);
 
-    Task<bool> IsProductAvailable(Guid productId);
+    Task<bool> IsProductAvailableAsync(Guid productId);
 
-    Task<IEnumerable<Product>> SearchProductsByWord(string keyword);
+    Task<IEnumerable<Product>> SearchProductsByWordAsync(string keyword);
 
-    Task SetProductAvailability(Guid productId, bool isAvailable);
+    Task SetProductAvailabilityAsync(Guid productId, bool isAvailable);
 }

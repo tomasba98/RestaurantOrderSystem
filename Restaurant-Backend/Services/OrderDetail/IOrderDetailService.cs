@@ -3,13 +3,13 @@
 using Restaurant_Backend.Entities;
 public interface IOrderDetailService
 {
-    OrderDetail CreateOrderDetail(OrderDetail orderDetail);
+    Task<OrderDetail> CreateOrderDetailAsync(OrderDetail orderDetail);
 
-    Task<OrderDetail?> GetOrderDetailById(Guid orderDetailId);
+    Task<OrderDetail?> GetOrderDetailByIdAsync(Guid orderDetailId);
 
-    IEnumerable<OrderDetail> GetAllOrdersDetailsFromOrder(Guid orderId);
+    Task<IEnumerable<OrderDetail>> GetAllOrdersDetailsFromOrderAsync(Guid orderId);
 
-    IEnumerable<OrderDetail> GetAllOrdersDetailsFromProduct(Guid productId);
+    Task<IEnumerable<OrderDetail>> GetAllOrdersDetailsFromProductAsync(Guid productId);
 
     Task UpdateOrderDetailAsync(OrderDetail updatedDetail);
 

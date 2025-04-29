@@ -29,7 +29,7 @@ public class OrderController : ControllerBase
     [HttpGet("orders")]
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
     {
-        var orders = await _orderService.GetOrdersByStatus(status);
+        var orders = await _orderService.GetOrdersByStatusAsync(status);
         var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
         return Ok(ordersResponse);
     }
@@ -38,7 +38,7 @@ public class OrderController : ControllerBase
     [HttpGet("orders/{orderId}")]
     public async Task<ActionResult> GetOrderById(Guid orderId)
     {
-        var order = await _orderService.GetOrderById(orderId);
+        var order = await _orderService.GetOrderByIdAsync(orderId);
         var orderResponse = _mapper.Map<IEnumerable<OrderResponse>>(order);
         return Ok(orderResponse);
     }
@@ -50,7 +50,7 @@ public class OrderController : ControllerBase
 
         order.Status = OrderStatus.Pending;
 
-        var createdOrder = await _orderService.CreateOrder(order);
+        var createdOrder = await _orderService.CreateOrderAsync(order);
 
         var createdOrderRequest = _mapper.Map<OrderRequest>(createdOrder);
 

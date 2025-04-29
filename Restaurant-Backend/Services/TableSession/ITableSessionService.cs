@@ -4,9 +4,9 @@ using Restaurant_Backend.Entities;
 
 public interface ITableSessionService
 {
-    TableSession StartSession(TableSession tableSession);
-    Task CloseSession(Guid tableSessionId);
-    Task<bool> HasActiveSession(Guid tableId);
-    Task<IEnumerable<TableSession>> GetSessionsByTableId(Guid tableId);
-    Task<IEnumerable<TableSession>> GetAllActiveSessions();
+    Task<TableSession> StartSessionAsync(TableSession tableSession);
+    Task CloseSessionAsync(Guid tableSessionId);
+    Task<bool> HasActiveSessionAsync(Guid tableId);
+    Task<IEnumerable<TableSession>> GetSessionsByTableIdAsync(Guid tableId);
+    Task<IEnumerable<TableSession>> GetAllActiveSessionsAsync();
 }
