@@ -4,6 +4,7 @@ namespace Restaurant_Backend.Services.Order.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Services.DataAccessLayer;
+using Restaurant_Backend.Utils;
 
 public class OrderService : IOrderService
 {
@@ -16,6 +17,16 @@ public class OrderService : IOrderService
     {
         order.TotalAmountHistory = order.TotalAmount;
         await _orderGenericService.InsertAsync(order);
+        return order;
+    }
+
+    public async Task<Order> UpdateOrderAsync(Order order)
+    {
+        var existingOrder = await _orderGenericService.GetByIdAsync(order.Id);
+        if (existingOrder == null)
+            throw new OrderNotFoundException(order.Id);
+
+        await _orderGenericService.UpdateAsync(order);
         return order;
     }
 
@@ -48,7 +59,7 @@ public class OrderService : IOrderService
 
     public async Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new OrderNotFoundException(orderId);
         order.Status = newStatus;
 
         await _orderGenericService.UpdateAsync(order);
@@ -56,7 +67,7 @@ public class OrderService : IOrderService
 
     public async Task MarkOrderAsPaidAsync(Guid orderId)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new OrderNotFoundException(orderId);
         order.IsPaid = true;
 
         await _orderGenericService.UpdateAsync(order);
@@ -64,18 +75,10 @@ public class OrderService : IOrderService
 
     public async Task DeleteOrderAsync(Guid orderId)
     {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new InvalidOperationException("Order not found.");
-        if (!order.IsPaid)
-            throw new InvalidOperationException("Cannot delete a not paid order.");
-
-        try
-        {
-            await _orderGenericService.DeleteAsync(order);
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException($"Error deleting order {orderId}: {ex.Message}");
-        }
+        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new OrderNotFoundException(orderId);
+        if (!order.IsPaid) throw new OrderNotPaidException(orderId);
+       
+        await _orderGenericService.DeleteAsync(order);           
     }
 
     public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(OrderStatus status)
