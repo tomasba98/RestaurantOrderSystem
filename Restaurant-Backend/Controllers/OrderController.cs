@@ -96,8 +96,6 @@ public class OrderController : ControllerBase
         }
     }
 
-
-
     /*
     [HttpPost("/{orderId}/details")]
         public async Task<ActionResult<OrderDetailDto>> AddOrderDetail(Guid orderId, OrderDetailCreateDto dto)
