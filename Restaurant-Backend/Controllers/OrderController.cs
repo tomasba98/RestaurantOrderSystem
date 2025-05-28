@@ -64,10 +64,14 @@ public class OrderController : ControllerBase
         order.TableSessionId = tableSession.Id;
         order.Status = OrderStatus.Pending;
 
+        // Load all required products in a single batch to optimize performance
+        var productIds = orderRequest.Items.Select(d => d.ProductId).Distinct();
+        var products = await _productService.GetProductListByIdsAsync(productIds);
+        var productDict = products.ToDictionary(p => p.Id);
+
         foreach (var item in orderRequest.Items)
         {
-            var product = await _productService.GetProductByIdAsync(item.ProductId);
-            if (product is null)
+            if (!productDict.TryGetValue(item.ProductId, out var product))
                 return NotFound($"Product {item.ProductId} not found.");
 
             var detail = _mapper.Map<OrderDetail>(item);
@@ -90,8 +94,41 @@ public class OrderController : ControllerBase
     {
         try
         {
-            var order = _mapper.Map<Order>(orderRequest);
-            var updatedOrder = await _orderService.UpdateOrderAsync(order);
+            var existingOrder = await _orderService.GetOrderByIdAsync(orderId);
+            if (existingOrder is null)
+                return NotFound("Order not found.");
+
+            var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
+            if (tableSession is null)
+                return BadRequest("Table or session not found.");
+
+            existingOrder.ProductList.Clear();
+
+            existingOrder.Table = tableSession.Table;
+            existingOrder.TableId = tableSession.Table.Id;
+            existingOrder.TableSession = tableSession;
+            existingOrder.TableSessionId = tableSession.Id;
+
+            // Load all required products in a single batch to optimize performance
+            var productIds = orderRequest.Items.Select(i => i.ProductId).Distinct();
+            var products = await _productService.GetProductListByIdsAsync(productIds);
+            var productDict = products.ToDictionary(p => p.Id);
+
+            foreach (var item in orderRequest.Items)
+            {
+                if (!productDict.TryGetValue(item.ProductId, out var product))
+                    return NotFound($"Product {item.ProductId} not found.");
+
+                var detail = _mapper.Map<OrderDetail>(item);
+                detail.Product = product;
+                detail.ProductId = product.Id;
+                detail.Order = existingOrder;
+                detail.OrderId = existingOrder.Id;
+
+                existingOrder.ProductList.Add(detail);
+            }
+
+            var updatedOrder = await _orderService.UpdateOrderAsync(existingOrder);
             var orderResponse = _mapper.Map<OrderRequest>(updatedOrder);
 
             return Ok(orderResponse);
@@ -105,6 +142,7 @@ public class OrderController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
 
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
@@ -128,21 +166,28 @@ public class OrderController : ControllerBase
         }
     }
 
+    /* NOT IN USE ANYMORE, USE UpdateOrder INSTEAD (FOR NOW).
+     *
     [HttpPost("/{orderId}/AddDetails")]
-    public async Task<ActionResult<OrderDetailRequest>> AddOrderDetail(Guid orderId, OrderDetailRequest detailRequest)
+    public async Task<IActionResult> AddOrderDetail(Guid orderId, OrderDetailRequest newDetailRequest)
     {
 
+        if (newDetailRequest?.ProductItems == null || !newDetailRequest.ProductItems.Any())
+            return BadRequest("No product items provided.");
 
         var order = await _orderService.GetOrderByIdAsync(orderId);
         if (order is null)
             return NotFound("Order not found.");
 
-        var orderDetails = _mapper.Map<List<OrderDetail>>(detailRequest.ProductItems);
+        var orderDetails = _mapper.Map<List<OrderDetail>>(newDetailRequest.ProductItems);
+
+        var productIds = orderDetails.Select(d => d.ProductId).Distinct();
+        var products = await _productService.GetProductListByIdsAsync(productIds);
+        var productDict = products.ToDictionary(p => p.Id);
 
         foreach (var detail in orderDetails)
         {
-            var product = await _productService.GetProductByIdAsync(detail.ProductId);
-            if (product is null)
+            if (!productDict.TryGetValue(detail.ProductId, out var product))
                 return NotFound($"Product {detail.ProductId} not found.");
 
             detail.Product = product;
@@ -170,7 +215,8 @@ public class OrderController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    
+    */
+
     [HttpPatch("/{orderId}/pay")]
     public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
     {

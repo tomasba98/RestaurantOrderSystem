@@ -20,7 +20,14 @@ public class ProductService : IProductService
     public async Task<Product?> GetProductByIdAsync(Guid productId)
     {
         return await _productGenericService.GetByIdAsync(productId);
-    }    
+    }
+
+    public async Task<List<Product>> GetProductListByIdsAsync(IEnumerable<Guid> productIds)
+    {
+        return await _productGenericService
+            .FilterByExpressionLinq(p => productIds.Contains(p.Id))
+            .ToListAsync();
+    }
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {

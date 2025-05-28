@@ -7,6 +7,8 @@ public interface IProductService
 
     Task<Product?> GetProductByIdAsync(Guid productId);
 
+    Task<List<Product>> GetProductListByIdsAsync(IEnumerable<Guid> productIds);
+
     Task<IEnumerable<Product>> GetAllProductsAsync();
 
     Task<Product> UpdateProductAsync(Product product);

@@ -18,7 +18,7 @@ public class TableSessionService : ITableSessionService
     public async Task<TableSession?> GetActiveSessionByTableIdAsync(Guid tableId)
     {
         return await _tableGenericService
-                .FilterByExpressionLinq(tableSession => tableSession.Id == tableId)
+                .FilterByExpressionLinq(session => session.Id == tableId && session.EndTime == null)
                 .Include(tableSession => tableSession.Table)
                 .FirstOrDefaultAsync();
     }
@@ -36,7 +36,7 @@ public class TableSessionService : ITableSessionService
     public async Task<bool> HasActiveSessionAsync(Guid tableId)
     {
         return await _tableGenericService
-            .FilterByExpressionLinq(s => s.TableId == tableId && s.EndTime == null)
+            .FilterByExpressionLinq(session => session.TableId == tableId && session.EndTime == null)
             .AnyAsync();
     }
 
