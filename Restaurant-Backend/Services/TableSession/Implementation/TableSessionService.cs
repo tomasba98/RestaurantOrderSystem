@@ -3,6 +3,7 @@
 namespace Restaurant_Backend.Services.TableSession.Implementation;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Restaurant_Backend.Entities;
 
 public class TableSessionService : ITableSessionService
@@ -12,6 +13,14 @@ public class TableSessionService : ITableSessionService
     public TableSessionService (IGenericService<TableSession> tableGenericService)
     {
         _tableGenericService = tableGenericService;
+    }
+
+    public async Task<TableSession?> GetActiveSessionByTableIdAsync(Guid tableId)
+    {
+        return await _tableGenericService
+                .FilterByExpressionLinq(tableSession => tableSession.Id == tableId)
+                .Include(tableSession => tableSession.Table)
+                .FirstOrDefaultAsync();
     }
     public async Task<TableSession> StartSessionAsync(TableSession tableSession)
     {

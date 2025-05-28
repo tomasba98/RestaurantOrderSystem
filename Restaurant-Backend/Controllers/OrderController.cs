@@ -6,6 +6,9 @@ using Restaurant_Backend.Services.Product;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Utils;
+using Restaurant_Backend.Models.OrderDetail;
+using Restaurant_Backend.Services.Table;
+using Restaurant_Backend.Services.TableSession;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -17,13 +20,17 @@ public class OrderController : ControllerBase
     private readonly IOrderDetailService _orderDetailService;
     private readonly IProductService _productService;
     private readonly IMapper _mapper;
+    private readonly ITableService _tableService;
+    private readonly ITableSessionService _tableSessionService;
 
-    public OrderController(IOrderService orderService, IProductService productService, IOrderDetailService orderDetailService, IMapper mapper)
+    public OrderController(IOrderService orderService, IProductService productService, IOrderDetailService orderDetailService, IMapper mapper, ITableService tableService, ITableSessionService tableSessionService)
     {
         _orderService = orderService;
         _productService = productService;
         _orderDetailService = orderDetailService;
         _mapper = mapper;
+        _tableService = tableService;
+        _tableSessionService = tableSessionService;
     }
 
     [HttpGet("by-status")]
@@ -43,10 +50,35 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<OrderRequest>> CreateOrder(OrderRequest orderRequest)
+    public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
+        var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
+
+        if (tableSession is null)
+            return BadRequest("Table or session not found.");
+
         var order = _mapper.Map<Order>(orderRequest);
+        order.Table = tableSession.Table;
+        order.TableSession = tableSession;
+        order.TableId = tableSession.Table.Id;
+        order.TableSessionId = tableSession.Id;
         order.Status = OrderStatus.Pending;
+
+        foreach (var item in orderRequest.Items)
+        {
+            var product = await _productService.GetProductByIdAsync(item.ProductId);
+            if (product is null)
+                return NotFound($"Product {item.ProductId} not found.");
+
+            var detail = _mapper.Map<OrderDetail>(item);
+            detail.Product = product;
+            detail.ProductId = product.Id;
+            detail.Order = order;
+            detail.OrderId = order.Id;
+
+            order.ProductList.Add(detail);
+        }
+
         var createdOrder = await _orderService.CreateOrderAsync(order);
         var createdOrderRequest = _mapper.Map<OrderRequest>(createdOrder);
 
@@ -54,7 +86,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("{orderId}")]
-    public async Task<IActionResult> UpdateOrder(OrderRequest orderRequest)
+    public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
     {
         try
         {
@@ -96,18 +128,81 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpPost("/{orderId}/AddDetails")]
+    public async Task<ActionResult<OrderDetailRequest>> AddOrderDetail(Guid orderId, OrderDetailRequest detailRequest)
+    {
+
+
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        var orderDetails = _mapper.Map<List<OrderDetail>>(detailRequest.ProductItems);
+
+        foreach (var detail in orderDetails)
+        {
+            var product = await _productService.GetProductByIdAsync(detail.ProductId);
+            if (product is null)
+                return NotFound($"Product {detail.ProductId} not found.");
+
+            detail.Product = product;
+            detail.Order = order;
+            detail.OrderId = order.Id;
+
+            order.ProductList.Add(detail);
+        }
+
+        try
+        {
+            await _orderService.UpdateOrderAsync(order);
+            return NoContent();
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (OrderNotPaidException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+    
+    [HttpPatch("/{orderId}/pay")]
+    public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
+    {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        order.IsPaid = true;
+
+        try
+        {
+            await _orderService.UpdateOrderAsync(order);
+            return NoContent();
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (OrderNotPaidException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
     /*
-    [HttpPost("/{orderId}/details")]
-        public async Task<ActionResult<OrderDetailDto>> AddOrderDetail(Guid orderId, OrderDetailCreateDto dto)
-
-    [HttpDelete("/details/{orderDetailId}")]
-        public async Task<IActionResult> RemoveOrderDetail(Guid orderDetailId)
-
     [HttpGet("/{orderId}/details")]
         public async Task<ActionResult<IEnumerable<OrderDetailDto>>> GetOrderDetails(Guid orderId)
 
-    [HttpPatch("/{orderId}/pay")]
-        public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
 
     [HttpPatch("/{orderId}/status")]
         public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
