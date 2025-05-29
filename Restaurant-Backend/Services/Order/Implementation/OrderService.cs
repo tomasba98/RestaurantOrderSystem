@@ -48,10 +48,10 @@ public class OrderService : IOrderService
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableId, Guid tableSessionId)
+    public async Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableSessionId)
     {
         return await _orderGenericService
-            .FilterByExpressionLinq(order => order.TableId == tableId && order.TableSessionId == tableSessionId)
+            .FilterByExpressionLinq(order => order.TableSessionId == tableSessionId)
             .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .ToListAsync();

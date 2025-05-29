@@ -26,5 +26,6 @@ public enum OrderStatus
     Pending,
     InKitchen,
     Ready,
-    Served
+    Served,
+    Canceled
 }

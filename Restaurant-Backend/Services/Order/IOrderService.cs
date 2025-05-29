@@ -12,7 +12,7 @@ public interface IOrderService
 
     Task<IEnumerable<Order>> GetTableOrdersAsync(Guid tableId);
 
-    Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableId, Guid tableSessionId);
+    Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableSessionId);
     
     Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus);
     

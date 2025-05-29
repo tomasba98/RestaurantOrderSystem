@@ -6,7 +6,6 @@ using Restaurant_Backend.Services.Product;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Utils;
-using Restaurant_Backend.Models.OrderDetail;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
 
@@ -39,6 +38,34 @@ public class OrderController : ControllerBase
         var orders = await _orderService.GetOrdersByStatusAsync(status);
         var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
         return Ok(ordersResponse);
+    }
+
+    [HttpPatch("/{orderId}/status")]
+    public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
+    {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        order.Status = status;
+
+        try
+        {
+            await _orderService.UpdateOrderAsync(order);
+            return NoContent();
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (OrderNotPaidException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     [HttpGet("{orderId}")]
@@ -166,7 +193,81 @@ public class OrderController : ControllerBase
         }
     }
 
-    /* NOT IN USE ANYMORE, USE UpdateOrder INSTEAD (FOR NOW).
+    [HttpPatch("/{orderId}/pay")]
+    public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
+    {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        order.IsPaid = true;
+
+        try
+        {
+            await _orderService.UpdateOrderAsync(order);
+            return NoContent();
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (OrderNotPaidException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }   
+
+    [HttpGet("/table/{tableId}")]
+    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
+    {
+        var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
+
+        return Ok(tableOrders);
+    }
+
+    [HttpGet("/session/{sessionId}")]
+    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
+    {
+        var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
+
+        return Ok(sessionOrders);
+    }    
+
+    [HttpPatch("/{orderId}/cancel")]
+    public async Task<IActionResult> CancelOrder(Guid orderId)
+    {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        order.Status = OrderStatus.Canceled;
+
+        try
+        {
+            await _orderService.UpdateOrderAsync(order);
+            return NoContent();
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (OrderNotPaidException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+    
+}
+
+/* NOT IN USE ANYMORE, USE UpdateOrder INSTEAD (FOR NOW).
      *
     [HttpPost("/{orderId}/AddDetails")]
     public async Task<IActionResult> AddOrderDetail(Guid orderId, OrderDetailRequest newDetailRequest)
@@ -216,57 +317,3 @@ public class OrderController : ControllerBase
         }
     }
     */
-
-    [HttpPatch("/{orderId}/pay")]
-    public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        order.IsPaid = true;
-
-        try
-        {
-            await _orderService.UpdateOrderAsync(order);
-            return NoContent();
-        }
-        catch (OrderNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (OrderNotPaidException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
-
-    /*
-    [HttpGet("/{orderId}/details")]
-        public async Task<ActionResult<IEnumerable<OrderDetailDto>>> GetOrderDetails(Guid orderId)
-
-
-    [HttpPatch("/{orderId}/status")]
-        public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
-
-    [HttpGet("/tables/{tableId}")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrdersByTable(Guid tableId)
-
-    [HttpGet("/sessions/{sessionId}/active")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetActiveOrdersBySession(Guid sessionId)
-
-    [HttpGet("/{orderId}/total")]
-        public async Task<ActionResult<decimal>> GetTotalAmount(Guid orderId)
-
-    [HttpGet("/search")]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> SearchOrders(string keyword)
-
-    [HttpPatch("/{orderId}/cancel")]
-        public async Task<IActionResult> CancelOrder(Guid orderId)
-    */
-}
-
