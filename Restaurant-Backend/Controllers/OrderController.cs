@@ -110,10 +110,17 @@ public class OrderController : ControllerBase
             order.ProductList.Add(detail);
         }
 
-        var createdOrder = await _orderService.CreateOrderAsync(order);
-        var createdOrderRequest = _mapper.Map<OrderRequest>(createdOrder);
+        try
+        {
+            var createdOrder = await _orderService.CreateOrderAsync(order);
+            var createdOrderResponse = _mapper.Map<OrderResponse>(createdOrder);
 
-        return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrderRequest);
+            return CreatedAtAction(nameof(GetOrderById), new { orderId = createdOrder.Id }, createdOrderResponse);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error ocurred while creating the order: {ex.Message}");
+        }
     }
 
     [HttpPut("{orderId}")]
@@ -125,16 +132,7 @@ public class OrderController : ControllerBase
             if (existingOrder is null)
                 return NotFound("Order not found.");
 
-            var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
-            if (tableSession is null)
-                return BadRequest("Table or session not found.");
-
             existingOrder.ProductList.Clear();
-
-            existingOrder.Table = tableSession.Table;
-            existingOrder.TableId = tableSession.Table.Id;
-            existingOrder.TableSession = tableSession;
-            existingOrder.TableSessionId = tableSession.Id;
 
             // Load all required products in a single batch to optimize performance
             var productIds = orderRequest.Items.Select(i => i.ProductId).Distinct();
