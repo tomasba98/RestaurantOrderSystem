@@ -1,40 +1,24 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant_Backend.Entities;
-using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Models.Product;
-using Restaurant_Backend.Services.Order;
-using Restaurant_Backend.Services.OrderDetail;
 using Restaurant_Backend.Services.Product;
-using Restaurant_Backend.Services.Table;
-using Restaurant_Backend.Services.TableSession;
-using Restaurant_Backend.Utils;
-
 namespace Restaurant_Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ProductController : ControllerBase
 {
-    private readonly IOrderService _orderService;
-    private readonly IOrderDetailService _orderDetailService;
     private readonly IProductService _productService;
     private readonly IMapper _mapper;
-    private readonly ITableService _tableService;
-    private readonly ITableSessionService _tableSessionService;
 
 
-    public ProductController(IOrderService orderService, IProductService productService, IOrderDetailService orderDetailService, IMapper mapper, ITableService tableService, ITableSessionService tableSessionService)
+    public ProductController(IProductService productService, IMapper mapper)
     {
-        _orderService = orderService;
         _productService = productService;
-        _orderDetailService = orderDetailService;
         _mapper = mapper;
-        _tableService = tableService;
-        _tableSessionService = tableSessionService;
     }
 
-    // GET: api/product
     [HttpGet]
     public async Task<IActionResult> GetAllProducts()
     {
@@ -111,22 +95,25 @@ public class ProductController : ControllerBase
         }
     }
 
-    /*
-    // PATCH: api/product/{id}/toggle-availability
-    [HttpPatch("{id}/toggle-availability")]
-    public async Task<IActionResult> ToggleProductAvailability(int id)
+    [HttpPatch("{productId}/toggle-availability")]
+    public async Task<IActionResult> ToggleProductAvailability(Guid productId, bool productStatus)
+    {
+        var existingProduct = await _productService.GetProductByIdAsync(productId);
+        if (existingProduct is null)
+            return NotFound("Product not found");
 
-    // GET: api/product/featured
-    [HttpGet("featured")]
-    public async Task<IActionResult> GetFeaturedProducts()
+        existingProduct.IsAvailable = productStatus;
 
-    // GET: api/product/best-sellers
-    [HttpGet("best-sellers")]
-    public async Task<IActionResult> GetBestSellingProducts()
+        try
+        {
+            var updatedProduct = await _productService.UpdateProductAsync(existingProduct);
+            var productResponse = _mapper.Map<ProductResponse>(updatedProduct);
 
-    // GET: api/product/session/{tableSessionId}
-    [HttpGet("session/{tableSessionId}")]
-    public async Task<IActionResult> GetProductsByTableSession(int tableSessionId)
-    */
-
+            return Ok(productResponse);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Error updating product: {ex.Message}");
+        }
+    }
 }
