@@ -26,12 +26,15 @@ public class TableService : ITableService
         return await _tableGenericService.FindAllAsync();
     }
 
-    public async Task UpdateTableAsync(Table table)
+    public async Task<Table> UpdateTableAsync(Table table)
     {
         await _tableGenericService.UpdateAsync(table);
+        return table;
     }                 
-    public async Task DeleteTableAsync(Table table)
+    public async Task DeleteTableAsync(Guid tableId)
     {
+        Table table = await _tableGenericService.GetByIdAsync(tableId) ?? throw new InvalidOperationException("Product not found.");
+
         await _tableGenericService.DeleteAsync(table);
     }                
     public async Task<bool> IsTableAvailableAsync(Guid tableId)

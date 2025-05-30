@@ -3,15 +3,15 @@
 using Restaurant_Backend.Entities;
 public interface ITableService
 {
-    Task<Table> CreateTableAsync(Table product);
+    Task<Table> CreateTableAsync(Table table);
 
-    Task<Table?> GetTableByIdAsync(Guid productId);
+    Task<Table?> GetTableByIdAsync(Guid tableId);
 
     Task<IEnumerable<Table>> GetAllTablesAsync();
 
-    Task UpdateTableAsync(Table table);       
+    Task<Table> UpdateTableAsync(Table table);       
     
-    Task DeleteTableAsync(Table table);         
+    Task DeleteTableAsync(Guid tableId);         
     
     Task<bool> IsTableAvailableAsync(Guid tableId);
 

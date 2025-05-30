@@ -113,7 +113,7 @@ public class ProductController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error updating product: {ex.Message}");
+            return StatusCode(500, $"Error toogling the product availability: {ex.Message}");
         }
     }
 }

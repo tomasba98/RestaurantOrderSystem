@@ -43,14 +43,8 @@ public class ProductService : IProductService
     public async Task DeleteProductAsync(Guid productId)
     {
         Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
-        try
-        {
-            await _productGenericService.DeleteAsync(product);
-        }
-        catch (Exception ex) 
-        {
-            throw new InvalidOperationException($"Error deleting product {productId}: {ex.Message}");
-        }
+        
+        await _productGenericService.DeleteAsync(product);        
     }
 
     public async Task<bool> IsProductAvailableAsync(Guid productId)
