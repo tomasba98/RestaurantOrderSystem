@@ -91,24 +91,10 @@ public class OrderController : ControllerBase
         order.TableSessionId = tableSession.Id;
         order.Status = OrderStatus.Pending;
 
-        // Load all required products in a single batch to optimize performance
-        var productIds = orderRequest.Items.Select(d => d.ProductId).Distinct();
-        var products = await _productService.GetProductListByIdsAsync(productIds);
-        var productDict = products.ToDictionary(p => p.Id);
+        var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+        if (failed)
+            return NotFound($"Product {missingProductId} not found.");
 
-        foreach (var item in orderRequest.Items)
-        {
-            if (!productDict.TryGetValue(item.ProductId, out var product))
-                return NotFound($"Product {item.ProductId} not found.");
-
-            var detail = _mapper.Map<OrderDetail>(item);
-            detail.Product = product;
-            detail.ProductId = product.Id;
-            detail.Order = order;
-            detail.OrderId = order.Id;
-
-            order.ProductList.Add(detail);
-        }
 
         try
         {
@@ -126,34 +112,19 @@ public class OrderController : ControllerBase
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
     {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        order.ProductList.Clear();
+
+        var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+        if (failed)
+            return NotFound($"Product {missingProductId} not found.");
+
         try
         {
-            var existingOrder = await _orderService.GetOrderByIdAsync(orderId);
-            if (existingOrder is null)
-                return NotFound("Order not found.");
-
-            existingOrder.ProductList.Clear();
-
-            // Load all required products in a single batch to optimize performance
-            var productIds = orderRequest.Items.Select(i => i.ProductId).Distinct();
-            var products = await _productService.GetProductListByIdsAsync(productIds);
-            var productDict = products.ToDictionary(p => p.Id);
-
-            foreach (var item in orderRequest.Items)
-            {
-                if (!productDict.TryGetValue(item.ProductId, out var product))
-                    return NotFound($"Product {item.ProductId} not found.");
-
-                var detail = _mapper.Map<OrderDetail>(item);
-                detail.Product = product;
-                detail.ProductId = product.Id;
-                detail.Order = existingOrder;
-                detail.OrderId = existingOrder.Id;
-
-                existingOrder.ProductList.Add(detail);
-            }
-
-            var updatedOrder = await _orderService.UpdateOrderAsync(existingOrder);
+            var updatedOrder = await _orderService.UpdateOrderAsync(order);
             var orderResponse = _mapper.Map<OrderRequest>(updatedOrder);
 
             return Ok(orderResponse);
@@ -262,7 +233,32 @@ public class OrderController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-    
+
+    private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, OrderRequest orderRequest)
+    {
+        var productIds = orderRequest.Items.Select(d => d.ProductId).Distinct();
+        var products = await _productService.GetProductListByIdsAsync(productIds);
+        var productDict = products.ToDictionary(p => p.Id);
+
+        foreach (var item in orderRequest.Items)
+        {
+            if (!productDict.TryGetValue(item.ProductId, out var product))
+            {
+                return (true, item.ProductId);
+            }
+
+            var detail = _mapper.Map<OrderDetail>(item);
+            detail.Product = product;
+            detail.ProductId = product.Id;
+            detail.Order = order;
+            detail.OrderId = order.Id;
+
+            order.ProductList.Add(detail);
+        }
+
+        return (false, null);
+    }
+
 }
 
 /* NOT IN USE ANYMORE, USE UpdateOrder INSTEAD (FOR NOW).
