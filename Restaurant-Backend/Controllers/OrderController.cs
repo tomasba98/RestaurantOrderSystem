@@ -32,6 +32,30 @@ public class OrderController : ControllerBase
         _tableSessionService = tableSessionService;
     }
 
+    [HttpGet("{orderId}")]
+    public async Task<ActionResult> GetOrderById(Guid orderId)
+    {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        var orderResponse = _mapper.Map<OrderResponse>(order);
+        return Ok(orderResponse);
+    }
+
+    [HttpGet("/table/{tableId}")]
+    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
+    {
+        var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
+
+        return Ok(tableOrders);
+    }
+
+    [HttpGet("/session/{sessionId}")]
+    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
+    {
+        var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
+
+        return Ok(sessionOrders);
+    }
+    
     [HttpGet("by-status")]
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
     {
@@ -46,6 +70,10 @@ public class OrderController : ControllerBase
         var order = await _orderService.GetOrderByIdAsync(orderId);
         if (order is null)
             return NotFound("Order not found.");
+
+        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
+        if (validationResult != null)
+            return validationResult;
 
         order.Status = status;
 
@@ -68,21 +96,13 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpGet("{orderId}")]
-    public async Task<ActionResult> GetOrderById(Guid orderId)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        var orderResponse = _mapper.Map<OrderResponse>(order);
-        return Ok(orderResponse);
-    }
-
     [HttpPost]
     public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
         var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
 
         if (tableSession is null)
-            return BadRequest("Table or session not found.");
+            return NotFound("The session of the table was not found.");
 
         var order = _mapper.Map<Order>(orderRequest);
         order.Table = tableSession.Table;
@@ -116,6 +136,10 @@ public class OrderController : ControllerBase
         if (order is null)
             return NotFound("Order not found.");
 
+        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
+        if (validationResult != null)
+            return validationResult;
+
         order.ProductList.Clear();
 
         var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
@@ -139,10 +163,17 @@ public class OrderController : ControllerBase
         }
     }
 
-
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
     {
+        var order = await _orderService.GetOrderByIdAsync(orderId);
+        if (order is null)
+            return NotFound("Order not found.");
+
+        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
+        if (validationResult != null)
+            return validationResult;
+
         try
         {
             await _orderService.DeleteOrderAsync(orderId);
@@ -169,7 +200,12 @@ public class OrderController : ControllerBase
         if (order is null)
             return NotFound("Order not found.");
 
+        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
+        if (validationResult != null)
+            return validationResult;
+
         order.IsPaid = true;
+        order.TotalAmountHistory = order.TotalAmount;
 
         try
         {
@@ -190,28 +226,16 @@ public class OrderController : ControllerBase
         }
     }   
 
-    [HttpGet("/table/{tableId}")]
-    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
-    {
-        var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
-
-        return Ok(tableOrders);
-    }
-
-    [HttpGet("/session/{sessionId}")]
-    public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
-    {
-        var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
-
-        return Ok(sessionOrders);
-    }    
-
     [HttpPatch("/{orderId}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid orderId)
     {
         var order = await _orderService.GetOrderByIdAsync(orderId);
         if (order is null)
             return NotFound("Order not found.");
+
+        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
+        if (validationResult != null)
+            return validationResult;
 
         order.Status = OrderStatus.Canceled;
 
@@ -232,6 +256,18 @@ public class OrderController : ControllerBase
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
+    }
+
+    private async Task<IActionResult?> ValidateActiveSessionAsync(Guid tableSessionId)
+    {
+        var session = await _tableSessionService.GetSessionByIdAsync(tableSessionId);
+        if (session is null)
+            return NotFound("Table session not found.");
+
+        if (!session.IsActive)
+            return Conflict("The session of the order has already ended. Modifications are not allowed.");
+
+        return null; // todo está bien
     }
 
     private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, OrderRequest orderRequest)
@@ -261,7 +297,7 @@ public class OrderController : ControllerBase
 
 }
 
-/* NOT IN USE ANYMORE, USE UpdateOrder INSTEAD (FOR NOW).
+/* NOT IN USE, USE UpdateOrder INSTEAD (FOR NOW).
      *
     [HttpPost("/{orderId}/AddDetails")]
     public async Task<IActionResult> AddOrderDetail(Guid orderId, OrderDetailRequest newDetailRequest)

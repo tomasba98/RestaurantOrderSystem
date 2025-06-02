@@ -37,7 +37,7 @@ public class TableController : ControllerBase
         return Ok(table);
     }
 
-    [HttpGet("/avaibles")]
+    [HttpGet("availables")]
     public async Task<IActionResult> GetAvailableTables()
     {
         var tables = await _tableService.GetAvailableTablesAsync();

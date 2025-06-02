@@ -3,6 +3,7 @@ using Restaurant_Backend.Entities;
 
 public interface ITableSessionService
 {
+    Task<TableSession?> GetSessionByIdAsync(Guid sessionId);
     Task<TableSession?> GetActiveSessionByTableIdAsync(Guid tableId);
     Task<TableSession> StartSessionAsync(TableSession tableSession);
     Task CloseSessionAsync(Guid tableSessionId);
