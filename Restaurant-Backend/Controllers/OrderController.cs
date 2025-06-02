@@ -267,7 +267,7 @@ public class OrderController : ControllerBase
         if (!session.IsActive)
             return Conflict("The session of the order has already ended. Modifications are not allowed.");
 
-        return null; // todo está bien
+        return null; 
     }
 
     private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, OrderRequest orderRequest)
