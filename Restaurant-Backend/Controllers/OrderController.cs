@@ -32,6 +32,11 @@ public class OrderController : ControllerBase
         _tableSessionService = tableSessionService;
     }
 
+    /// <summary>
+    /// Retrieves an order by its unique identifier.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order.</param>
+    /// <returns>An ActionResult containing the order information.</returns>
     [HttpGet("{orderId}")]
     public async Task<ActionResult> GetOrderById(Guid orderId)
     {
@@ -40,6 +45,11 @@ public class OrderController : ControllerBase
         return Ok(orderResponse);
     }
 
+    /// <summary>
+    /// Retrieves all orders associated with a specific table.
+    /// </summary>
+    /// <param name="tableId">The unique identifier of the table.</param>
+    /// <returns>A list of orders linked to the specified table.</returns>
     [HttpGet("/table/{tableId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
     {
@@ -48,6 +58,11 @@ public class OrderController : ControllerBase
         return Ok(tableOrders);
     }
 
+    /// <summary>
+    /// Retrieves all orders associated with a specific session.
+    /// </summary>
+    /// <param name="sessionId">The unique identifier of the table session.</param>
+    /// <returns>A list of orders linked to the specified session.</returns>
     [HttpGet("/session/{sessionId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
     {
@@ -55,7 +70,12 @@ public class OrderController : ControllerBase
 
         return Ok(sessionOrders);
     }
-    
+
+    /// <summary>
+    /// Retrieves all orders with a specific status.
+    /// </summary>
+    /// <param name="status">The status to filter orders by.</param>
+    /// <returns>A list of orders matching the specified status.</returns>
     [HttpGet("by-status")]
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
     {
@@ -64,6 +84,12 @@ public class OrderController : ControllerBase
         return Ok(ordersResponse);
     }
 
+    /// <summary>
+    /// Changes the status of a specific order.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order.</param>
+    /// <param name="status">The new status to assign to the order.</param>
+    /// <returns>An IActionResult indicating the result of the operation.</returns>
     [HttpPatch("/{orderId}/status")]
     public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
     {
@@ -96,6 +122,11 @@ public class OrderController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Creates a new order based on the provided request data.
+    /// </summary>
+    /// <param name="orderRequest">The data required to create the order.</param>
+    /// <returns>An ActionResult containing the created order or an error message.</returns>
     [HttpPost]
     public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
@@ -129,6 +160,12 @@ public class OrderController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Updates an existing order with new information.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order to update.</param>
+    /// <param name="orderRequest">The updated order data.</param>
+    /// <returns>An IActionResult indicating the result of the update operation.</returns>
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
     {
@@ -163,6 +200,11 @@ public class OrderController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Deletes an existing order.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order to delete.</param>
+    /// <returns>An IActionResult indicating the result of the deletion.</returns>
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
     {
@@ -193,6 +235,11 @@ public class OrderController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Marks an order as paid and stores its total amount history.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order to mark as paid.</param>
+    /// <returns>An IActionResult indicating the result of the operation.</returns>
     [HttpPatch("/{orderId}/pay")]
     public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
     {
@@ -224,8 +271,13 @@ public class OrderController : ControllerBase
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-    }   
+    }
 
+    /// <summary>
+    /// Cancels an existing order by changing its status.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order to cancel.</param>
+    /// <returns>An IActionResult indicating the result of the cancellation.</returns>
     [HttpPatch("/{orderId}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid orderId)
     {
@@ -258,6 +310,11 @@ public class OrderController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Validates whether the table session associated with an order is active.
+    /// </summary>
+    /// <param name="tableSessionId">The unique identifier of the table session.</param>
+    /// <returns>An IActionResult if the session is invalid; otherwise, null.</returns>
     private async Task<IActionResult?> ValidateActiveSessionAsync(Guid tableSessionId)
     {
         var session = await _tableSessionService.GetSessionByIdAsync(tableSessionId);
@@ -270,6 +327,12 @@ public class OrderController : ControllerBase
         return null; 
     }
 
+    /// <summary>
+    /// Loads the product details into the order from the provided order request.
+    /// </summary>
+    /// <param name="order">The order object to populate with product details.</param>
+    /// <param name="orderRequest">The request containing product IDs and quantities.</param>
+    /// <returns>A tuple indicating whether the operation failed and the ID of a missing product if any.</returns>
     private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, OrderRequest orderRequest)
     {
         var productIds = orderRequest.Items.Select(d => d.ProductId).Distinct();

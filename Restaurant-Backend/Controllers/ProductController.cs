@@ -19,6 +19,10 @@ public class ProductController : ControllerBase
         _mapper = mapper;
     }
 
+    /// <summary>
+    /// Retrieves a list of all products.
+    /// </summary>
+    /// <returns>An IActionResult containing the list of products.</returns>
     [HttpGet]
     public async Task<IActionResult> GetAllProducts()
     {
@@ -27,7 +31,11 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
-
+    /// <summary>
+    /// Retrieves the details of a product by its unique identifier.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product.</param>
+    /// <returns>An IActionResult containing the product details.</returns>
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
@@ -35,8 +43,12 @@ public class ProductController : ControllerBase
 
         return Ok(product);
     }
-    
 
+    /// <summary>
+    /// Creates a new product.
+    /// </summary>
+    /// <param name="productRequest">The product information to create.</param>
+    /// <returns>An IActionResult with the created product or an error message.</returns>
     [HttpPost]
     public async Task<IActionResult> CreateProduct([FromBody] ProductRequest productRequest)
     {
@@ -55,22 +67,27 @@ public class ProductController : ControllerBase
         }
     }
 
-    
+    /// <summary>
+    /// Updates the information of an existing product.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product to update.</param>
+    /// <param name="productRequest">The updated product data.</param>
+    /// <returns>An IActionResult with the updated product or an error message.</returns>
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductRequest productRequest)
     {
-        var existingProduct = await _productService.GetProductByIdAsync(productId);
-        if (existingProduct is null)
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product is null)
             return NotFound("Product not found");
         
-        existingProduct.Price = productRequest.Price;
-        existingProduct.Name = productRequest.Name;
-        existingProduct.Description = productRequest.Description;
-        existingProduct.IsAvailable = productRequest.IsAvailable;
+        product.Price = productRequest.Price;
+        product.Name = productRequest.Name;
+        product.Description = productRequest.Description;
+        product.IsAvailable = productRequest.IsAvailable;
 
         try
         {
-            var updatedProduct = await _productService.UpdateProductAsync(existingProduct);
+            var updatedProduct = await _productService.UpdateProductAsync(product);
             var productResponse = _mapper.Map<ProductResponse>(updatedProduct);
 
             return Ok(productResponse);
@@ -81,6 +98,12 @@ public class ProductController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Toggles the availability status of a product.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product.</param>
+    /// <param name="productStatus">The new availability status to apply.</param>
+    /// <returns>An IActionResult with the updated product or an error message.</returns>
     [HttpDelete("{productId}")]
     public async Task<IActionResult> DeleteProduct(Guid productId)
     {
@@ -95,18 +118,24 @@ public class ProductController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Toggles the availability status of a product.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product.</param>
+    /// <param name="productStatus">The new availability status to apply.</param>
+    /// <returns>An IActionResult with the updated product or an error message.</returns>
     [HttpPatch("{productId}/toggle-availability")]
     public async Task<IActionResult> ToggleProductAvailability(Guid productId, bool productStatus)
     {
-        var existingProduct = await _productService.GetProductByIdAsync(productId);
-        if (existingProduct is null)
+        var product = await _productService.GetProductByIdAsync(productId);
+        if (product is null)
             return NotFound("Product not found");
 
-        existingProduct.IsAvailable = productStatus;
+        product.IsAvailable = productStatus;
 
         try
         {
-            var updatedProduct = await _productService.UpdateProductAsync(existingProduct);
+            var updatedProduct = await _productService.UpdateProductAsync(product);
             var productResponse = _mapper.Map<ProductResponse>(updatedProduct);
 
             return Ok(productResponse);
