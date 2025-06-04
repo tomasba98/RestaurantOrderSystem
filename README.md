@@ -1,55 +1,51 @@
-# Restaurant Order System ( En progreso..)
+# Restaurant Order System (In Progress...)
 
-Este es un sistema de gestión de comandas para restaurantes desarrollado con **ASP.NET Core**. Permite que mozos y cajeros carguen pedidos desde distintas terminales, y que cocina reciba las órdenes en tiempo real en una pantalla.
-
----
-
-## Características principales
-
-- Creación y gestión de pedidos por mesa
-- Visualización de órdenes en tiempo real desde cocina
-- Generación de tickets para el cobro
-- Administración de productos
-- Accesible desde múltiples PCs en red local (LAN)
-- Funcionamiento 100% local (sin necesidad de internet)
+This is a restaurant order management system developed with **ASP.NET Core**. It allows waiters and cashiers to place orders from different terminals, and the kitchen to receive orders in real-time on a display.
 
 ---
 
-## Tecnologías utilizadas
+## Key Features
 
-- **ASP.NET Core** (WebApp)
-- **Entity Framework Core**
-- **PostgreSQL**
-- **Kestrel o IIS como servidor local**
-
----
-
-## Arquitectura del sistema
-
-**Aplicación Web Local (On-Premise)**  
-- Se ejecuta en una PC con el servidor web y base de datos.  
-- Accesible desde otras PCs del restaurante conectadas por red LAN.  
-- Pensado para operar sin conexión a Internet.
-
+- Create and manage orders by table  
+- Real-time order display in the kitchen  
+- Ticket generation for payment  
+- Product management  
+- Accessible from multiple PCs over a local network (LAN)  
+- Fully local operation (no internet required)  
 
 ---
 
-📁 Restaurant-Backend<br/>
-├── Controllers/         → Controladores de la API<br/>
-├── Entities/            → Modelos de dominio<br/>
-├── Services/            → Lógica de negocio (inyeccion de dependecia)<br/>
-├── appsettings.json     → Configuración<br/>
-└── Program.cs / Startup.cs<br/>
+## Technologies Used
+
+- **ASP.NET Core** (WebApp)  
+- **Entity Framework Core**  
+- **PostgreSQL**  
+- **Kestrel or IIS as local server**  
 
 ---
 
-<!-- ## 📍 Estado actual del proyecto
-- ✅ Funcionalidad básica de pedidos y cocina
+## System Architecture
 
-- ✅ Módulo de productos
+**Local Web Application (On-Premise)**  
+- Runs on a PC with the web server and database.  
+- Accessible from other restaurant PCs connected via LAN.  
+- Designed to operate without an Internet connection.  
 
-- 🔜 Login de usuarios y control de acceso
+---
 
-- 🔜 Reportes de ventas
+📁 Restaurant-Backend  
+├── Controllers/         → API controllers  
+├── Entities/            → Domain models  
+├── Services/            → Business logic (dependency injection)  
+├── appsettings.json     → Configuration  
+└── Program.cs / Startup.cs  
 
-- 🔜 Interfaz para celulares o tablets --!>
+---
+
+<!-- ## 📍 Current Project Status  
+- ✅ Basic ordering and kitchen functionality  
+- ✅ Product module  
+- 🔜 User login and access control  
+- 🔜 Sales reports  
+- 🔜 Mobile or tablet interface --!>
+"""
