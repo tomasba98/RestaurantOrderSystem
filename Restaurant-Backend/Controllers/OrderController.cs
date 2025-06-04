@@ -128,25 +128,24 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
-        var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
-
-        if (tableSession is null)
-            return NotFound("The session of the table was not found.");
-
-        var order = _mapper.Map<Order>(orderRequest);
-        order.Table = tableSession.Table;
-        order.TableSession = tableSession;
-        order.TableId = tableSession.Table.Id;
-        order.TableSessionId = tableSession.Id;
-        order.Status = OrderStatus.Pending;
-
-        var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
-        if (failed)
-            return NotFound($"Product {missingProductId} not found.");
-
-
         try
         {
+            var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
+
+            if (tableSession is null)
+                return NotFound("The session of the table was not found.");
+
+            var order = _mapper.Map<Order>(orderRequest);
+            order.Table = tableSession.Table;
+            order.TableSession = tableSession;
+            order.TableId = tableSession.Table.Id;
+            order.TableSessionId = tableSession.Id;
+            order.Status = OrderStatus.Pending;
+
+            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+            if (failed)
+                return NotFound($"Product {missingProductId} not found.");
+
             var createdOrder = await _orderService.CreateOrderAsync(order);
             var createdOrderResponse = _mapper.Map<OrderResponse>(createdOrder);
 
