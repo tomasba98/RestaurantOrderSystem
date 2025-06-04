@@ -25,7 +25,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The ID of the session.</param>
     /// <returns>The session data if found; otherwise, a 404 or error response.</returns>
-    [HttpGet("/{sessionId}")]
+    [HttpGet("{sessionId}")]
     public async Task<IActionResult> GetSessionById(Guid sessionId)
     {
         try
@@ -50,7 +50,7 @@ public class TableSessionController : ControllerBase
     /// Retrieves all active table sessions.
     /// </summary>
     /// <returns>A list of active sessions.</returns>
-    [HttpGet("")]
+    [HttpGet()]
     public async Task<IActionResult> GetAllSessions()
     {
         try
@@ -69,7 +69,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionRequest">The session data to start.</param>
     /// <returns>The created session data.</returns>
-    [HttpPost("/start")]
+    [HttpPost("{sessionId}/start")]
     public async Task<IActionResult> StartSession([FromBody] SessionRequest sessionRequest)
     {
         var session = _mapper.Map<TableSession>(sessionRequest);            
@@ -92,7 +92,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The ID of the session to end.</param>
     /// <returns>A confirmation message if successful.</returns>
-    [HttpPatch("/{sessionId}/end")]
+    [HttpPatch("{sessionId}/end")]
     public async Task<IActionResult> EndSession(Guid sessionId)
     {     
         try
@@ -113,7 +113,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="tableId">The ID of the table.</param>
     /// <returns>The active session data for the table.</returns>
-    [HttpGet("/table/{tableId}")]
+    [HttpGet("table/{tableId}")]
     public async Task<IActionResult> GetActiveSessionByTableId(Guid tableId)
     {
         try
