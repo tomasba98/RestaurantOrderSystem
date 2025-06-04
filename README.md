@@ -1,14 +1,18 @@
 # Restaurant Order System (In Progress...)
 
-This is a restaurant order management system developed with **ASP.NET Core**. It allows waiters and cashiers to place orders from different terminals, and the kitchen to receive orders in real-time on a display.
+This is a restaurant order management system developed with **ASP.NET Core**. It allows waiters and cashiers to place orders from different terminals, and the kitchen to receive orders in real-time on a display. The system manages the registration of orders placed for each table and maintains a stock of product/plates, tracking their availability.
+
+# Business Logic
+- Orders from a session that has already ended cannot be modified or deleted.
+- Paid orders cannot be deleted.
 
 ---
 
 ## Key Features
-
-- Create and manage orders by table  
-- Real-time order display in the kitchen  
-- Ticket generation for payment  
+- Use of AutoMapper for object mapping.
+- Implementation of custom exceptions for effective error handling.
+- Ability to create and manage orders per table.
+- Real-time order display in the kitchen
 - Product management  
 - Accessible from multiple PCs over a local network (LAN)  
 - Fully local operation (no internet required)  
