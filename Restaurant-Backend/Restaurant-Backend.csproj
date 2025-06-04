@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Models\Authentication\" />
-    <Folder Include="Models\TableSession\" />
   </ItemGroup>
 
 </Project>
