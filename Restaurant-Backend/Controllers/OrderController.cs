@@ -40,9 +40,20 @@ public class OrderController : ControllerBase
     [HttpGet("{orderId}")]
     public async Task<ActionResult> GetOrderById(Guid orderId)
     {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        var orderResponse = _mapper.Map<OrderResponse>(order);
-        return Ok(orderResponse);
+        try
+        {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            var orderResponse = _mapper.Map<OrderResponse>(order);
+            return Ok(orderResponse);
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -53,9 +64,17 @@ public class OrderController : ControllerBase
     [HttpGet("/table/{tableId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
     {
-        var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
-
-        return Ok(tableOrders);
+        try
+        {
+            var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
+            if (tableOrders is null || !tableOrders.Any())
+                return NotFound("No orders were found for the specified table.");
+            return Ok(tableOrders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving the orders for the table: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -66,9 +85,17 @@ public class OrderController : ControllerBase
     [HttpGet("/session/{sessionId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
     {
-        var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
-
-        return Ok(sessionOrders);
+        try
+        {
+            var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
+            if (sessionOrders is null || !sessionOrders.Any())
+                return NotFound("No orders were found for the specified session.");
+            return Ok(sessionOrders);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving the orders for the session: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -79,9 +106,18 @@ public class OrderController : ControllerBase
     [HttpGet("by-status")]
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
     {
-        var orders = await _orderService.GetOrdersByStatusAsync(status);
-        var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
-        return Ok(ordersResponse);
+        try
+        {
+            var orders = await _orderService.GetOrdersByStatusAsync(status);
+            if (orders is null || !orders.Any())
+                return NotFound("No orders were found with the specified status.");
+            var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+            return Ok(ordersResponse);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving orders by status: {ex.Message}");
+        }
     }
 
     /// <summary>
