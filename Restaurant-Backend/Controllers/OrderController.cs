@@ -93,18 +93,16 @@ public class OrderController : ControllerBase
     [HttpPatch("/{orderId}/status")]
     public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
     {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
-        if (validationResult != null)
-            return validationResult;
-
-        order.Status = status;
-
         try
         {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
+            if (validationResult != null)
+                return validationResult;
+
+            order.Status = status;
+
             await _orderService.UpdateOrderAsync(order);
             return NoContent();
         }
@@ -168,23 +166,22 @@ public class OrderController : ControllerBase
     /// <returns>An IActionResult indicating the result of the update operation.</returns>
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
-        if (validationResult != null)
-            return validationResult;
-
-        order.ProductList.Clear();
-
-        var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
-        if (failed)
-            return NotFound($"Product {missingProductId} not found.");
+    {      
 
         try
         {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
+            if (validationResult != null)
+                return validationResult;
+
+            order.ProductList.Clear();
+
+            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+            if (failed)
+                return NotFound($"Product {missingProductId} not found.");
+
             var updatedOrder = await _orderService.UpdateOrderAsync(order);
             var orderResponse = _mapper.Map<OrderRequest>(updatedOrder);
 
@@ -207,17 +204,15 @@ public class OrderController : ControllerBase
     /// <returns>An IActionResult indicating the result of the deletion.</returns>
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
-        if (validationResult != null)
-            return validationResult;
-
+    {      
         try
         {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
+            if (validationResult != null)
+                return validationResult;
+
             await _orderService.DeleteOrderAsync(orderId);
             return NoContent(); 
         }
@@ -242,20 +237,18 @@ public class OrderController : ControllerBase
     /// <returns>An IActionResult indicating the result of the operation.</returns>
     [HttpPatch("/{orderId}/pay")]
     public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
-        if (validationResult != null)
-            return validationResult;
-
-        order.IsPaid = true;
-        order.TotalAmountHistory = order.TotalAmount;
-
+    {      
         try
         {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
+            if (validationResult != null)
+                return validationResult;
+
+            order.IsPaid = true;
+            order.TotalAmountHistory = order.TotalAmount;
+
             await _orderService.UpdateOrderAsync(order);
             return NoContent();
         }
@@ -280,19 +273,17 @@ public class OrderController : ControllerBase
     /// <returns>An IActionResult indicating the result of the cancellation.</returns>
     [HttpPatch("/{orderId}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid orderId)
-    {
-        var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
-
-        var validationResult = await ValidateActiveSessionAsync(order.TableSessionId);
-        if (validationResult != null)
-            return validationResult;
-
-        order.Status = OrderStatus.Canceled;
-
+    {     
         try
         {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+
+            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
+            if (validationResult != null)
+                return validationResult;
+
+            order.Status = OrderStatus.Canceled;
+
             await _orderService.UpdateOrderAsync(order);
             return NoContent();
         }
@@ -370,8 +361,6 @@ public class OrderController : ControllerBase
             return BadRequest("No product items provided.");
 
         var order = await _orderService.GetOrderByIdAsync(orderId);
-        if (order is null)
-            return NotFound("Order not found.");
 
         var orderDetails = _mapper.Map<List<OrderDetail>>(newDetailRequest.ProductItems);
 

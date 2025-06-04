@@ -60,7 +60,7 @@ public class TableSessionController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error getting the active sessions: {ex.Message}");
+            return StatusCode(500, $"An error occurred while retrieving the active sessions: {ex.Message}");
         }
     }
 
@@ -118,12 +118,12 @@ public class TableSessionController : ControllerBase
     {
         try
         {
-            var activeSessions = _tableSessionService.GetActiveSessionByTableIdAsync(tableId);
+            var activeSessions = await _tableSessionService.GetActiveSessionByTableIdAsync(tableId);
             return Ok(activeSessions);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, $"Error getting the active sessions of the table: {ex.Message}");
+            return StatusCode(500, $"An error occurred while retrieving the active sessions of the table: {ex.Message}");
         }
     }    
 

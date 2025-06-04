@@ -30,11 +30,14 @@ public class OrderService : IOrderService
 
     public async Task<Order?> GetOrderByIdAsync(Guid orderId)
     {
-        return await _orderGenericService
-            .FilterByExpressionLinq(order => order.Id == orderId)
-            .Include(order => order.ProductList)
-            .ThenInclude(item => item.Product)
-            .FirstOrDefaultAsync();
+        var order = await _orderGenericService
+         .FilterByExpressionLinq(order => order.Id == orderId)
+         .Include(order => order.ProductList)
+         .ThenInclude(item => item.Product)
+         .FirstOrDefaultAsync()
+         ?? throw new OrderNotFoundException(orderId);           
+
+        return order;
     }
 
     public async Task<IEnumerable<Order>> GetTableOrdersAsync(Guid tableId)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Product;
 using Restaurant_Backend.Services.Product;
+
 namespace Restaurant_Backend.Controllers;
 
 [Route("api/[controller]")]
@@ -11,7 +12,6 @@ public class ProductController : ControllerBase
 {
     private readonly IProductService _productService;
     private readonly IMapper _mapper;
-
 
     public ProductController(IProductService productService, IMapper mapper)
     {
@@ -39,9 +39,20 @@ public class ProductController : ControllerBase
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
-        var product = await _productService.GetProductByIdAsync(productId);
+        try
+        {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product is null)
+                return NotFound("Product not found");
 
-        return Ok(product);
+            return Ok(product);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error ocurred while retrieving the product.");
+        }
+        
     }
 
     /// <summary>
@@ -75,18 +86,18 @@ public class ProductController : ControllerBase
     /// <returns>An IActionResult with the updated product or an error message.</returns>
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductRequest productRequest)
-    {
-        var product = await _productService.GetProductByIdAsync(productId);
-        if (product is null)
-            return NotFound("Product not found");
-        
-        product.Price = productRequest.Price;
-        product.Name = productRequest.Name;
-        product.Description = productRequest.Description;
-        product.IsAvailable = productRequest.IsAvailable;
-
+    {    
         try
         {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product is null)
+                return NotFound("Product not found");
+
+            product.Price = productRequest.Price;
+            product.Name = productRequest.Name;
+            product.Description = productRequest.Description;
+            product.IsAvailable = productRequest.IsAvailable;
+
             var updatedProduct = await _productService.UpdateProductAsync(product);
             var productResponse = _mapper.Map<ProductResponse>(updatedProduct);
 
@@ -126,15 +137,15 @@ public class ProductController : ControllerBase
     /// <returns>An IActionResult with the updated product or an error message.</returns>
     [HttpPatch("{productId}/toggle-availability")]
     public async Task<IActionResult> ToggleProductAvailability(Guid productId, bool productStatus)
-    {
-        var product = await _productService.GetProductByIdAsync(productId);
-        if (product is null)
-            return NotFound("Product not found");
-
-        product.IsAvailable = productStatus;
-
+    {       
         try
         {
+            var product = await _productService.GetProductByIdAsync(productId);
+            if (product is null)
+                return NotFound("Product not found");
+
+            product.IsAvailable = productStatus;
+
             var updatedProduct = await _productService.UpdateProductAsync(product);
             var productResponse = _mapper.Map<ProductResponse>(updatedProduct);
 

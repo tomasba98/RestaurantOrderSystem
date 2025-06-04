@@ -27,9 +27,16 @@ public class TableController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllTables()
     {
-        var tables = await _tableService.GetAllTablesAsync();
+        try
+        {
+            var tables = await _tableService.GetAllTablesAsync();
 
-        return Ok(tables);
+            return Ok(tables);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving all the tables: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -40,9 +47,15 @@ public class TableController : ControllerBase
     [HttpGet("{tableId}")]
     public async Task<IActionResult> GetTableById(Guid tableId)
     {
-        var table = await _tableService.GetTableByIdAsync(tableId);
-
-        return Ok(table);
+        try
+        {
+            var table = await _tableService.GetTableByIdAsync(tableId);
+            return Ok(table);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving the table: {ex.Message}");
+        }
     }
 
 
@@ -53,9 +66,15 @@ public class TableController : ControllerBase
     [HttpGet("availables")]
     public async Task<IActionResult> GetAvailableTables()
     {
-        var tables = await _tableService.GetAvailableTablesAsync();
-
-        return Ok(tables);
+        try
+        {
+            var tables = await _tableService.GetAvailableTablesAsync();
+            return Ok(tables);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving available tables: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -91,15 +110,15 @@ public class TableController : ControllerBase
     [HttpPut("{tableId}")]
     public async Task<IActionResult> Updatetable(Guid tableId, [FromBody] TableRequest tableRequest)
     {
-        var existingtable = await _tableService.GetTableByIdAsync(tableId);
-        if (existingtable is null)
-            return NotFound("table not found");
-
-        existingtable.Number = tableRequest.Number;
-        existingtable.IsOccupied = tableRequest.IsOccupied;
-
         try
         {
+            var existingtable = await _tableService.GetTableByIdAsync(tableId);
+            if (existingtable is null)
+                return NotFound("table not found");
+
+            existingtable.Number = tableRequest.Number;
+            existingtable.IsOccupied = tableRequest.IsOccupied;
+
             var updatedtable = await _tableService.UpdateTableAsync(existingtable);
             var tableResponse = _mapper.Map<TableResponse>(updatedtable);
 
@@ -139,15 +158,15 @@ public class TableController : ControllerBase
     /// <returns>The updated table information.</returns>
     [HttpPatch("{tableId}/toggle-occupation")]
     public async Task<IActionResult> ToggleTableOccupation(Guid tableId, bool tableStatus)
-    {
-        var existingtable = await _tableService.GetTableByIdAsync(tableId);
-        if (existingtable is null)
-            return NotFound("table not found");
-
-        existingtable.IsOccupied = tableStatus;
-
+    {        
         try
         {
+            var existingtable = await _tableService.GetTableByIdAsync(tableId);
+            if (existingtable is null)
+                return NotFound("table not found");
+
+            existingtable.IsOccupied = tableStatus;
+
             var updatedtable = await _tableService.UpdateTableAsync(existingtable);
             var tableResponse = _mapper.Map<TableResponse>(updatedtable);
 
