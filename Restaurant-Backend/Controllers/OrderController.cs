@@ -69,6 +69,7 @@ public class OrderController : ControllerBase
             var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
             if (tableOrders is null || !tableOrders.Any())
                 return NotFound("No orders were found for the specified table.");
+
             return Ok(tableOrders);
         }
         catch (Exception ex)
@@ -90,6 +91,7 @@ public class OrderController : ControllerBase
             var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
             if (sessionOrders is null || !sessionOrders.Any())
                 return NotFound("No orders were found for the specified session.");
+
             return Ok(sessionOrders);
         }
         catch (Exception ex)
@@ -111,7 +113,9 @@ public class OrderController : ControllerBase
             var orders = await _orderService.GetOrdersByStatusAsync(status);
             if (orders is null || !orders.Any())
                 return NotFound("No orders were found with the specified status.");
+
             var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+
             return Ok(ordersResponse);
         }
         catch (Exception ex)
@@ -145,10 +149,6 @@ public class OrderController : ControllerBase
         catch (OrderNotFoundException ex)
         {
             return NotFound(ex.Message);
-        }
-        catch (OrderNotPaidException ex)
-        {
-            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
@@ -202,7 +202,6 @@ public class OrderController : ControllerBase
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
     {      
-
         try
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
@@ -291,50 +290,11 @@ public class OrderController : ControllerBase
         {
             return NotFound(ex.Message);
         }
-        catch (OrderNotPaidException ex)
-        {
-            return BadRequest(ex.Message);
-        }
         catch (Exception ex)
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// Cancels an existing order by changing its status.
-    /// </summary>
-    /// <param name="orderId">The unique identifier of the order to cancel.</param>
-    /// <returns>An IActionResult indicating the result of the cancellation.</returns>
-    [HttpPatch("/{orderId}/cancel")]
-    public async Task<IActionResult> CancelOrder(Guid orderId)
-    {     
-        try
-        {
-            var order = await _orderService.GetOrderByIdAsync(orderId);
-
-            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
-            if (validationResult != null)
-                return validationResult;
-
-            order.Status = OrderStatus.Canceled;
-
-            await _orderService.UpdateOrderAsync(order);
-            return NoContent();
-        }
-        catch (OrderNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (OrderNotPaidException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }
+    }    
 
     /// <summary>
     /// Validates whether the table session associated with an order is active.
