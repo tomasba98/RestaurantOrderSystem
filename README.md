@@ -27,9 +27,7 @@ This starts:
 - **postgres** at port `5433`
 
 ### Verify
-
 - Open `http://localhost:4332/swagger` 
-- Connect to PostgreSQL with:
 
 ---
 ## Key Features
