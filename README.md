@@ -21,7 +21,6 @@ From the root directory, run:
 ```bash
 docker-compose up --build
 ```
-
 This starts:
 - **dotnetapi** at `http://localhost:4332`
 - **postgres** at port `5433`
