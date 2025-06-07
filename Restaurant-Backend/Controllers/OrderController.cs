@@ -30,13 +30,7 @@ public class OrderController : ControllerBase
         _mapper = mapper;
         _tableService = tableService;
         _tableSessionService = tableSessionService;
-    }
-
-    [HttpGet("/health")]
-    public IActionResult Health()
-    {
-        return Ok(new { Status = "API is running!", Timestamp = DateTime.Now });
-    }
+    }   
 
     /// <summary>
     /// Retrieves an order by its unique identifier.
