@@ -89,10 +89,10 @@ public class TableController : ControllerBase
 
         try
         {
-            var createdtable = await _tableService.CreateTableAsync(table);
-            var createdtableResponse = _mapper.Map<TableResponse>(createdtable);
+            var createdTable = await _tableService.CreateTableAsync(table);
+            var createdTableResponse = _mapper.Map<TableResponse>(createdTable);
 
-            return CreatedAtAction(nameof(GetTableById), new { orderId = createdtable.Id }, createdtableResponse);
+            return CreatedAtAction(nameof(GetTableById), new { tableId = createdTable.Id }, createdTableResponse);
         }
         catch (Exception ex)
         {

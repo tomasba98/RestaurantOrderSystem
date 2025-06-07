@@ -70,7 +70,7 @@ public class ProductController : ControllerBase
             var createdProduct = await _productService.CreateProductAsync(product);
             var createdProductResponse = _mapper.Map<ProductResponse>(createdProduct);
 
-            return CreatedAtAction(nameof(GetProductById), new { orderId = createdProduct.Id }, createdProductResponse);
+            return CreatedAtAction(nameof(GetProductById), new { productId = createdProduct.Id }, createdProductResponse);
         }
         catch (Exception ex)
         {

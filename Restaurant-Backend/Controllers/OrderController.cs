@@ -32,6 +32,12 @@ public class OrderController : ControllerBase
         _tableSessionService = tableSessionService;
     }
 
+    [HttpGet("/health")]
+    public IActionResult Health()
+    {
+        return Ok(new { Status = "API is running!", Timestamp = DateTime.Now });
+    }
+
     /// <summary>
     /// Retrieves an order by its unique identifier.
     /// </summary>
@@ -61,7 +67,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="tableId">The unique identifier of the table.</param>
     /// <returns>A list of orders linked to the specified table.</returns>
-    [HttpGet("/table/{tableId}")]
+    [HttpGet("table/{tableId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
     {
         try
@@ -83,7 +89,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The unique identifier of the table session.</param>
     /// <returns>A list of orders linked to the specified session.</returns>
-    [HttpGet("/session/{sessionId}")]
+    [HttpGet("session/{sessionId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
     {
         try
@@ -130,7 +136,7 @@ public class OrderController : ControllerBase
     /// <param name="orderId">The unique identifier of the order.</param>
     /// <param name="status">The new status to assign to the order.</param>
     /// <returns>An IActionResult indicating the result of the operation.</returns>
-    [HttpPatch("/{orderId}/status")]
+    [HttpPatch("{orderId}/status")]
     public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
     {
         try
@@ -161,7 +167,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="orderRequest">The data required to create the order.</param>
     /// <returns>An ActionResult containing the created order or an error message.</returns>
-    [HttpPost]
+    [HttpPost("")]
     public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
         try
@@ -169,7 +175,7 @@ public class OrderController : ControllerBase
             var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
 
             if (tableSession is null)
-                return NotFound("The session of the table was not found.");
+                return NotFound("No active session for this table");
 
             var order = _mapper.Map<Order>(orderRequest);
             order.Table = tableSession.Table;
@@ -269,7 +275,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="orderId">The unique identifier of the order to mark as paid.</param>
     /// <returns>An IActionResult indicating the result of the operation.</returns>
-    [HttpPatch("/{orderId}/pay")]
+    [HttpPatch("{orderId}/pay")]
     public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
     {      
         try
