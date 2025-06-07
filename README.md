@@ -8,6 +8,30 @@ This is a restaurant order management system developed with **ASP.NET Core**. It
 
 ---
 
+## 🛠 Running the Project with Docker
+
+### Prerequisites
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+
+### Start the Project
+
+From the root directory, run:
+
+```bash
+docker-compose up --build
+```
+
+This starts:
+- **dotnetapi** at `http://localhost:4332`
+- **postgres** at port `5433`
+
+### Verify
+
+- Open `http://localhost:4332/swagger` 
+- Connect to PostgreSQL with:
+
+---
 ## Key Features
 - Use of AutoMapper for object mapping.
 - Implementation of custom exceptions for effective error handling.
