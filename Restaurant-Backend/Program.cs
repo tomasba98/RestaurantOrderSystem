@@ -18,31 +18,29 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurar URLs ANTES de build
+builder.WebHost.UseUrls("http://0.0.0.0:4332");
+
 // Register of interfaces services
 builder.Services.AddScoped<IGenericService<Order>, GenericService<Order>>();
 builder.Services.AddScoped<IOrderService, OrderService>();
-
 builder.Services.AddScoped<IGenericService<OrderDetail>, GenericService<OrderDetail>>();
 builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
-
 builder.Services.AddScoped<IGenericService<Product>, GenericService<Product>>();
 builder.Services.AddScoped<IProductService, ProductService>();
-
 builder.Services.AddScoped<IGenericService<Table>, GenericService<Table>>();
 builder.Services.AddScoped<ITableService, TableService>();
-
 builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
 builder.Services.AddScoped<ITableSessionService, TableSessionService>();
 
-
-//Connection to the data base
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
-
+// Connection to the database - CORREGIDO: usar DefaultConnection
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-//Automapper
+// Automapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,17 +54,32 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//Execute migrations automatically
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    try
+    {
+        context.Database.Migrate();
+        Console.WriteLine("Database migrated successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error migrating database: {ex.Message}");
+    }
 }
 
-app.UseHttpsRedirection();
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+//}
+
+
+// app.UseHttpsRedirection(); disable to avoid problems with docker
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
