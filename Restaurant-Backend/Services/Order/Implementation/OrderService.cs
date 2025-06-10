@@ -66,18 +66,11 @@ public class OrderService : IOrderService
         await _orderGenericService.UpdateAsync(order);
     }
 
-    public async Task MarkOrderAsPaidAsync(Guid orderId)
-    {
-        Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new OrderNotFoundException(orderId);
-        order.IsPaid = true;
-
-        await _orderGenericService.UpdateAsync(order);
-    }
 
     public async Task DeleteOrderAsync(Guid orderId)
     {
         Order? order = await _orderGenericService.GetByIdAsync(orderId) ?? throw new OrderNotFoundException(orderId);
-        if (!order.IsPaid) throw new OrderNotPaidException(orderId);
+        if (order.Status != OrderStatus.Paid) throw new OrderNotPaidException(orderId);
        
         await _orderGenericService.DeleteAsync(order);           
     }

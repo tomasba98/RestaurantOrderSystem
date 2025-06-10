@@ -7,8 +7,7 @@ public class OrderResponse
 {
     public Guid Id { get; set; }                 
     public Guid TableId { get; set; }            
-    public DateTime CreatedAt { get; set; }      
-    public bool IsPaid { get; set; }            
+    public DateTime CreatedAt { get; set; }             
     public OrderStatus Status { get; set; }      
     public List<OrderDetailResponse> ProductList { get; set; } = [];
 }

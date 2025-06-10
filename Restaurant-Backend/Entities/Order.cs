@@ -10,7 +10,6 @@ public class Order : EntityBase
 {   
     public Guid TableId { get; set; }
     public required Table Table { get; set; }
-    public bool IsPaid { get; set; }
     public List<OrderDetail> ProductList { get; set; } = [];
     public OrderStatus Status { get; set; }
     public Guid TableSessionId { get; set; }
@@ -23,9 +22,10 @@ public class Order : EntityBase
 
 public enum OrderStatus
 {
-    Pending,
+    Confirmed,
     InKitchen,
     Ready,
     Served,
+    Paid,
     Canceled
 }

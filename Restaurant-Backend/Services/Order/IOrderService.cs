@@ -6,6 +6,7 @@ using Restaurant_Backend.Entities;
 public interface IOrderService
 {
     Task<Order> CreateOrderAsync(Order order);
+
     Task<Order> UpdateOrderAsync(Order order);
 
     Task<Order?> GetOrderByIdAsync(Guid orderId);
@@ -14,9 +15,7 @@ public interface IOrderService
 
     Task<IEnumerable<Order>> GetSessionOrdersAsync(Guid tableSessionId);
     
-    Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus);
-    
-    Task MarkOrderAsPaidAsync(Guid orderId);
+    Task UpdateOrderStatusAsync(Guid orderId, OrderStatus newStatus);    
     
     Task DeleteOrderAsync(Guid orderId);
     

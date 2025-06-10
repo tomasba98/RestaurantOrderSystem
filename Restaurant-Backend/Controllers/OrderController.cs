@@ -176,7 +176,7 @@ public class OrderController : ControllerBase
             order.TableSession = tableSession;
             order.TableId = tableSession.Table.Id;
             order.TableSessionId = tableSession.Id;
-            order.Status = OrderStatus.Pending;
+            order.Status = OrderStatus.Confirmed;
 
             var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
             if (failed)
@@ -262,39 +262,7 @@ public class OrderController : ControllerBase
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-    }
-
-    /// <summary>
-    /// Marks an order as paid and stores its total amount history.
-    /// </summary>
-    /// <param name="orderId">The unique identifier of the order to mark as paid.</param>
-    /// <returns>An IActionResult indicating the result of the operation.</returns>
-    [HttpPatch("{orderId}/pay")]
-    public async Task<IActionResult> MarkOrderAsPaid(Guid orderId)
-    {      
-        try
-        {
-            var order = await _orderService.GetOrderByIdAsync(orderId);
-
-            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
-            if (validationResult != null)
-                return validationResult;
-
-            order.IsPaid = true;
-            order.TotalAmountHistory = order.TotalAmount;
-
-            await _orderService.UpdateOrderAsync(order);
-            return NoContent();
-        }
-        catch (OrderNotFoundException ex)
-        {
-            return NotFound(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
-    }    
+    }       
 
     /// <summary>
     /// Validates whether the table session associated with an order is active.
