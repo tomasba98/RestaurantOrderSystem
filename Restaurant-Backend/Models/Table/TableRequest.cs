@@ -2,6 +2,6 @@
 
 public class TableRequest
 {
-    public string Number { get; set; } = string.Empty;
+    public int Number { get; set; } 
     public bool IsOccupied { get; set; }
 }

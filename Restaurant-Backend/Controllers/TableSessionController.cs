@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.TableSession;
+using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
 
 namespace Restaurant_Backend.Controllers;
@@ -13,11 +14,13 @@ public class TableSessionController : ControllerBase
 {
     private ITableSessionService _tableSessionService;
     private readonly IMapper _mapper;
+    private ITableService _tableService;
 
-    public TableSessionController(ITableSessionService tableSessionService, IMapper mapper)
+    public TableSessionController(ITableSessionService tableSessionService, IMapper mapper, ITableService tableService)
     {
         _tableSessionService = tableSessionService;
         _mapper = mapper;
+        _tableService = tableService;
     }
 
     /// <summary>
@@ -69,10 +72,10 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionRequest">The session data to start.</param>
     /// <returns>The created session data.</returns>
-    [HttpPost("{sessionId}/start")]
+    [HttpPost("start")]
     public async Task<IActionResult> StartSession([FromBody] SessionRequest sessionRequest)
     {
-        var session = _mapper.Map<TableSession>(sessionRequest);            
+        var session = _mapper.Map<TableSession>(sessionRequest);
 
         try
         {

@@ -41,6 +41,7 @@ public class TableService : ITableService
     {
         return await _tableGenericService
             .FilterByExpressionLinq(table => table.IsOccupied == false)
+            .AsNoTracking()
             .AnyAsync();
     }
 
@@ -48,6 +49,7 @@ public class TableService : ITableService
     {
         return await _tableGenericService
             .FilterByExpressionLinq(table => table.IsOccupied == false)
+            .AsNoTracking()
             .ToListAsync();
     }
 

@@ -33,7 +33,7 @@ builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
 builder.Services.AddScoped<ITableSessionService, TableSessionService>();
 
-// Connection to the database - CORREGIDO: usar DefaultConnection
+// Connection to the database 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -42,6 +42,8 @@ builder.Services.AddControllers();
 
 // Automapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddScoped<SessionRequestToTableSessionAction>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -70,11 +72,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 
 // app.UseHttpsRedirection(); disable to avoid problems with docker

@@ -23,7 +23,7 @@ public class TableSessionService : ITableSessionService
     public async Task<TableSession?> GetActiveSessionByTableIdAsync(Guid tableId)
     {
         return await _tableGenericService
-                .FilterByExpressionLinq(session => session.Id == tableId && session.IsActive == true)
+                .FilterByExpressionLinq(session => session.TableId == tableId && session.IsActive == true)
                 .Include(tableSession => tableSession.Table)
                 .FirstOrDefaultAsync();
     }

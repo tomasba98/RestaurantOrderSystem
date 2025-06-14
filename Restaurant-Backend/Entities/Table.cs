@@ -8,6 +8,6 @@ namespace Restaurant_Backend.Entities;
 [Table("Tables")]
 public class Table : EntityBase
 {
-    public string Number { get; set; } = string.Empty;
+    public int Number { get; set; } 
     public bool IsOccupied { get; set; }
 }

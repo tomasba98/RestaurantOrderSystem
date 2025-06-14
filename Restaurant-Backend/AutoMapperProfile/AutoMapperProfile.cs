@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
 
 using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Models.OrderDetail;
 using Restaurant_Backend.Models.Product;
 using Restaurant_Backend.Models.Table;
+using Restaurant_Backend.Models.TableSession;
 
 namespace Restaurant_Backend.AutoMapperProfile;
 
@@ -34,5 +37,14 @@ public class AutoMapperProfile : Profile
         CreateMap<TableRequest, Table>();
         CreateMap<Table, TableResponse>();
 
+        //Session
+        CreateMap<TableSession, SessionResponse>()
+            .ForMember(dest => dest.TableId, opt => opt.MapFrom(src => src.TableId))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
+            .ForMember(dest => dest.Orders, opt => opt.MapFrom(src => src.Orders));
+
+        CreateMap<SessionRequest, TableSession>()
+            .AfterMap<SessionRequestToTableSessionAction>();
     }
 }
