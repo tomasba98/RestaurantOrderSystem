@@ -42,6 +42,11 @@ public static class Encrypt
         return new JwtSecurityTokenHandler().WriteToken(securityToken);
     }
 
+    /// <summary>
+    /// Generates a SHA-256 hash from the given string and returns it as a hexadecimal string.
+    /// </summary>
+    /// <param name="value">The input string to hash.</param>
+    /// <returns>A lowercase hexadecimal string representing the SHA-256 hash.</returns>
     public static string Hash(string value)
     {
         StringBuilder sb = new();

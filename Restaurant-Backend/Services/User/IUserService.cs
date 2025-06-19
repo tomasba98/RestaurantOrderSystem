@@ -28,8 +28,18 @@ public interface IUserService
     /// <returns>The user entity if found; otherwise, null.</returns>
     Task<User?> GetUserByIdAsync(Guid userId);
 
+    /// <summary>
+    /// Checks if a user with the specified username already exists in the system.
+    /// </summary>
+    /// <param name="userName">The username to check.</param>
+    /// <returns>True if the username exists; otherwise, false.</returns>
     Task<bool> CheckIfUsernameExistsAsync(string userName);
 
+    /// <summary>
+    /// Updates an existing user's information.
+    /// </summary>
+    /// <param name="user">The user entity with updated data.</param>
+    /// <returns>The updated user entity.</returns>
     Task<User> UpdateUserAsync(User user);
 
 }
