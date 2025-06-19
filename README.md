@@ -7,6 +7,7 @@ This is a restaurant order management system developed with **ASP.NET Core**. It
 - Paid orders cannot be deleted.
 
 ---
+
 ## Features
 - Use of AutoMapper for object mapping.
 - Implementation of custom exceptions for effective error handling.
@@ -21,6 +22,7 @@ This is a restaurant order management system developed with **ASP.NET Core**. It
 - A JWT token is generated on login, including UserId, UserName, and Role.
 - The Password is hashed using SHA-256.
 - Roles are enforced using the [Authorize(Roles = "Admin,Manager")] attribute.
+  
 ---
 
 ## 🛠 Running the Project with Docker
