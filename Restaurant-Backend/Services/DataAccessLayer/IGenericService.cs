@@ -31,13 +31,7 @@ public interface IGenericService<TEntity> where TEntity : EntityBase
     /// Asynchronously deletes a single entity from the database.
     /// </summary>
     /// <param name="entity">The entity to delete.</param>
-    Task DeleteAsync(TEntity entity);
-
-    /// <summary>
-    /// Asynchronously deletes a single entity from the database.
-    /// </summary>
-    /// <param name="entityId">The entity id to delete.</param>
-    //Task DeleteByIdAsync(Guid entityId);
+    Task DeleteAsync(TEntity entity);    
 
     /// <summary>
     /// Asynchronously updates a single entity in the database.

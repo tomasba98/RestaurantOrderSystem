@@ -14,7 +14,18 @@ public class User : EntityBase
     
     [Required]
     public string Password { get; set; } = null!;
-    
-    [Required]
-    public string Name { get; set; } = null!;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+    public DateTime? LastLogin { get; set; }
+    public Roles Role { get; set; }
+}
+
+public enum Roles
+{
+    Admin,
+    Manager,
+    Waiter,
+    Kitchen
 }

@@ -21,9 +21,7 @@ public class OrderService : IOrderService
     }
 
     public async Task<Order> UpdateOrderAsync(Order order)
-    {
-        var existingOrder = await _orderGenericService.GetByIdAsync(order.Id) ?? throw new OrderNotFoundException(order.Id);
-        
+    {        
         await _orderGenericService.UpdateAsync(order);
         return order;
     }

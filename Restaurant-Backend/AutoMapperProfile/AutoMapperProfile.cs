@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
-
+using Restaurant_Backend.Models.Authentication;
 using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Models.OrderDetail;
 using Restaurant_Backend.Models.Product;
@@ -46,5 +46,14 @@ public class AutoMapperProfile : Profile
 
         CreateMap<SessionRequest, TableSession>()
             .AfterMap<SessionRequestToTableSessionAction>();
+
+        //User
+        CreateMap<RegisterUserRequest, User>()
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
+            .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
+
+        CreateMap<UpdateUserRequest, User>()
+            .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
+
     }
 }

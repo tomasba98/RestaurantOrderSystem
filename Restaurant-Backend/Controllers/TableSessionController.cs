@@ -1,22 +1,23 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.TableSession;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
+using Restaurant_Backend.Services.User;
 
 namespace Restaurant_Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TableSessionController : ControllerBase
+public class TableSessionController : BaseController
 {
     private ITableSessionService _tableSessionService;
     private readonly IMapper _mapper;
     private ITableService _tableService;
 
-    public TableSessionController(ITableSessionService tableSessionService, IMapper mapper, ITableService tableService)
+    public TableSessionController(ITableSessionService tableSessionService, IMapper mapper, ITableService tableService, IHttpContextAccessor httpContextAccessor, IUserService userService) : base(httpContextAccessor, userService)
     {
         _tableSessionService = tableSessionService;
         _mapper = mapper;
@@ -28,6 +29,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The ID of the session.</param>
     /// <returns>The session data if found; otherwise, a 404 or error response.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet("{sessionId}")]
     public async Task<IActionResult> GetSessionById(Guid sessionId)
     {
@@ -53,6 +55,7 @@ public class TableSessionController : ControllerBase
     /// Retrieves all active table sessions.
     /// </summary>
     /// <returns>A list of active sessions.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet()]
     public async Task<IActionResult> GetAllSessions()
     {
@@ -72,6 +75,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionRequest">The session data to start.</param>
     /// <returns>The created session data.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPost("start")]
     public async Task<IActionResult> StartSession([FromBody] SessionRequest sessionRequest)
     {
@@ -84,7 +88,7 @@ public class TableSessionController : ControllerBase
 
             return CreatedAtAction(nameof(GetSessionById), new { sessionId = createdSession.Id }, createdSessionResponse);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(500, "An error ocurred while creating the product.");
         }
@@ -95,6 +99,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The ID of the session to end.</param>
     /// <returns>A confirmation message if successful.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPatch("{sessionId}/end")]
     public async Task<IActionResult> EndSession(Guid sessionId)
     {     
@@ -116,6 +121,7 @@ public class TableSessionController : ControllerBase
     /// </summary>
     /// <param name="tableId">The ID of the table.</param>
     /// <returns>The active session data for the table.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet("table/{tableId}")]
     public async Task<IActionResult> GetActiveSessionByTableId(Guid tableId)
     {

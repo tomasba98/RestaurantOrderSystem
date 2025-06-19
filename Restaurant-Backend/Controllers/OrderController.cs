@@ -8,12 +8,14 @@ using Restaurant_Backend.Models.Order;
 using Restaurant_Backend.Utils;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
+using Restaurant_Backend.Services.User;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Restaurant_Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class OrderController : ControllerBase
+public class OrderController : BaseController
 {
     private readonly IOrderService _orderService;
     private readonly IOrderDetailService _orderDetailService;
@@ -22,7 +24,7 @@ public class OrderController : ControllerBase
     private readonly ITableService _tableService;
     private readonly ITableSessionService _tableSessionService;
 
-    public OrderController(IOrderService orderService, IProductService productService, IOrderDetailService orderDetailService, IMapper mapper, ITableService tableService, ITableSessionService tableSessionService)
+    public OrderController(IOrderService orderService, IProductService productService, IOrderDetailService orderDetailService, IMapper mapper, ITableService tableService, ITableSessionService tableSessionService, IHttpContextAccessor httpContextAccessor,IUserService userService) : base(httpContextAccessor, userService)
     {
         _orderService = orderService;
         _productService = productService;
@@ -30,13 +32,14 @@ public class OrderController : ControllerBase
         _mapper = mapper;
         _tableService = tableService;
         _tableSessionService = tableSessionService;
-    }   
+    }
 
     /// <summary>
     /// Retrieves an order by its unique identifier.
     /// </summary>
     /// <param name="orderId">The unique identifier of the order.</param>
     /// <returns>An ActionResult containing the order information.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
     [HttpGet("{orderId}")]
     public async Task<ActionResult> GetOrderById(Guid orderId)
     {
@@ -61,6 +64,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="tableId">The unique identifier of the table.</param>
     /// <returns>A list of orders linked to the specified table.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
     [HttpGet("table/{tableId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersByTable(Guid tableId)
     {
@@ -83,6 +87,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="sessionId">The unique identifier of the table session.</param>
     /// <returns>A list of orders linked to the specified session.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
     [HttpGet("session/{sessionId}")]
     public async Task<ActionResult<IEnumerable<OrderRequest>>> GetOrdersBySession(Guid sessionId)
     {
@@ -105,6 +110,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="status">The status to filter orders by.</param>
     /// <returns>A list of orders matching the specified status.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
     [HttpGet("by-status")]
     public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
     {
@@ -130,6 +136,7 @@ public class OrderController : ControllerBase
     /// <param name="orderId">The unique identifier of the order.</param>
     /// <param name="status">The new status to assign to the order.</param>
     /// <returns>An IActionResult indicating the result of the operation.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
     [HttpPatch("{orderId}/status")]
     public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
     {
@@ -161,6 +168,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="orderRequest">The data required to create the order.</param>
     /// <returns>An ActionResult containing the created order or an error message.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPost("")]
     public async Task<ActionResult<OrderRequest>> CreateOrder([FromBody] OrderRequest orderRequest)
     {
@@ -199,6 +207,7 @@ public class OrderController : ControllerBase
     /// <param name="orderId">The unique identifier of the order to update.</param>
     /// <param name="orderRequest">The updated order data.</param>
     /// <returns>An IActionResult indicating the result of the update operation.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPut("{orderId}")]
     public async Task<IActionResult> UpdateOrder(Guid orderId, [FromBody] OrderRequest orderRequest)
     {      
@@ -236,6 +245,7 @@ public class OrderController : ControllerBase
     /// </summary>
     /// <param name="orderId">The unique identifier of the order to delete.</param>
     /// <returns>An IActionResult indicating the result of the deletion.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpDelete("{orderId}")]
     public async Task<IActionResult> DeleteOrder(Guid orderId)
     {      

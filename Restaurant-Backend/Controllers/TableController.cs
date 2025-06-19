@@ -1,20 +1,22 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Table;
 using Restaurant_Backend.Services.Table;
+using Restaurant_Backend.Services.User;
 
 namespace Restaurant_Backend.Controllers;
 
 
 [Route("api/[controller]")]
 [ApiController]
-public class TableController : ControllerBase
+public class TableController : BaseController
 {
     private readonly ITableService _tableService;
     private readonly IMapper _mapper;
 
-    public TableController(ITableService tableService, IMapper mapper)
+    public TableController(ITableService tableService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IUserService userService) : base(httpContextAccessor, userService)
     {
         _tableService = tableService;
         _mapper = mapper;
@@ -24,6 +26,7 @@ public class TableController : ControllerBase
     /// Retrieves all tables.
     /// </summary>
     /// <returns>List of all tables.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet]
     public async Task<IActionResult> GetAllTables()
     {
@@ -44,6 +47,7 @@ public class TableController : ControllerBase
     /// </summary>
     /// <param name="tableId">The unique identifier of the table.</param>
     /// <returns>The table with the given ID.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet("{tableId}")]
     public async Task<IActionResult> GetTableById(Guid tableId)
     {
@@ -63,6 +67,7 @@ public class TableController : ControllerBase
     /// Retrieves all available (unoccupied) tables.
     /// </summary>
     /// <returns>List of available tables.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpGet("availables")]
     public async Task<IActionResult> GetAvailableTables()
     {
@@ -82,6 +87,7 @@ public class TableController : ControllerBase
     /// </summary>
     /// <param name="tableRequest">The table data to create.</param>
     /// <returns>The created table information.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPost]
     public async Task<IActionResult> Createtable([FromBody] TableRequest tableRequest)
     {
@@ -94,7 +100,7 @@ public class TableController : ControllerBase
 
             return CreatedAtAction(nameof(GetTableById), new { tableId = createdTable.Id }, createdTableResponse);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(500, "An error ocurred while creating the table.");
         }
@@ -107,6 +113,7 @@ public class TableController : ControllerBase
     /// <param name="tableId">The ID of the table to update.</param>
     /// <param name="tableRequest">The updated table data.</param>
     /// <returns>The updated table information.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPut("{tableId}")]
     public async Task<IActionResult> Updatetable(Guid tableId, [FromBody] TableRequest tableRequest)
     {
@@ -136,6 +143,7 @@ public class TableController : ControllerBase
     /// </summary>
     /// <param name="tableId">The ID of the table to delete.</param>
     /// <returns>No content if deletion is successful.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpDelete("{tableId}")]
     public async Task<IActionResult> Deletetable(Guid tableId)
     {
@@ -156,6 +164,7 @@ public class TableController : ControllerBase
     /// <param name="tableId">The ID of the table to update.</param>
     /// <param name="tableStatus">The new occupation status.</param>
     /// <returns>The updated table information.</returns>
+    [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPatch("{tableId}/toggle-occupation")]
     public async Task<IActionResult> ToggleTableOccupation(Guid tableId, bool tableStatus)
     {        

@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Restaurant_Backend.Context;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Restaurant_Backend.AutoMapperProfile;
-using Restaurant_Backend.Services.DataAccessLayer.Implementation;
-using Restaurant_Backend.Services.DataAccessLayer;
+using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
+using Restaurant_Backend.Services.DataAccessLayer;
+using Restaurant_Backend.Services.DataAccessLayer.Implementation;
 using Restaurant_Backend.Services.Order;
 using Restaurant_Backend.Services.Order.Implementation;
 using Restaurant_Backend.Services.OrderDetail;
@@ -14,7 +17,12 @@ using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.Table.Implementation;
 using Restaurant_Backend.Services.TableSession;
 using Restaurant_Backend.Services.TableSession.Implementation;
+using Restaurant_Backend.Services.User;
+using Restaurant_Backend.Services.User.Implementation;
 using System.Reflection;
+using System.Security.Claims;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +40,9 @@ builder.Services.AddScoped<IGenericService<Table>, GenericService<Table>>();
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
 builder.Services.AddScoped<ITableSessionService, TableSessionService>();
+builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
+builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthenticationService, Restaurant_Backend.Services.Authentication.Implementation.AuthenticationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Connection to the database 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -39,6 +50,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddHttpContextAccessor();
 
 // Automapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -52,6 +65,66 @@ builder.Services.AddSwaggerGen(c =>
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
+});
+
+// Add CORS for cross-origin resource sharing.
+builder.Services.AddCors();
+
+// Configure JWT-based authentication.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "RestaurantSystem",
+        ValidateAudience = false,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("!£@0#y~9I1.p0goq1£1+12345678901234567890123456789012")),
+        RoleClaimType = ClaimTypes.Role
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// Configure Swagger documentation.
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = builder.Configuration["Swagger:Title"],
+        Version = builder.Configuration["Swagger:Version"],
+    });
+
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header
+                    },
+                    new List<string>()
+                }
+            });
 });
 
 var app = builder.Build();
@@ -78,9 +151,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Enable CORS for specified origins.
+app.UseCors(policy =>
+{
+    policy.WithOrigins("http://localhost:5173")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+});
 
 // app.UseHttpsRedirection(); disable to avoid problems with docker
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

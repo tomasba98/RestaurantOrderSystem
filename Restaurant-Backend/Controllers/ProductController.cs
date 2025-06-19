@@ -1,19 +1,21 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Product;
 using Restaurant_Backend.Services.Product;
+using Restaurant_Backend.Services.User;
 
 namespace Restaurant_Backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ProductController : ControllerBase
+public class ProductController : BaseController
 {
     private readonly IProductService _productService;
     private readonly IMapper _mapper;
 
-    public ProductController(IProductService productService, IMapper mapper)
+    public ProductController(IProductService productService, IMapper mapper, IHttpContextAccessor httpContextAccessor, IUserService userService) : base(httpContextAccessor, userService)
     {
         _productService = productService;
         _mapper = mapper;
@@ -23,6 +25,7 @@ public class ProductController : ControllerBase
     /// Retrieves a list of all products.
     /// </summary>
     /// <returns>An IActionResult containing the list of products.</returns>
+    
     [HttpGet]
     public async Task<IActionResult> GetAllProducts()
     {
@@ -36,6 +39,7 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="productId">The unique identifier of the product.</param>
     /// <returns>An IActionResult containing the product details.</returns>
+    [AllowAnonymous]
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
@@ -48,7 +52,7 @@ public class ProductController : ControllerBase
             return Ok(product);
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(500, "An error ocurred while retrieving the product.");
         }
@@ -60,6 +64,7 @@ public class ProductController : ControllerBase
     /// </summary>
     /// <param name="productRequest">The product information to create.</param>
     /// <returns>An IActionResult with the created product or an error message.</returns>
+    [Authorize(Roles = "Admin,Manager")]
     [HttpPost]
     public async Task<IActionResult> CreateProduct([FromBody] ProductRequest productRequest)
     {
@@ -72,7 +77,7 @@ public class ProductController : ControllerBase
 
             return CreatedAtAction(nameof(GetProductById), new { productId = createdProduct.Id }, createdProductResponse);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return StatusCode(500, "An error ocurred while creating the product.");
         }
@@ -84,6 +89,7 @@ public class ProductController : ControllerBase
     /// <param name="productId">The unique identifier of the product to update.</param>
     /// <param name="productRequest">The updated product data.</param>
     /// <returns>An IActionResult with the updated product or an error message.</returns>
+    [Authorize(Roles = "Admin,Manager")]
     [HttpPut("{productId}")]
     public async Task<IActionResult> UpdateProduct(Guid productId, [FromBody] ProductRequest productRequest)
     {    
@@ -113,8 +119,8 @@ public class ProductController : ControllerBase
     /// Toggles the availability status of a product.
     /// </summary>
     /// <param name="productId">The unique identifier of the product.</param>
-    /// <param name="productStatus">The new availability status to apply.</param>
     /// <returns>An IActionResult with the updated product or an error message.</returns>
+    [Authorize(Roles = "Admin,Manager")]
     [HttpDelete("{productId}")]
     public async Task<IActionResult> DeleteProduct(Guid productId)
     {
@@ -135,6 +141,7 @@ public class ProductController : ControllerBase
     /// <param name="productId">The unique identifier of the product.</param>
     /// <param name="productStatus">The new availability status to apply.</param>
     /// <returns>An IActionResult with the updated product or an error message.</returns>
+    [Authorize(Roles = "Admin,Manager,Kitchen")]
     [HttpPatch("{productId}/toggle-availability")]
     public async Task<IActionResult> ToggleProductAvailability(Guid productId, bool productStatus)
     {       
