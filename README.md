@@ -29,15 +29,21 @@ This starts:
 - Open `http://localhost:4332/swagger` 
 
 ---
-## Key Features
+## Features
 - Use of AutoMapper for object mapping.
 - Implementation of custom exceptions for effective error handling.
 - Ability to create and manage orders per table.
 - Real-time order display in the kitchen
 - Product management  
 - Accessible from multiple PCs over a local network (LAN)  
-- Fully local operation (no internet required)  
+- Fully local operation (no internet required)
 
+### Authentication & Authorization with JWT
+- The API uses JWT for user authentication and restricts access to specific endpoints based on user roles.
+- A JWT token is generated on login, including UserId, UserName, and Role.
+- The Password is encryption using SHA-256.
+- Roles are enforced using the [Authorize(Roles = "Admin,Manager")] attribute.
+  
 ---
 
 ## Technologies Used
