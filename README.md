@@ -17,7 +17,7 @@ This is a restaurant order management system developed with **ASP.NET Core**. It
 - Accessible from multiple PCs over a local network (LAN)  
 - Fully local operation (no internet required)
 
-### Authentication & Authorization with JWT
+### 🔐 Authentication & Authorization with JWT
 - The API uses JWT for user authentication and restricts access to specific endpoints based on user roles.
 - A JWT token is generated on login, including UserId, UserName, and Role.
 - The Password is hashed using SHA-256.
