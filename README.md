@@ -41,7 +41,7 @@ This starts:
 ### Authentication & Authorization with JWT
 - The API uses JWT for user authentication and restricts access to specific endpoints based on user roles.
 - A JWT token is generated on login, including UserId, UserName, and Role.
-- The Password is encryption using SHA-256.
+- The Password is hashed using SHA-256.
 - Roles are enforced using the [Authorize(Roles = "Admin,Manager")] attribute.
   
 ---
