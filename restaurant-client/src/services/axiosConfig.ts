@@ -12,20 +12,16 @@ const axiosConfig: AxiosRequestConfig = {
   },
 };
 
-// Crear instancia de Axios
 const apiClient: AxiosInstance = axios.create(axiosConfig);
 
-// Interceptor para requests - Agregar token de autenticación
+
 apiClient.interceptors.request.use(
   (config) => {
-    // Obtener token del localStorage o context
     const token = localStorage.getItem('auth_token');
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    // Log de requests en desarrollo
+    }    
     if (import.meta.env.DEV) {
       console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, config.data);
     }
@@ -38,7 +34,6 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Interceptor para responses - Manejo de errores globales
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     // Log de responses exitosas en desarrollo
