@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -45,18 +47,29 @@ builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthentic
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Connection to the database 
+// Configuración de la base de datos (solo una vez)
+// 1. Configuración de DbContext (como ya tienes)
+// Connection to the database 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Configura AutoMapper con inyección de dependencias
+builder.Services.AddSingleton<AutoMapper.IConfigurationProvider>(sp =>
+{
+    var config = new MapperConfiguration(cfg =>
+    {
+        cfg.AddProfile(new AutoMapperProfile(sp));
+    });
+    return config;
+});
+
+builder.Services.AddScoped<IMapper>(sp =>
+    new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
 
 // Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddHttpContextAccessor();
-
-// Automapper
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-builder.Services.AddScoped<SessionRequestToTableSessionAction>();
-
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

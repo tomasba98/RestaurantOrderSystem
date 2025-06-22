@@ -13,8 +13,10 @@ namespace Restaurant_Backend.AutoMapperProfile;
 
 public class AutoMapperProfile : Profile
 {
-    public AutoMapperProfile()
+    private readonly IServiceProvider _serviceProvider;
+    public AutoMapperProfile(IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         //Order
         CreateMap<OrderRequest, Order>()
             .ForMember(dest => dest.ProductList, opt => opt.Ignore()) 
@@ -43,15 +45,27 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
             .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
             .ForMember(dest => dest.Orders, opt => opt.MapFrom(src => src.Orders));
-
         CreateMap<SessionRequest, TableSession>()
-            .AfterMap<SessionRequestToTableSessionAction>();
+           .AfterMap((src, dest, ctx) =>
+           {
+               using var scope = _serviceProvider.CreateScope();
+               var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+               ctx.ResolveEntity<SessionRequest, TableSession, Table>(
+                   src,
+                   dest,
+                   s => s.TableId,
+                   (d, e) => d.Table = e,
+                   (d, id) => d.TableId = (Guid)id,
+                   dbContext
+               );
+               dest.IsActive = true;
+           });
 
         //User
         CreateMap<RegisterUserRequest, User>()
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
             .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
-
         CreateMap<UpdateUserRequest, User>()
             .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
 
