@@ -11,7 +11,7 @@ using AutoMapper;
 namespace Restaurant_Backend.Controllers;
 
 
-[Route("api/[controller]")]
+[Route("api/auth")]
 [ApiController]
 [AllowAnonymous]
 public class AuthenticationController : BaseController
@@ -28,7 +28,7 @@ public class AuthenticationController : BaseController
     }
 
     [Authorize(Roles = "Admin,Manager")]
-    [HttpPost("Register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserRequest userRequest)
     {
         if (await _userService.CheckIfUsernameExistsAsync(userRequest.UserName))
@@ -47,7 +47,7 @@ public class AuthenticationController : BaseController
     }
 
     [AllowAnonymous]
-    [HttpPost("Login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login(AccessRequest request)
     {
         User? user = await _userService.GetUserByNameAsync(request.UserName);
