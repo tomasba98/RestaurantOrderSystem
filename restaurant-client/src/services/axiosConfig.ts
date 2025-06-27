@@ -20,6 +20,7 @@ apiClient.interceptors.request.use(
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }    
     if (import.meta.env.DEV) {
       console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, config.data);

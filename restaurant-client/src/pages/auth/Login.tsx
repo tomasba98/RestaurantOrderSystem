@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
     }
   }, [error, clearError]);
 
-  // Manejar cambios en el formulario
+  // Manage changes on the form
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -64,7 +64,6 @@ const LoginPage: React.FC = () => {
       [name]: value,
     }));
 
-    // Limpiar error del campo específico
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors(prev => ({
         ...prev,
@@ -94,7 +93,7 @@ const LoginPage: React.FC = () => {
     return Object.values(errors).every(error => error === '');
   };
 
-  // MHandle form submission
+  // Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
@@ -131,6 +130,7 @@ const LoginPage: React.FC = () => {
           }}
         >
           <CardContent sx={{ p: 4 }}>
+            
             {/* Logo and title */}
             <Box sx={{ textAlign: 'center', mb: 4 }}>
               <Avatar

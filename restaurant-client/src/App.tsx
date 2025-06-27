@@ -8,6 +8,7 @@ import RegisterPage from './pages/auth/Register';
 import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Roles } from './types';
+import NavBar from './components/NavBar';
 
 
 
@@ -16,6 +17,7 @@ function App() {
     <ThemeProvider theme={theme}>
     <CssBaseline />
     <AuthProvider>
+      <NavBar />
         <Routes>
           <Route path="/" element={<ColorPaletteTester />} />
           <Route path="/login" element={<LoginPage />} />

@@ -8,8 +8,8 @@ export enum OrderStatus {
   }
   
   export enum Roles {
-    Admin = 'Admin',
-    Manager = 'Manager',
-    Waiter = 'Waiter',
-    Kitchen = 'Kitchen'
+    Admin = 0,
+    Manager = 1,
+    Waiter = 2,
+    Kitchen = 3
   }

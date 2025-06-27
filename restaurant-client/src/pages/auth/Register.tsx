@@ -1,6 +1,5 @@
-// src/pages/auth/RegisterPage.tsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Card,
@@ -13,6 +12,7 @@ import {
   IconButton,
   Container,
   Avatar,
+  MenuItem,
 } from '@mui/material';
 import {
   Visibility,
@@ -23,15 +23,10 @@ import {
   Email,
 } from '@mui/icons-material';
 import { useAuth } from '@/hooks';
+import { Roles, type RegisterData } from '@/types';
+import { authService } from '@/services/api';
 
-// Tipo para el registro (adaptar según tu backend)
-interface RegisterData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
-}
+
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +38,9 @@ const RegisterPage: React.FC = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: false,
+    firstName: '',
+    lastName: '',
+    role: Roles.Waiter,
   });
   
   const [showPassword, setShowPassword] = useState(false);
@@ -54,10 +51,12 @@ const RegisterPage: React.FC = () => {
   
   const [formErrors, setFormErrors] = useState({
     username: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: '',
+    role: ''
   });
 
   useEffect(() => {
@@ -73,7 +72,6 @@ const RegisterPage: React.FC = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
 
-    // Limpiar error del campo específico
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors(prev => ({
         ...prev,
@@ -81,48 +79,50 @@ const RegisterPage: React.FC = () => {
       }));
     }
 
-    // Limpiar errores generales
     if (error) setError(null);
   };
 
-  // Validar email
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Validar formulario
   const validateForm = (): boolean => {
     const errors = {
       username: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
-      acceptTerms: '',
+      role: ''
     };
 
-    // Validar username
     if (!formData.username.trim()) {
       errors.username = 'El nombre de usuario es requerido';
     } else if (formData.username.length < 3) {
       errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
     }
 
-    // Validar email
+    if (!formData.firstName.trim()) {
+      errors.firstName = 'El nombre es requerido';
+    } 
+    if (!formData.lastName.trim()) {
+      errors.firstName = 'El apellido es requerido';
+    } 
+
     if (!formData.email.trim()) {
       errors.email = 'El email es requerido';
     } else if (!isValidEmail(formData.email)) {
       errors.email = 'Ingresa un email válido';
     }
 
-    // Validar password
     if (!formData.password) {
       errors.password = 'La contraseña es requerida';
     } else if (formData.password.length < 6) {
       errors.password = 'La contraseña debe tener al menos 6 caracteres';
     }
 
-    // Validar confirmación de password
     if (!formData.confirmPassword) {
       errors.confirmPassword = 'Confirma tu contraseña';
     } else if (formData.password !== formData.confirmPassword) {
@@ -133,7 +133,6 @@ const RegisterPage: React.FC = () => {
     return Object.values(errors).every(error => error === '');
   };
 
-  // Manejar envío del formulario
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     
@@ -145,24 +144,29 @@ const RegisterPage: React.FC = () => {
     setError(null);
 
     try {
-      // Aquí harías la llamada a tu API de registro
-      // const response = await apiService.auth.register({
-      //   username: formData.username,
-      //   email: formData.email,
-      //   password: formData.password,
-      // });
-
-      // Simulación de registro exitoso
+      await authService.register({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        role: formData.role
+      });
+      
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setSuccess('¡Cuenta creada exitosamente! Redirigiendo al login...');
       
-      // Redireccionar al login después de 2 segundos
       setTimeout(() => {
         navigate('/login');
       }, 2000);
 
     } catch (error: any) {
+      console.error('Registro error completo:', error.response?.data);
+      const errors = error.response?.data?.errors;
+      if (errors) {
+        console.error('Errores específicos de validación:', errors);
+      }
       const errorMessage = 
         error.response?.data?.message || 
         error.message || 
@@ -230,11 +234,51 @@ const RegisterPage: React.FC = () => {
               <TextField
                 fullWidth
                 name="username"
-                label="Nombre de Usuario"
+                label="Usuario"
                 value={formData.username}
                 onChange={handleInputChange}
                 error={!!formErrors.username}
                 helperText={formErrors.username}
+                disabled={isLoading}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+               <TextField
+                fullWidth
+                name="firstName"
+                type="firstName"
+                label="Nombre"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                error={!!formErrors.firstName}
+                helperText={formErrors.firstName}
+                disabled={isLoading}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <TextField
+                fullWidth
+                name="lastName"
+                type="lastName"
+                label="Apellido"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                error={!!formErrors.lastName}
+                helperText={formErrors.lastName}
                 disabled={isLoading}
                 margin="normal"
                 InputProps={{
@@ -326,7 +370,36 @@ const RegisterPage: React.FC = () => {
                     </InputAdornment>
                   ),
                 }}
-              />      
+              />
+
+              <TextField
+              select
+              fullWidth
+              name="role"
+              label="Rol"
+              value={formData.role}
+              onChange={handleInputChange}
+              error={!!formErrors.role}
+              helperText={formErrors.role}
+              disabled={isLoading}
+              margin="normal"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Person color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            >
+              {Object.keys(Roles)
+                .filter(key => !isNaN(Number(key))) // Solo claves numéricas (0, 1, 2, 3)
+                .map(key => (
+                  <MenuItem key={key} value={Number(key)}>
+                    {Roles[Number(key)]}
+                  </MenuItem>
+                ))}
+
+            </TextField>      
 
               <Button
                 type="submit"

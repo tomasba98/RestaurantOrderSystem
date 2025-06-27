@@ -47,12 +47,26 @@ public class AuthenticationController : BaseController
         return result ? Ok() : BadRequest("Something went wrong.");
     }
 
+    [HttpPost("verify")]
+    public async Task<IActionResult> Verify(RegisterUserRequest userRequest)
+    {
+        Guid? userId = GetUserIdFromToken();
+
+        if (userId is null || !await ValidateUserId(userId))
+        {
+            return BadRequest("Invalid user ID.");
+        }
+
+        return Ok();
+    }
+
+
     [HttpGet("profile")]
     public async Task<IActionResult> GetProfile()
     {
         Guid? userId = GetUserIdFromToken();
 
-        if (await ValidateUserId(userId))
+        if (!await ValidateUserId(userId))
         {
             return BadRequest("Invalid user ID.");
         }

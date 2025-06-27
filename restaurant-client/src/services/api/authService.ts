@@ -1,13 +1,12 @@
-// src/services/api/authService.ts
 import apiClient from '../axiosConfig';
-import type { AccessRequest, AuthenticationResponse, RegisterUserRequest, User, ApiResponse } from '@/types';
+import type { AccessRequest, AuthenticationResponse, ApiResponse, User, RegisterRequest } from '@/types';
 
 const authService = {
   login: async (credentials: AccessRequest): Promise<AuthenticationResponse> => {
     const response = await apiClient.post<AuthenticationResponse>('/auth/login', credentials);
     return response.data;
   },
-  register: async (userData: RegisterUserRequest): Promise<AuthenticationResponse> => {
+  register: async (userData: RegisterRequest): Promise<AuthenticationResponse> => {
     const response = await apiClient.post<AuthenticationResponse>('/auth/register', userData);
     return response.data;
   },

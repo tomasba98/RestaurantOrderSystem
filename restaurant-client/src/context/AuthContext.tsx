@@ -2,11 +2,13 @@ import React, { createContext, useEffect, useReducer } from 'react';
 import  { ApiUtils, authService } from '@/services/api';
 import { type User, type AccessRequest, type AuthenticationResponse, Roles, type AuthState, type AuthContextType, type AuthAction } from '@/types';
 
+const token = localStorage.getItem('auth_token');
+
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('auth_token'),
+  token: token,
   isLoading: false,
-  isAuthenticated: false,
+  isAuthenticated: !!token,
   error: null,
 };
 interface AuthProviderProps {
@@ -111,7 +113,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem('auth_token');
       dispatch({ type: 'LOGOUT' });
     }
-  };
+  }; 
 
   const clearError = (): void => {
     dispatch({ type: 'CLEAR_ERROR' });
