@@ -1,8 +1,7 @@
-// src/services/axiosConfig.ts
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const axiosConfig: AxiosRequestConfig = {
   baseURL: BASE_URL,
@@ -36,7 +35,6 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    // Log de responses exitosas en desarrollo
     if (import.meta.env.DEV) {
       console.log(`✅ [${response.status}] ${response.config.url}`, response.data);
     }
@@ -44,32 +42,30 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Manejo de errores globales
     if (error.response) {
       const { status, data } = error.response;
       
       switch (status) {
         case 401:
-          // Token expirado o no válido
           localStorage.removeItem('auth_token');
           window.location.href = '/login';
           break;
         case 403:
-          console.error('❌ Acceso denegado');
+          console.error('❌ Access denied');
           break;
         case 404:
-          console.error('❌ Recurso no encontrado');
+          console.error('❌ Resource not found');
           break;
         case 500:
-          console.error('❌ Error interno del servidor');
+          console.error('❌ Internal Server Error');
           break;
         default:
-          console.error(`❌ Error ${status}:`, data?.message || 'Error desconocido');
+          console.error(`❌ Error ${status}:`, data?.message || 'Unkonwn error');
       }
     } else if (error.request) {
-      console.error('❌ No se recibió respuesta del servidor:', error.request);
+      console.error('❌ No response was received from the server.:', error.request);
     } else {
-      console.error('❌ Error en la configuración de la petición:', error.message);
+      console.error('❌ Error in request configuration:', error.message);
     }
     
     return Promise.reject(error);

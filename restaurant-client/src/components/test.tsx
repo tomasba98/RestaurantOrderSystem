@@ -19,8 +19,10 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import { Link } from 'react-router-dom';
 
 function ColorPaletteTester() {
+  
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       {/* Barra de Aplicación - Primary */}
@@ -29,7 +31,11 @@ function ColorPaletteTester() {
           <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}> {/* Usamos h4 */}
             Sistema de Órdenes
           </Typography>
-          <Button color="primary">Iniciar Sesión</Button>
+          <Button 
+          color="primary" 
+          component={Link}
+          to="/login">
+            Iniciar Sesión</Button>
         </Toolbar>
       </AppBar>
 
