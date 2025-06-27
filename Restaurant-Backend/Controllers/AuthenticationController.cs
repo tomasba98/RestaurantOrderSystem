@@ -7,6 +7,7 @@ using Restaurant_Backend.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using System.Security.Claims;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -46,6 +47,32 @@ public class AuthenticationController : BaseController
         return result ? Ok() : BadRequest("Something went wrong.");
     }
 
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        Guid? userId = GetUserIdFromToken();
+
+        if (await ValidateUserId(userId))
+        {
+            return BadRequest("Invalid user ID.");
+        }
+        if (userId is null)
+        {
+            return BadRequest("User ID is null.");
+        }
+
+        User? user = await _userService.GetUserByIdAsync((Guid)userId);
+
+        if (user is null) return NotFound();
+
+        return Ok(new
+        {
+            user.FirstName,
+            user.Role
+        });
+    }
+
+
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login(AccessRequest request)
@@ -54,8 +81,7 @@ public class AuthenticationController : BaseController
 
         if (user is null) return BadRequest("Invalid credentials.");        
 
-        if (!Encrypt.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");
-        
+        if (!Encrypt.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
 
         AuthenticationResponse response = _authenticationService.GenerateJwt(user);
 
