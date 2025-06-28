@@ -17,7 +17,6 @@ export interface User extends EntityBase {
     login: (credentials: AccessRequest) => Promise<void>;
     logout: () => Promise<void>;
     clearError: () => void;
-    checkAuth: () => Promise<void>;
     updateUserProfile: (user: User) => void;
     hasRole: (role: Roles) => boolean;
     hasAnyRole: (roles: Roles[]) => boolean;
@@ -32,6 +31,15 @@ export interface AuthenticationResponse {
   token: string;
 }
 
+export interface RegisterRequest {
+  username: string;
+  firstName: string;
+  lastName: string;
+  role: Roles
+  email: string;
+  password: string;
+}
+
 export interface RegisterData {
   username: string;
   firstName: string;
@@ -39,6 +47,7 @@ export interface RegisterData {
   role: Roles
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 export interface UpdateUserRequest {
@@ -51,11 +60,3 @@ export interface UpdateUserRequest {
 
 export type CreateUser = Omit<User, 'id' | 'createdAt' | 'lastLogin'>;
 export type UpdateUser = Partial<Pick<User, 'userName' | 'role' >>;
-export type AuthAction =
-| { type: 'LOGIN_START' }
-| { type: 'LOGIN_SUCCESS'; payload: { user: User; token: string } }
-| { type: 'LOGIN_FAILURE'; payload: string }
-| { type: 'LOGOUT' }
-| { type: 'CLEAR_ERROR' }
-| { type: 'SET_LOADING'; payload: boolean }
-| { type: 'UPDATE_USER'; payload: User };

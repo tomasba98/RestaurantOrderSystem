@@ -1,5 +1,5 @@
 import theme from './theme/theme';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, CssBaseline, Table } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
 import ColorPaletteTester from './components/test';
@@ -9,6 +9,9 @@ import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Roles } from './types';
 import NavBar from './components/NavBar';
+import TablesPage from './pages/table/tables';
+import TablesOverview from './pages/table/tables2';
+import HallLayout from './pages/hall/HallLayout';
 
 
 
@@ -22,6 +25,9 @@ function App() {
           <Route path="/" element={<ColorPaletteTester />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/tables" element={<TablesPage />} />
+          <Route path="/tables2" element={<TablesOverview />} />
+          <Route path="/tables3" element={<HallLayout />} />
           {/* <Route path="/orders" element={<OrdersPage />} /> */}
 
           {/* Rutas protegidas - requieren autenticación */}
@@ -31,6 +37,8 @@ function App() {
                     <div>Dashboard - Reemplaza con tu componente</div>
                   </ProtectedRoute>
                 } />
+          
+
 
           {/* Ruta catch-all para páginas no encontradas */}
           <Route path="*" element={

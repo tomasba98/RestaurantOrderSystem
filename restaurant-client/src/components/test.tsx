@@ -43,9 +43,9 @@ function ColorPaletteTester() {
         Prueba de Tema - Elegancia Moderna
       </Typography>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}> {/* Más espacio entre secciones */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}> 
 
-        <Paper elevation={1} sx={{ p: 3, }}> {/* Elevación más suave */}
+        <Paper elevation={1} sx={{ p: 3, }}>
           <Typography variant="h6" gutterBottom>
             Botones y Acciones
           </Typography>
@@ -62,7 +62,7 @@ function ColorPaletteTester() {
             <Button variant="contained" color="primary" disabled>
               Deshabilitado
             </Button>
-            <Fab color="secondary" aria-label="add" size="medium"> {/* Tamaño medium */}
+            <Fab color="secondary" aria-label="add" size="medium"> 
               <AddIcon />
             </Fab>
           </Box>
