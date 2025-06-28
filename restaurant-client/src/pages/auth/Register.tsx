@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  InputAdornment,
-  IconButton,
-  Container,
-  Avatar,
-  MenuItem,
-} from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  RestaurantMenu,
-  Person,
-  Lock,
-  Email,
-} from '@mui/icons-material';
+import {  Box,  Card,  CardContent,  TextField,  Button,  Typography,  Alert,  InputAdornment,  IconButton,  Container,  Avatar,  MenuItem,} from '@mui/material';
+import {  Visibility,  VisibilityOff,  RestaurantMenu,  Person,  Lock,  Email,} from '@mui/icons-material';
 import { useAuth } from '@/hooks';
 import { Roles, type RegisterData } from '@/types';
 import { authService } from '@/services/api';
@@ -32,7 +12,6 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Estados del formulario
   const [formData, setFormData] = useState<RegisterData>({
     username: '',
     email: '',

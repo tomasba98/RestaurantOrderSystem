@@ -5,8 +5,9 @@ export default class ApiUtils {
     if (error.response?.data?.message) return error.response.data.message;
     if (error.response?.data?.errors?.length > 0) return error.response.data.errors.join(', ');
     if (error.message) return error.message;
-    return 'Ha ocurrido un error inesperado';
+    return 'An unexpected error has occurred.';
   }
+
 
   static buildPaginationParams(
     page: number = 1,

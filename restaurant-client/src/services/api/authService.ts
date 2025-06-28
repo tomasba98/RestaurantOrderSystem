@@ -15,7 +15,7 @@ const authService = {
   },
   verifyToken: async (): Promise<boolean> => {
     try {
-      await apiClient.get('/auth/verify');
+      await apiClient.post('/auth/verify');
       return true;
     } catch {
       return false;

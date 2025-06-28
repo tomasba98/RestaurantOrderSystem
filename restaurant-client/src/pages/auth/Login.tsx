@@ -1,27 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  Link,
-  InputAdornment,
-  IconButton,
-  Container,
-  Avatar,
-  Divider,
-} from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  RestaurantMenu,
-  Person,
-  Lock,
-} from '@mui/icons-material';
+import {  Box,  Card,  CardContent,  TextField,  Button,  Typography,  Alert,  Link,  InputAdornment,  IconButton,  Container,  Avatar,  Divider,} from '@mui/material';
+import {  Visibility,  VisibilityOff,  RestaurantMenu,  Person,  Lock,} from '@mui/icons-material';
 import { useAuth } from '@/hooks';
 
 const LoginPage: React.FC = () => {
@@ -39,14 +19,13 @@ const LoginPage: React.FC = () => {
     password: '',
   });
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/orders');
     }
   }, [isAuthenticated, navigate]);
 
-  // Clear errors when the user starts typing
+
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {
@@ -56,7 +35,14 @@ const LoginPage: React.FC = () => {
     }
   }, [error, clearError]);
 
-  // Manage changes on the form
+ 
+/**
+ * Handles changes to input fields, updating the form data state with the new input value.
+ * If there is an existing error message for the input field, it clears the error.
+ * 
+ * @param {React.ChangeEvent<HTMLInputElement>} event - The input change event.
+ */
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData(prev => ({
@@ -72,7 +58,15 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Validate form
+
+/**
+ * Validates the login form data, checking for required fields and 
+ * minimum password length. Updates the form errors state if any 
+ * validation checks fail.
+ *
+ * @returns {boolean} - True if the form is valid (no errors), 
+ *                      otherwise false.
+ */
   const validateForm = (): boolean => {
     const errors = {
       username: '',
