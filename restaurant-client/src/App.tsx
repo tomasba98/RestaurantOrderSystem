@@ -9,8 +9,6 @@ import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Roles } from './types';
 import NavBar from './components/NavBar';
-import TablesPage from './pages/table/tables';
-import TablesOverview from './pages/table/tables2';
 import HallLayout from './pages/hall/HallLayout';
 
 
@@ -25,9 +23,7 @@ function App() {
           <Route path="/" element={<ColorPaletteTester />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/tables" element={<TablesPage />} />
-          <Route path="/tables2" element={<TablesOverview />} />
-          <Route path="/tables3" element={<HallLayout />} />
+          <Route path="/hall" element={<HallLayout />} />
           {/* <Route path="/orders" element={<OrdersPage />} /> */}
 
           {/* Rutas protegidas - requieren autenticación */}
