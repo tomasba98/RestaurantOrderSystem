@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Restaurant_Backend.AutoMapperProfile;
 using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
+using Restaurant_Backend.Models.Authentication;
 using Restaurant_Backend.Services.DataAccessLayer;
 using Restaurant_Backend.Services.DataAccessLayer.Implementation;
 using Restaurant_Backend.Services.Order;
@@ -83,6 +84,12 @@ builder.Services.AddSwaggerGen(c =>
 // Add CORS for cross-origin resource sharing.
 builder.Services.AddCors();
 
+var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
+builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+
+var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+
+
 // Configure JWT-based authentication.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -92,9 +99,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateIssuer = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = "RestaurantSystem",
+        ValidIssuer = jwtSettings.Issuer,
         ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("!£@0#y~9I1.p0goq1£1+12345678901234567890123456789012")),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
         RoleClaimType = ClaimTypes.Role
     };
 });
