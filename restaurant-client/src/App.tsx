@@ -1,5 +1,5 @@
 import theme from './theme/theme';
-import { ThemeProvider, CssBaseline, Table } from '@mui/material';
+import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
 import ColorPaletteTester from './components/test';
