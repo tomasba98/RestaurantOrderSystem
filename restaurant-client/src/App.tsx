@@ -2,7 +2,7 @@ import theme from './theme/theme';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
-import ColorPaletteTester from './components/test';
+import ColorPaletteTester from './components/ColorPaletteTester';
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
 import { AuthProvider } from '@/context/AuthContext';

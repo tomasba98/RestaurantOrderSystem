@@ -47,9 +47,8 @@ builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
 builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthenticationService, Restaurant_Backend.Services.Authentication.Implementation.AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-// Connection to the database 
-// Configuración de la base de datos (solo una vez)
-// 1. Configuración de DbContext (como ya tienes)
+
+
 // Connection to the database 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

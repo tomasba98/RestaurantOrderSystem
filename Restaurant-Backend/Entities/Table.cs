@@ -10,4 +10,6 @@ public class Table : EntityBase
 {
     public int Number { get; set; } 
     public bool IsOccupied { get; set; }
+    public int X {  get; set; }
+    public int Y { get; set; }
 }

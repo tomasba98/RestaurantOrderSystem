@@ -1,44 +1,39 @@
-import type { TableResponse, TableRequest, ApiResponse } from '@/types';
+import type { TableResponse, TableRequest } from '@/types';
 import apiClient from '../axiosConfig';
 
 const tableService = {
     getAll: async (): Promise<TableResponse[]> => {
-      const response = await apiClient.get<ApiResponse<TableResponse[]>>('/tables');
-      return response.data.data!;
+      const response = await apiClient.get<TableResponse[]>('/Table');
+      return response.data;
     },
 
     getAvailable: async (): Promise<TableResponse[]> => {
-      const response = await apiClient.get<ApiResponse<TableResponse[]>>('/tables/available');
-      return response.data.data!;
+      const response = await apiClient.get<TableResponse[]>('/Table/available');
+      return response.data;
     },
 
     getById: async (id: string): Promise<TableResponse> => {
-      const response = await apiClient.get<ApiResponse<TableResponse>>(`/tables/${id}`);
-      return response.data.data!;
+      const response = await apiClient.get<TableResponse>(`/Table/${id}`);
+      return response.data;
     },
 
     create: async (table: TableRequest): Promise<TableResponse> => {
-      const response = await apiClient.post<ApiResponse<TableResponse>>('/tables', table);
-      return response.data.data!;
+      const response = await apiClient.post<TableResponse>('/Table', table);
+      return response.data;
     },
 
     update: async (id: string, table: Partial<TableRequest>): Promise<TableResponse> => {
-      const response = await apiClient.put<ApiResponse<TableResponse>>(`/tables/${id}`, table);
-      return response.data.data!;
+      const response = await apiClient.put<TableResponse>(`/Table/${id}`, table);
+      return response.data;
     },
 
     delete: async (id: string): Promise<void> => {
-      await apiClient.delete(`/tables/${id}`);
+      await apiClient.delete(`/Table/${id}`);
     },
 
-    occupy: async (id: string): Promise<TableResponse> => {
-      const response = await apiClient.patch<ApiResponse<TableResponse>>(`/tables/${id}/occupy`);
-      return response.data.data!;
-    },
-
-    free: async (id: string): Promise<TableResponse> => {
-      const response = await apiClient.patch<ApiResponse<TableResponse>>(`/tables/${id}/free`);
-      return response.data.data!;
+    setOccupation: async (id: string, isOccupied: boolean): Promise<boolean> => {
+      const response = await apiClient.patch<{ isOccupied: boolean }>(`/Table/${id}/set-occupation`, isOccupied );
+      return response.data.isOccupied;
     }
   };
 

@@ -4,6 +4,7 @@ import type { AccessRequest, AuthenticationResponse, ApiResponse, User, Register
 const authService = {
   login: async (credentials: AccessRequest): Promise<AuthenticationResponse> => {
     const response = await apiClient.post<AuthenticationResponse>('/auth/login', credentials);
+    localStorage.setItem('auth_token', response.data.token); 
     return response.data;
   },
   register: async (userData: RegisterRequest): Promise<AuthenticationResponse> => {
@@ -11,7 +12,8 @@ const authService = {
     return response.data;
   },
   logout: async (): Promise<void> => {
-    await apiClient.post('/auth/logout');
+    localStorage.removeItem('auth_token');
+    //await apiClient.post('/auth/logout');
   },
   verifyToken: async (): Promise<boolean> => {
     try {
@@ -26,8 +28,8 @@ const authService = {
     return response.data;
   },
   getProfile: async (): Promise<User> => {
-    const response = await apiClient.get<ApiResponse<User>>('/auth/profile');
-    return response.data.data!;
+    const response = await apiClient.get<User>('/auth/profile');    
+    return response.data;
   }
 };
 

@@ -79,8 +79,10 @@ public class AuthenticationController : BaseController
 
         return Ok(new
         {
-            user.FirstName,
-            user.Role
+            user.Id,
+            userName = user.FirstName,
+            user.Role,
+            user.CreatedAt
         });
     }
 

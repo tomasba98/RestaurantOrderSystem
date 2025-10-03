@@ -4,4 +4,6 @@ public class TableRequest
 {
     public int Number { get; set; } 
     public bool IsOccupied { get; set; }
+    public int x { get; set; }
+    public int y { get; set; }
 }

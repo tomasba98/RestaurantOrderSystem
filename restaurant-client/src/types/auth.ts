@@ -3,8 +3,7 @@ import type { EntityBase, Roles } from './index';
 export interface User extends EntityBase {
     userName: string;
     role: Roles;
-  }  
-  
+  }    
  
  export interface AuthState {
   user: User | null;

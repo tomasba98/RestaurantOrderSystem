@@ -162,11 +162,11 @@ public class TableController : BaseController
     /// Toggles the occupation status of a table.
     /// </summary>
     /// <param name="tableId">The ID of the table to update.</param>
-    /// <param name="tableStatus">The new occupation status.</param>
+    /// <param name="isOccupied">The new occupation status.</param>
     /// <returns>The updated table information.</returns>
     [Authorize(Roles = "Admin,Manager,Waiter")]
-    [HttpPatch("{tableId}/toggle-occupation")]
-    public async Task<IActionResult> ToggleTableOccupation(Guid tableId, bool tableStatus)
+    [HttpPatch("{tableId}/set-occupation")]
+    public async Task<IActionResult> SetTableOccupation(Guid tableId, [FromBody] bool isOccupied)
     {        
         try
         {
@@ -174,7 +174,7 @@ public class TableController : BaseController
             if (existingtable is null)
                 return NotFound("table not found");
 
-            existingtable.IsOccupied = tableStatus;
+            existingtable.IsOccupied = isOccupied;
 
             var updatedtable = await _tableService.UpdateTableAsync(existingtable);
             var tableResponse = _mapper.Map<TableResponse>(updatedtable);
