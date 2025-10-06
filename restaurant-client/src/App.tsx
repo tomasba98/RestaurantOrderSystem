@@ -2,14 +2,14 @@ import theme from './theme/theme';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import './App.css'
-import ColorPaletteTester from './components/ColorPaletteTester';
-import LoginPage from './pages/auth/Login';
-import RegisterPage from './pages/auth/Register';
+import ColorPaletteTester from './presentation/components/ColorPaletteTester';
+import LoginPage from './presentation/pages/auth/Login';
+import RegisterPage from './presentation/pages/auth/Register';
 import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Roles } from './types';
 import NavBar from './components/NavBar';
-import HallLayout from './pages/hall/HallLayout';
+import HallLayout from './presentation/pages/hall/HallLayout';
 
 
 
