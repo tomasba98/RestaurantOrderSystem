@@ -1,5 +1,6 @@
-import { Roles } from "@/types";
-import { useAuth } from "@/hooks";
+/*
+import { useAuth } from "@/aplication/context/AuthContext";
+
 
 export const useRoleCheck = () => {
     const { hasRole, hasAnyRole, user } = useAuth();
@@ -17,3 +18,4 @@ export const useRoleCheck = () => {
       currentRole: user?.role,
     };
   };
+  */

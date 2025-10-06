@@ -6,7 +6,7 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData {
-  username: string;
+  userName: string;
   firstName: string;
   lastName: string;
   role: number;
@@ -24,5 +24,5 @@ export interface IAuthRepository {
   register(data: RegisterData): Promise<AuthResponse>;
   logout(): Promise<void>;
   getProfile(): Promise<User>;
-  verifyToken(): Promise<boolean>;
+  verifyToken(token: string): Promise<boolean>;
 }

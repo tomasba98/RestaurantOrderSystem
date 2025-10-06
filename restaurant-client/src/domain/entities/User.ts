@@ -1,8 +1,10 @@
 export interface User {
     id: string;
-    userName: string;
+    userName: string;    
+    email: string;
     role: Roles;
-    createdAt: string;
+    createdAt: string;    
+    updatedAt: Date;
   }
 
   export enum Roles {
@@ -10,4 +12,14 @@ export interface User {
     Manager = 1,
     Waiter = 2,
     Kitchen = 3
+  }
+
+  export interface AuthTokens {
+    accessToken: string;
+    refreshToken: string;
+  }
+  
+  export interface AuthResponse {
+    user: User;
+    tokens: AuthTokens;
   }

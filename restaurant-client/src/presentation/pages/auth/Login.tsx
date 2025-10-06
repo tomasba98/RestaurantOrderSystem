@@ -1,3 +1,4 @@
+/*
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import {  Box,  Card,  CardContent,  TextField,  Button,  Typography,  Alert,  Link,  InputAdornment,  IconButton,  Container,  Avatar,  Divider,} from '@mui/material';
@@ -21,7 +22,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/orders');
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -36,12 +37,7 @@ const LoginPage: React.FC = () => {
   }, [error, clearError]);
 
  
-/**
- * Handles changes to input fields, updating the form data state with the new input value.
- * If there is an existing error message for the input field, it clears the error.
- * 
- * @param {React.ChangeEvent<HTMLInputElement>} event - The input change event.
- */
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -59,14 +55,7 @@ const LoginPage: React.FC = () => {
   };
 
 
-/**
- * Validates the login form data, checking for required fields and 
- * minimum password length. Updates the form errors state if any 
- * validation checks fail.
- *
- * @returns {boolean} - True if the form is valid (no errors), 
- *                      otherwise false.
- */
+
   const validateForm = (): boolean => {
     const errors = {
       username: '',
@@ -125,7 +114,6 @@ const LoginPage: React.FC = () => {
         >
           <CardContent sx={{ p: 4 }}>
             
-            {/* Logo and title */}
             <Box sx={{ textAlign: 'center', mb: 4 }}>
               <Avatar
                 sx={{
@@ -146,14 +134,12 @@ const LoginPage: React.FC = () => {
               </Typography>
             </Box>
 
-            {/* Error Alert */}
             {error && (
               <Alert severity="error" sx={{ mb: 3 }}>
                 {error}
               </Alert>
             )}
 
-            {/* Form */}
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <TextField
                 fullWidth
@@ -218,7 +204,6 @@ const LoginPage: React.FC = () => {
 
             <Divider sx={{ my: 3 }} />
 
-            {/* Links */}
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary">
                 ¿No tienes una cuenta?{' '}
@@ -240,6 +225,129 @@ const LoginPage: React.FC = () => {
             </Box>
           </CardContent>
         </Card>
+      </Box>
+    </Container>
+  );
+};
+
+export default LoginPage;
+*/
+
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
+import type { LoginDTO } from '@/aplication/dto/AuthDTO';
+import { useAuth } from '@/aplication/context/AuthContext';
+
+const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
+  const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
+  
+  const [formData, setFormData] = useState<LoginDTO>({
+    userName: '',
+    password: '',
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/hall');
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    return () => clearError();
+  }, [clearError]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+      await login(formData);
+  };
+
+  return (
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
+          <Typography component="h1" variant="h4" align="center" gutterBottom>
+            Iniciar Sesión
+          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={formData.userName}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Contraseña"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={isLoading}
+            >
+              {isLoading ? <CircularProgress size={24} /> : 'Iniciar Sesión'}
+            </Button>
+
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2">
+                ¿No tienes cuenta?{' '}
+                <Link to="/register" style={{ textDecoration: 'none', color: '#785F60' }}>
+                  Regístrate aquí
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+        </Paper>
       </Box>
     </Container>
   );

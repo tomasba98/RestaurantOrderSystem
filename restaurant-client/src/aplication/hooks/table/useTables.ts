@@ -20,8 +20,8 @@ export const useTables = () => {
         setLoading(true);
         const data = await getAllTablesUseCase.execute();
         setTables(data);
-      } catch (err) {
-        setError(err.message);
+      } catch (err ) {
+        setError((err as Error).message);
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ export const useTables = () => {
         setTables(prev => [...prev, newTable]);
         return newTable;
       } catch (err) {
-        setError(err.message);
+        setError((err as Error).message);
         throw err;
       }
     };
