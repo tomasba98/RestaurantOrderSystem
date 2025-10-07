@@ -15,7 +15,7 @@ export interface User {
   }
 
   export interface AuthTokens {
-    accessToken: string;
+    auth_token: string;
     refreshToken: string;
   }
   

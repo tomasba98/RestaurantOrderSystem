@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {  Box,  Card,  CardContent,  TextField,  Button,  Typography,  Alert,  InputAdornment,  IconButton,  Container,  Avatar,  MenuItem,} from '@mui/material';
 import {  Visibility,  VisibilityOff,  RestaurantMenu,  Person,  Lock,  Email,} from '@mui/icons-material';
-import { useAuth } from '@/hooks';
-import { Roles, type RegisterData } from '@/types';
-import { authService } from '@/services/api';
+import type { RegisterData } from '@/domain/repositories/IAuthRepository';
+import { Roles } from '@/domain/entities/User';
+import { useAuth } from '@/aplication/hooks/auth/useAuth';
 
 
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { register } = useAuth();
 
   const [formData, setFormData] = useState<RegisterData>({
-    username: '',
+    userName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -29,7 +29,7 @@ const RegisterPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   
   const [formErrors, setFormErrors] = useState({
-    username: '',
+    userName: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -37,12 +37,6 @@ const RegisterPage: React.FC = () => {
     confirmPassword: '',
     role: ''
   });
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -68,7 +62,7 @@ const RegisterPage: React.FC = () => {
 
   const validateForm = (): boolean => {
     const errors = {
-      username: '',
+      userName: '',
       firstName: '',
       lastName: '',
       email: '',
@@ -77,10 +71,10 @@ const RegisterPage: React.FC = () => {
       role: ''
     };
 
-    if (!formData.username.trim()) {
-      errors.username = 'El nombre de usuario es requerido';
-    } else if (formData.username.length < 3) {
-      errors.username = 'El nombre de usuario debe tener al menos 3 caracteres';
+    if (!formData.userName.trim()) {
+      errors.userName = 'El nombre de usuario es requerido';
+    } else if (formData.userName.length < 3) {
+      errors.userName = 'El nombre de usuario debe tener al menos 3 caracteres';
     }
 
     if (!formData.firstName.trim()) {
@@ -123,13 +117,14 @@ const RegisterPage: React.FC = () => {
     setError(null);
 
     try {
-      await authService.register({
-        username: formData.username,
+      await register({
+        userName: formData.userName,
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        role: formData.role
+        role: formData.role,
+        confirmPassword: formData.confirmPassword
       });
       
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -212,12 +207,12 @@ const RegisterPage: React.FC = () => {
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <TextField
                 fullWidth
-                name="username"
+                name="userName"
                 label="Usuario"
-                value={formData.username}
+                value={formData.userName}
                 onChange={handleInputChange}
-                error={!!formErrors.username}
-                helperText={formErrors.username}
+                error={!!formErrors.userName}
+                helperText={formErrors.userName}
                 disabled={isLoading}
                 margin="normal"
                 InputProps={{

@@ -9,12 +9,10 @@ export const useTables = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
   
-    // Instanciamos el repositorio y los casos de uso
     const tableRepository = new TableRepositoryImpl();
     const getAllTablesUseCase = new GetAllTablesUseCase(tableRepository);
     const createTableUseCase = new CreateTableUseCase(tableRepository);
   
-    // Función para cargar mesas
     const loadTables = async () => {
       try {
         setLoading(true);
@@ -27,7 +25,6 @@ export const useTables = () => {
       }
     };
   
-    // Función para crear mesa
     const createTable = async (number: number) => {
       try {
         const newTable = await createTableUseCase.execute({

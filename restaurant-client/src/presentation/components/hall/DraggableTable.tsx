@@ -1,9 +1,14 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Box, Paper, Typography, IconButton, Tooltip } from "@mui/material";
 import { AddShoppingCart, TableRestaurant, Person } from "@mui/icons-material";
-import type { DraggableTableProps } from "@/types";
 import { tableService } from "@/services/api";
+import type { Table } from "@/domain/entities/Table";
 
+interface DraggableTableProps {
+  table: Table;
+  onCreateOrder: (table: Table) => void;
+  onToggleOccupied: (tableId: string) => void;
+}
 function DraggableTable({ table, onCreateOrder, onToggleOccupied }: DraggableTableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: table.id });
 

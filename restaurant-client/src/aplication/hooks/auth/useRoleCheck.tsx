@@ -1,5 +1,6 @@
-/*
-import { useAuth } from "@/aplication/context/AuthContext";
+
+import { Roles } from "@/domain/entities/User";
+import { useAuth } from "./useAuth";
 
 
 export const useRoleCheck = () => {
@@ -18,4 +19,3 @@ export const useRoleCheck = () => {
       currentRole: user?.role,
     };
   };
-  */

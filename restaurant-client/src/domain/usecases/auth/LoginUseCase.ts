@@ -9,11 +9,10 @@ export class LoginUseCase {
       if (!credentials.userName || !credentials.password) {
         throw new Error('El nombre de usuario y contraseña son requeridos');
       }        
-  
-      // Ejecutar login
+
       const authResponse = await this.authRepository.login(credentials);
   
-      localStorage.setItem('accessToken', authResponse.token);
+      localStorage.setItem('auth_token', authResponse.token);      
   
       return authResponse;
     } 

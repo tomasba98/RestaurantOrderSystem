@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { AuthContext } from '@/context/AuthContext';
+import { AuthContext } from '@/aplication/context/AuthContext';
 
 const NavBar: React.FC = () => {
   const auth = useContext(AuthContext);

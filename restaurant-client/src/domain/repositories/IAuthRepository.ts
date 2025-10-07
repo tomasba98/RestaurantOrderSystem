@@ -12,6 +12,7 @@ export interface RegisterData {
   role: number;
   email: string;
   password: string;
+  confirmPassword: string
 }
 
 export interface AuthResponse {

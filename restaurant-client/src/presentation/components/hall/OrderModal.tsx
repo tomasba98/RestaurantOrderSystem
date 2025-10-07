@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {  Dialog,  DialogTitle,  DialogContent,  DialogActions,  Button,  Typography,  Box,  List,  ListItem,  ListItemText,  IconButton,  Card,  CardContent,  Divider,  Chip,  Alert,  CircularProgress,} from '@mui/material';
 import { Add, Remove, ShoppingCart, Close } from '@mui/icons-material';
-import type { Product, OrderDetailItem, Table } from '@/types';
+import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
+import type { Table } from '@/domain/entities/Table';
+import type { Product } from '@/domain/entities/Product';
 
 interface OrderModalProps {
   open: boolean;

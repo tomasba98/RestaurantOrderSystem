@@ -4,7 +4,9 @@ import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { Add } from '@mui/icons-material';
 import DraggableTable from './DraggableTable';
 import OrderModal from './OrderModal';
-import type { HallProps, Table, Product, OrderDetailItem } from '@/types';
+import type { HallProps, Table } from '@/domain/entities/Table';
+import type { Product } from '@/domain/entities/Product';
+import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 
 interface ExtendedHallProps extends HallProps {
   products: Product[];
