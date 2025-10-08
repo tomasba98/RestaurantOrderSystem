@@ -1,15 +1,16 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Box, Paper, Typography, IconButton, Tooltip } from "@mui/material";
-import { AddShoppingCart, TableRestaurant, Person } from "@mui/icons-material";
-import { tableService } from "@/services/api";
+import { AddShoppingCart, TableRestaurant, Person, Delete } from "@mui/icons-material";
 import type { Table } from "@/domain/entities/Table";
 
 interface DraggableTableProps {
   table: Table;
   onCreateOrder: (table: Table) => void;
   onToggleOccupied: (tableId: string) => void;
+  onDeleteTable: (tableId: string) => void;
 }
-function DraggableTable({ table, onCreateOrder, onToggleOccupied }: DraggableTableProps) {
+
+function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable }: DraggableTableProps) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: table.id });
 
   const style: React.CSSProperties = {
@@ -25,30 +26,28 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied }: DraggableTab
     justifyContent: 'center',
     userSelect: 'none',
   };
-
+ 
   const handleCreateOrder = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCreateOrder(table);
   };
 
-  const handleToggleOccupied = async (e: React.MouseEvent) => {
+  const handleToggleOccupied = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("handleToggleOccupied");
     onToggleOccupied(table.id);
-    // try {
-    //   await tableService.setOccupation(table.id, !table.isOccupied);
-    // } catch (error) {
-    //   console.error("Error while updating occupation:", error);
-    // }
   };
-  
+
+  const handleDeleteTable = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDeleteTable(table.id);
+  };
 
   return (
     <div style={style}>
-      {/*Draggable area - Table*/}
-      <div 
-        ref={setNodeRef} 
-        {...listeners} 
+      {/* Draggable area - Table */}
+      <div
+        ref={setNodeRef}
+        {...listeners}
         {...attributes}
         style={{
           width: '100%',
@@ -102,7 +101,7 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied }: DraggableTab
           display: 'flex',
           flexDirection: 'column',
           gap: 0.5,
-          zIndex: 10, 
+          zIndex: 10,
         }}
       >
         <Tooltip title="Crear Orden">
@@ -138,6 +137,24 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied }: DraggableTab
             }}
           >
             <Person sx={{ fontSize: 16 }} />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Eliminar Mesa">
+          <IconButton
+            size="small"
+            onClick={handleDeleteTable}
+            sx={{
+              backgroundColor: 'red',   // puedes usar 'warning.main' de MUI si quieres paleta
+              color: 'white',
+              width: 30,
+              height: 30,
+              '&:hover': {
+                backgroundColor: 'darkred',  // o 'warning.dark'
+              },
+            }}
+          >
+            <Delete sx={{ fontSize: 16 }} />
           </IconButton>
         </Tooltip>
       </Box>

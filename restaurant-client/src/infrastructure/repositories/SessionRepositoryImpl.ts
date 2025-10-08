@@ -1,6 +1,6 @@
 import type { TableSession } from "@/domain/entities/Session";
 import type { CreateSessionData, ISessionRepository } from "@/domain/repositories/ISessionRepository";
-import { apiClient } from "../http/apiClientInstance";
+import { apiClient } from '../http/ApiClient';
 
 export class SessionRepositoryImpl implements ISessionRepository {
     private readonly basePath = '/Session';

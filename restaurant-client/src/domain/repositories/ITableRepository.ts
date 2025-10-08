@@ -18,7 +18,7 @@ export interface CreateTableData {
     getById(id: string): Promise<Table>;
     getAvailable(): Promise<Table[]>;
     create(data: CreateTableData): Promise<Table>;
-    update(id: string, data: UpdateTableData): Promise<Table>;
+    update(id: string, x: number, y: number): Promise<Table>;
     delete(id: string): Promise<void>;
     setOccupation(id: string, isOccupied: boolean): Promise<boolean>;
   }

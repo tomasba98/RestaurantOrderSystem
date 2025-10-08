@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
-export class ApiClient {
+class ApiClient {
   private client: AxiosInstance;
 
   constructor(baseURL: string) {
@@ -16,7 +16,6 @@ export class ApiClient {
   }
 
   private setupInterceptors(): void {
-    // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('auth_token');
@@ -36,7 +35,6 @@ export class ApiClient {
       }
     );
 
-    // Response interceptor
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         if (import.meta.env.DEV) {
@@ -95,3 +93,6 @@ export class ApiClient {
     return response.data;
   }
 }
+
+
+export const apiClient = new ApiClient(import.meta.env.VITE_API_URL || 'http://localhost:5000/api');

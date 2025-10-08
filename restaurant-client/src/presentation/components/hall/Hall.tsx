@@ -26,6 +26,7 @@ const Hall: React.FC<ExtendedHallProps> = ({
   products,
   onCreateOrder,
   onToggleTableOccupied,
+  onUpdateTablePosition,
   onAddTable,
   onDeleteTable,
   loading = false,
@@ -36,14 +37,15 @@ const Hall: React.FC<ExtendedHallProps> = ({
 
   const handleDragEnd = (event: any) => {
     const { delta, active } = event;
-    
-    // Prevent dragging outside boundaries
+    let newX = 0 ;
+    let newY = 0;
+
     setTables((prev) =>
       prev.map((table) => {
         if (table.id === active.id) {
-          const newX = Math.max(0, Math.min(width - 120, table.x + delta.x));
-          const newY = Math.max(0, Math.min(height - 120, table.y + delta.y));
-          
+            newX = Math.max(0, Math.min(width - 120, table.x + delta.x));
+            newY = Math.max(0, Math.min(height - 120, table.y + delta.y));
+            onUpdateTablePosition?.(active.id, newX, newY); 
           return {
             ...table,
             x: newX,
@@ -52,7 +54,7 @@ const Hall: React.FC<ExtendedHallProps> = ({
         }
         return table;
       })
-    );    
+    );      
   };
 
   const handleCreateOrder = (table: Table) => {
@@ -146,6 +148,7 @@ const Hall: React.FC<ExtendedHallProps> = ({
               table={table}
               onCreateOrder={handleCreateOrder}
               onToggleOccupied={handleToggleOccupied}
+              onDeleteTable={handleDeleteTable}
             />
           ))}
         </DndContext>
@@ -166,8 +169,8 @@ const Hall: React.FC<ExtendedHallProps> = ({
             >
               <Add />
             </Fab>
-          </Tooltip>
-        )}
+          </Tooltip>          
+        )}       
       </Box>
 
       {/* Order Modal */}

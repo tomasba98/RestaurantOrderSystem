@@ -3,7 +3,7 @@ import type {
   IOrderRepository, 
   CreateOrderData, 
 } from '@/domain/repositories/IOrderRepository';
-import { apiClient } from '../http/apiClientInstance';
+import { apiClient } from '../http/ApiClient';
 import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 
 export class OrderRepositoryImpl implements IOrderRepository {

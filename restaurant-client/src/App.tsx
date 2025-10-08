@@ -22,20 +22,14 @@ function App() {
           <Route path="/" element={<ColorPaletteTester />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={
-            <ProtectedRoute requiredRole={Roles.Admin}>
+          <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
              <RegisterPage />
           </ProtectedRoute>} />
-          {/* <Route path="/hall" element={<HallLayout />} /> */}
-          {/* <Route path="/orders" element={<OrdersPage />} /> */}
-
-          {/* Rutas protegidas - requieren autenticación */}
-          <Route path="/dashboard" element={
-                  <ProtectedRoute requiredRole={Roles.Admin}>
-                    {/* <Dashboard /> */}
-                    <div>Dashboard - Reemplaza con tu componente</div>
-                  </ProtectedRoute>
-                } />
-          
+          <Route path="/hall" element={
+          <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Waiter]}>
+            <HallLayout /> 
+          </ProtectedRoute>}/>
+          {/* <Route path="/orders" element={<OrdersPage />} /> */}         
 
 
           {/* Ruta catch-all para páginas no encontradas */}

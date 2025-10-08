@@ -4,7 +4,7 @@ import type {
   CreateProductData, 
   UpdateProductData,
 } from '@/domain/repositories/IProductRepository';
-import { apiClient } from '../http/apiClientInstance';
+import { apiClient } from '../http/ApiClient';
 import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 
 export class ProductRepositoryImpl implements IProductRepository {

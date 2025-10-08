@@ -6,18 +6,17 @@ import { useAuth } from '@/aplication/hooks/auth/useAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: number; 
+  requiredRoles?: number[]; 
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requiredRole 
+  requiredRoles 
 }) => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
-  
   if (isLoading) {
     return (
       <Box
@@ -37,7 +36,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       </Box>
     );
   }
-  
+
   if (!isAuthenticated) {
     console.log(`[ProtectedRoute] Redirigiendo a /login desde ${location.pathname}: No autenticado.`);
     return (
@@ -48,58 +47,61 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       />
     );
   }
-  
+
   let isRoleAuthorized = true;
-  if (requiredRole !== undefined) {
-    isRoleAuthorized = user?.role === requiredRole;
+  if (requiredRoles && requiredRoles.length > 0) {
+    isRoleAuthorized = requiredRoles.includes(user?.role ?? -1);
   }
 
   console.log('🔐 ProtectedRoute Debug:', {
     path: location.pathname,
     isAuthenticated,
     userRole: user?.role,
-    requiredRole,
+    requiredRoles,
     isRoleAuthorized,
   });
 
   if (!isRoleAuthorized) {
-    console.warn(`[ProtectedRoute] Acceso Denegado por Rol. Redirigiendo a /: Rol Requerido ${requiredRole}, Rol Usuario ${user?.role}.`);
+    console.warn(`[ProtectedRoute] Acceso Denegado por Rol. Redirigiendo a /: Roles Requeridos ${requiredRoles}, Rol Usuario ${user?.role}.`);
     return (
       <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        textAlign: 'center',
-        px: 3,
-      }}
-    >
-      <Typography variant="h4" color="error" gutterBottom>
-        Acceso Denegado
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        No tienes permisos para acceder a esta página.
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-        Se requiere rol: <strong>{Roles[requiredRole!]}</strong>
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Tu rol actual: <strong>{Roles[user?.role!]}</strong>
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mt: 3 }}
-        onClick={() => navigate('/')}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          textAlign: 'center',
+          px: 3,
+        }}
       >
-        Volver al inicio
-      </Button>
-    </Box>
+        <Typography variant="h4" color="error" gutterBottom>
+          Acceso Denegado
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          No tienes permisos para acceder a esta página.
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Se requiere uno de los roles:{" "}
+          <strong>
+            {requiredRoles!.map((r) => Roles[r]).join(', ')}
+          </strong>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Tu rol actual: <strong>{Roles[user?.role!]}</strong>
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3 }}
+          onClick={() => navigate('/')}
+        >
+          Volver al inicio
+        </Button>
+      </Box>
     );
   }
-  
+
   return <>{children}</>;
 };
 

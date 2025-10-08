@@ -9,6 +9,6 @@ export class UpdateTablePositionUseCase {
       throw new Error('Las coordenadas no pueden ser negativas');
     }
 
-    return await this.tableRepository.update(tableId, { x, y });
+    return await this.tableRepository.update(tableId, x, y );
   }
 }

@@ -1,6 +1,6 @@
 import type { Table } from '@/domain/entities/Table';
 import type { ITableRepository, CreateTableData, UpdateTableData } from '@/domain/repositories/ITableRepository';
-import { apiClient } from '../http/apiClientInstance';
+import { apiClient } from '../http/ApiClient';
 
 export class TableRepositoryImpl implements ITableRepository {
   private readonly basePath = '/Table';
@@ -21,8 +21,8 @@ export class TableRepositoryImpl implements ITableRepository {
     return await apiClient.post<Table>(this.basePath, data);
   }
 
-  async update(id: string, data: UpdateTableData): Promise<Table> {
-    return await apiClient.put<Table>(`${this.basePath}/${id}`, data);
+  async update(id: string,  x: number, y: number): Promise<Table> {
+    return await apiClient.put<Table>(`${this.basePath}/${id}/position?x=${x}&y=${y}`);
   }
 
   async delete(id: string): Promise<void> {

@@ -114,8 +114,8 @@ public class TableController : BaseController
     /// <param name="tableRequest">The updated table data.</param>
     /// <returns>The updated table information.</returns>
     [Authorize(Roles = "Admin,Manager,Waiter")]
-    [HttpPut("{tableId}")]
-    public async Task<IActionResult> Updatetable(Guid tableId, [FromBody] TableRequest tableRequest)
+    [HttpPut("{tableId}/position")]
+    public async Task<IActionResult> UpdatetablePosition(Guid tableId, int x, int y)
     {
         try
         {
@@ -123,8 +123,8 @@ public class TableController : BaseController
             if (existingtable is null)
                 return NotFound("table not found");
 
-            existingtable.Number = tableRequest.Number;
-            existingtable.IsOccupied = tableRequest.IsOccupied;
+            existingtable.X = x;
+            existingtable.Y = y;
 
             var updatedtable = await _tableService.UpdateTableAsync(existingtable);
             var tableResponse = _mapper.Map<TableResponse>(updatedtable);
