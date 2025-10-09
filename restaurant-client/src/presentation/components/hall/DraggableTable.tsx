@@ -61,8 +61,8 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable 
             width: '100%',
             height: '100%',
             borderRadius: '50%',
-            backgroundColor: table.isOccupied ? '#ff5252' : 'white',
-            color: 'black',
+            backgroundColor: table.isOccupied ? '#BF1515' : 'black',
+            color: 'white',
             position: 'relative',
             transition: 'all 0.3s ease',
             '&:hover': {

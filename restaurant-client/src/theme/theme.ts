@@ -3,7 +3,7 @@ import type { Shadows } from '@mui/material/styles';
 
 const defaultTheme = createTheme();
 
-const theme = createTheme({
+const themeLight = createTheme({
      palette: {
     primary: {
       main: '#785F60', 
@@ -257,16 +257,14 @@ const theme = createTheme({
 const themeDark = createTheme({
   // 1. Establece el modo oscuro
   palette: {
-      mode: 'dark', // ⬅️ Clave para el tema oscuro
+      mode: 'dark', 
       primary: {
-          // Manteniendo tus colores primarios
           main: '#785F60', 
           light: '#A38B8C',
           dark: '#523A3B',
           contrastText: '#FFFFFF',
       },
       secondary: {
-          // Manteniendo tus colores secundarios
           main: '#A69F8B', 
           light: '#C2BDA8',
           dark: '#827B67',
@@ -298,9 +296,9 @@ const themeDark = createTheme({
       },
       // 2. Ajusta los colores de texto para el fondo oscuro
       text: {
-          primary: '#E0E0E0', // Gris muy claro para texto principal
-          secondary: '#B0B0B0', // Gris claro para texto secundario
-          disabled: '#707070', // Gris oscuro para texto deshabilitado
+          primary: '#FFFFFF', // Gris muy claro para texto principal
+          secondary: '#F0F0F0', // Gris claro para texto secundario
+          disabled: '#E8E6E6', // Gris oscuro para texto deshabilitado
       },
       // 3. Define fondos oscuros
       background: {
@@ -365,7 +363,7 @@ const themeDark = createTheme({
           fontSize: '0.875rem',
           fontWeight: 400,
           lineHeight: 1.4,
-          color: '#B0B0B0', 
+          color: '#E0E0E0', 
       },
       button: {
           textTransform: 'none', 
@@ -403,14 +401,12 @@ const themeDark = createTheme({
                   padding: '8px 20px', 
               },
               containedPrimary: {
-                  // El hover oscuro es apropiado incluso en el dark mode para un efecto de "hundimiento"
                   '&:hover': {
                       backgroundColor: '#523A3B', 
                   },
               },
               outlinedPrimary: {
                   border: '1px solid #785F60',
-                  // El hover en outlined debe ser una versión oscura y transparente
                   '&:hover': {
                       backgroundColor: 'rgba(120, 95, 96, 0.12)', // Más opacidad para verse en fondo oscuro
                   },
@@ -462,7 +458,7 @@ const themeDark = createTheme({
                       },
                   },
                   '& .MuiInputLabel-root': {
-                      color: '#B0B0B0', // Label del input claro
+                      color: '#C9C9C9', // Label del input claro
                       '&.Mui-focused': {
                           color: '#785F60', // Label enfocado
                       },

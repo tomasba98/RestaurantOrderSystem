@@ -1,43 +1,118 @@
-import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import React, { useContext, useEffect } from 'react';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
+import { TableRestaurant, Receipt, Kitchen, Home } from '@mui/icons-material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '@/aplication/context/AuthContext';
+import { useRoleCheck } from '@/aplication/hooks/auth/useRoleCheck';
 
 const NavBar: React.FC = () => {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const roleCheck = useRoleCheck();
 
   if (!auth) return null;
 
   const { isAuthenticated, user, logout } = auth;
+  //onst { canTakeOrders, canViewKitchen } = roleCheck;
 
+  useEffect(() => {
+    console.log(isAuthenticated);
+  })
   const handleLogout = async () => {
     await logout();
+    navigate('/login');
   };
 
-  return (
-    <AppBar position="static" color="default">
-      <Toolbar>
-        <Button variant="outlined" color="primary" href="/">
-            Restaurant System
-        </Button>
+  const isActive = (path: string) => location.pathname === path;
 
-        {isAuthenticated && user ? (
-          <Box display="flex" alignItems="center" gap={2}>
-            <Typography variant="body1">
-              Bienvenido, <strong>{user.userName}</strong>
-            </Typography>
+  return (
+    <AppBar position="static" color="default" elevation={1}>
+      <Toolbar>
+        
+        {/* Logo/Home */}
+        <IconButton
+          edge="start"
+          color="primary"
+          onClick={() => navigate('/')}
+          sx={{ mr: 2 }}
+        >
+          <Home />
+        </IconButton>
+
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            flexGrow: 0,
+            mr: 4,
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+          onClick={() => navigate('/')}
+        >
+          Restaurant System
+        </Typography>
+
+        {/* Navigation Links - Solo si está autenticado */}
+        {isAuthenticated && (
+          <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>    
+
+          {/* A futuro, vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
+
             <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleLogout}
+              startIcon={<TableRestaurant />}
+              onClick={() => navigate('/hall')}
+              variant={isActive('/hall') ? 'contained' : 'text'}
+              color={isActive('/hall') ? 'primary' : 'inherit'}
             >
-              Cerrar sesión
+              Mesas
+            </Button>
+            <Button
+              startIcon={<Receipt />}
+              onClick={() => navigate('/orders')}
+              variant={isActive('/orders') ? 'contained' : 'text'}
+              color={isActive('/orders') ? 'primary' : 'inherit'}
+            >
+              Órdenes
+            </Button>            
+            <Button
+              startIcon={<Kitchen />}
+              onClick={() => navigate('/kitchen')}
+              variant={isActive('/kitchen') ? 'contained' : 'text'}
+              color={isActive('/kitchen') ? 'primary' : 'inherit'}
+            >
+              Cocina
             </Button>
           </Box>
-        ) : (
-          <Button variant="contained" color="primary" href="/login">
-            Iniciar sesión
-          </Button>
         )}
+
+        {/* User Info & Logout */}
+        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
+          {isAuthenticated && user ? (
+            <>
+              <Box sx={{ textAlign: 'right' }}>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {user.userName}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {['Admin', 'Manager', 'Waiter', 'Kitchen'][user.role]}
+                </Typography>
+              </Box>
+              <Button variant="outlined" color="primary" onClick={handleLogout}>
+                Cerrar sesión
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate('/login')}
+            >
+              Iniciar sesión
+            </Button>
+          )}
+        </Box>
       </Toolbar>
     </AppBar>
   );

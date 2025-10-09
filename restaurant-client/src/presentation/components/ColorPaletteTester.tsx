@@ -152,9 +152,9 @@ function ColorPaletteTester() {
               **1x** Ensalada César <br />
               **3x** Refrescos
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              Estado: <Chip label="En Preparación" color="info" size="small" />
-            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}/>
+              Estado: 
+            <Chip label="En Preparación" color="info" size="small" />
           </CardContent>
           <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
             <Button size="small" color="primary" variant="outlined">

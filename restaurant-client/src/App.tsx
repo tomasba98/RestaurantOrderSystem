@@ -9,6 +9,8 @@ import { AuthProvider } from './aplication/context/AuthContext';
 import NavBar from './presentation/components/shared/NavBar';
 import ProtectedRoute from './presentation/components/auth/ProtectedRoute';
 import { Roles } from './domain/entities/User';
+import OrdersPage from './presentation/pages/order/OrdersPage';
+import KitchenPage from './presentation/pages/kitchen/KitchenPage';
 
 
 
@@ -20,16 +22,48 @@ function App() {
       <NavBar />
         <Routes>
           <Route path="/" element={<ColorPaletteTester />} />
+          
+
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={
-          <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
-             <RegisterPage />
-          </ProtectedRoute>} />
-          <Route path="/hall" element={
-          <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Waiter]}>
-            <HallLayout /> 
-          </ProtectedRoute>}/>
-          {/* <Route path="/orders" element={<OrdersPage />} /> */}         
+
+          {/* Gestión de Usuarios - Admin y Manager */}
+          <Route 
+            path="/register" 
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
+                <RegisterPage />
+              </ProtectedRoute>} />
+
+
+           {/* Gestión de Mesas - Admin, Manager y Waiter */}
+           <Route
+            path="/hall"
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Waiter]}>
+                <HallLayout />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Gestión de Órdenes - Admin, Manager y Waiter */}
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Waiter]}>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Vista de Cocina - Admin, Manager y Kitchen */}
+          <Route
+            path="/kitchen"
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Kitchen]}>
+                <KitchenPage />
+              </ProtectedRoute>
+            }
+          />        
 
 
           {/* Ruta catch-all para páginas no encontradas */}
