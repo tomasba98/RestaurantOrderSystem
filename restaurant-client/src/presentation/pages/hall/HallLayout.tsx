@@ -72,7 +72,6 @@ const HallLayout = () => {
   const handleCreateOrder = async (tableId: string, items: OrderDetailItem[]) => {
     setOrderLoading(true);
     try {
-      // TODO: Implementar cuando refactorices Orders
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       const table = tables.find(t => t.id === tableId);
