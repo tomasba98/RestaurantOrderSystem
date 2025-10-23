@@ -5,9 +5,8 @@ export class UpdateOrderStatusUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
   async execute(orderId: string, status: OrderStatus): Promise<Order> {
-    const order = await this.orderRepository.getById(orderId);
+    const order = await this.orderRepository.getById(orderId);    
     
-    // Validar transiciones de estado válidas
     const validTransitions: Record<OrderStatus, OrderStatus[]> = {
       [OrderStatus.Confirmed]: [OrderStatus.InKitchen, OrderStatus.Canceled],
       [OrderStatus.InKitchen]: [OrderStatus.Ready, OrderStatus.Canceled],

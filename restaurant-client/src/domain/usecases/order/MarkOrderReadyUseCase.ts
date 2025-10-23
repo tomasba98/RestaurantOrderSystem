@@ -5,49 +5,49 @@ export class MarkOrderReadyUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
   async execute(orderId: string): Promise<Order> {
-    // Validar que el ID no esté vacío
+    // Validate that the ID is not empty
     if (!orderId || orderId.trim() === '') {
-      throw new Error('El ID de la orden es requerido');
+      throw new Error('Order ID is required');
     }
 
-    // Obtener la orden actual
+    // Get the current order
     const order = await this.orderRepository.getById(orderId);
     
-    // Validar que la orden existe
+    // Validate that the order exists
     if (!order) {
-      throw new Error(`No se encontró la orden con ID: ${orderId}`);
+      throw new Error(`Order not found with ID: ${orderId}`);
     }
 
-    // Validar que la orden está en el estado correcto
+    // Validate that the order is in the correct status
     if (order.status !== OrderStatus.InKitchen) {
       throw new Error(
-        `Solo se pueden marcar como listas las órdenes que están en cocina. ` +
-        `Estado actual: ${this.getStatusLabel(order.status)}`
+        `Only orders currently in the kitchen can be marked as ready. ` +
+        `Current status: ${this.getStatusLabel(order.status)}`
       );
     }
 
-    // Validar que la orden tiene productos
+    // Validate that the order has products
     if (!order.productList || order.productList.length === 0) {
-      throw new Error('La orden no tiene productos');
+      throw new Error('The order has no products');
     }
 
-    // Marcar la orden como lista
+    // Mark the order as ready
     const updatedOrder = await this.orderRepository.markReady(orderId);
 
-    // Verificar que el estado se actualizó correctamente
+    // Verify that the status was updated correctly
     if (updatedOrder.status !== OrderStatus.Ready) {
-      throw new Error('Error al actualizar el estado de la orden');
+      throw new Error('Failed to update order status');
     }
 
     return updatedOrder;
   }
 
   /**
-   * Marcar múltiples órdenes como listas
+   * Mark multiple orders as ready
    */
   async executeMultiple(orderIds: string[]): Promise<Order[]> {
     if (!orderIds || orderIds.length === 0) {
-      throw new Error('Se debe proporcionar al menos un ID de orden');
+      throw new Error('At least one order ID must be provided');
     }
 
     const results: Order[] = [];
@@ -60,20 +60,20 @@ export class MarkOrderReadyUseCase {
       } catch (error: any) {
         errors.push({
           orderId,
-          error: error.message || 'Error desconocido',
+          error: error.message || 'Unknown error',
         });
       }
     }
 
     if (errors.length > 0) {
-      console.warn('Algunas órdenes no pudieron ser marcadas como listas:', errors);
+      console.warn('Some orders could not be marked as ready:', errors);
     }
 
     return results;
   }
 
   /**
-   * Verificar si una orden puede ser marcada como lista
+   * Check if an order can be marked as ready
    */
   async canMarkAsReady(orderId: string): Promise<{
     canMark: boolean;
@@ -85,14 +85,14 @@ export class MarkOrderReadyUseCase {
       if (order.status !== OrderStatus.InKitchen) {
         return {
           canMark: false,
-          reason: `La orden debe estar en cocina. Estado actual: ${this.getStatusLabel(order.status)}`,
+          reason: `The order must be in the kitchen. Current status: ${this.getStatusLabel(order.status)}`,
         };
       }
 
       if (!order.productList || order.productList.length === 0) {
         return {
           canMark: false,
-          reason: 'La orden no tiene productos',
+          reason: 'The order has no products',
         };
       }
 
@@ -100,22 +100,22 @@ export class MarkOrderReadyUseCase {
     } catch (error: any) {
       return {
         canMark: false,
-        reason: error.message || 'Error al verificar la orden',
+        reason: error.message || 'Error verifying the order',
       };
     }
   }
 
   /**
-   * Obtener etiqueta legible del estado
+   * Get a readable label for the order status
    */
   private getStatusLabel(status: OrderStatus): string {
     const labels: Record<OrderStatus, string> = {
-      [OrderStatus.Confirmed]: 'Confirmada',
-      [OrderStatus.InKitchen]: 'En Cocina',
-      [OrderStatus.Ready]: 'Lista',
-      [OrderStatus.Served]: 'Servida',
-      [OrderStatus.Paid]: 'Pagada',
-      [OrderStatus.Canceled]: 'Cancelada',
+      [OrderStatus.Confirmed]: 'Confirmed',
+      [OrderStatus.InKitchen]: 'In Kitchen',
+      [OrderStatus.Ready]: 'Ready',
+      [OrderStatus.Served]: 'Served',
+      [OrderStatus.Paid]: 'Paid',
+      [OrderStatus.Canceled]: 'Canceled',
     };
     return labels[status] || status;
   }

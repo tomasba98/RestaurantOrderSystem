@@ -58,7 +58,7 @@ const NavBar: React.FC = () => {
         {isAuthenticated && (
           <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>    
 
-          {/* A futuro, vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
+          {/* Recordatorio: A futuro, vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
 
             <Button
               startIcon={<TableRestaurant />}

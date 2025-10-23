@@ -13,7 +13,6 @@ export const useTables = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Inicializar casos de uso
   const tableRepository = new TableRepositoryImpl();
   const getAllTablesUseCase = new GetAllTablesUseCase(tableRepository);
   const createTableUseCase = new CreateTableUseCase(tableRepository);

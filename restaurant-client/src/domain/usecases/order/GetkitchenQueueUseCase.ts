@@ -6,32 +6,32 @@ export class GetKitchenQueueUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
   async execute(): Promise<Order[]> {
-    // Obtener todas las órdenes de la cola de cocina
+    // Get all orders in the kitchen queue
     const orders = await this.orderRepository.getKitchenQueue();
     
-    // Filtrar solo órdenes relevantes para cocina
-    // Confirmadas: Esperando a ser procesadas
-    // InKitchen: Actualmente siendo preparadas
+    // Filter only relevant orders for the kitchen
+    // Confirmed: Waiting to be processed
+    // InKitchen: Currently being prepared
     const kitchenStatuses = [OrderStatus.Confirmed, OrderStatus.InKitchen];
     
     const filteredOrders = orders.filter(order => 
       kitchenStatuses.includes(order.status)
     );
 
-    // Ordenar las órdenes por prioridad:
-    // 1. Primero las confirmadas (pendientes de comenzar)
-    // 2. Luego las que están en cocina
-    // 3. Dentro de cada grupo, por tiempo (más antiguas primero)
+    // Sort orders by priority:
+    // 1. Confirmed first (waiting to start)
+    // 2. Then the ones already in the kitchen
+    // 3. Within each group, sort by time (oldest first)
     const sortedOrders = filteredOrders.sort((a, b) => {
-      // Prioridad por estado
+      // Priority by status
       if (a.status === OrderStatus.Confirmed && b.status === OrderStatus.InKitchen) {
-        return -1; // a va primero
+        return -1; // a goes first
       }
       if (a.status === OrderStatus.InKitchen && b.status === OrderStatus.Confirmed) {
-        return 1; // b va primero
+        return 1; // b goes first
       }
       
-      // Si tienen el mismo estado, ordenar por fecha (más antigua primero)
+      // If they have the same status, sort by creation date (oldest first)
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
       return dateA - dateB;
@@ -41,7 +41,7 @@ export class GetKitchenQueueUseCase {
   }
 
   /**
-   * Obtener solo las órdenes confirmadas (pendientes de comenzar)
+   * Get only confirmed orders (waiting to start)
    */
   async getPendingOrders(): Promise<Order[]> {
     const allOrders = await this.execute();
@@ -49,7 +49,7 @@ export class GetKitchenQueueUseCase {
   }
 
   /**
-   * Obtener solo las órdenes en cocina (en preparación)
+   * Get only in-progress orders (currently being prepared)
    */
   async getInProgressOrders(): Promise<Order[]> {
     const allOrders = await this.execute();
@@ -57,19 +57,18 @@ export class GetKitchenQueueUseCase {
   }
 
   /**
-   * Obtener estadísticas de la cola de cocina
+   * Get kitchen queue statistics
    */
   async getQueueStats(): Promise<{
     total: number;
     pending: number;
     inProgress: number;
-    avgWaitTime: number; // en minutos
+    avgWaitTime: number; 
   }> {
     const allOrders = await this.execute();
     const pending = allOrders.filter(o => o.status === OrderStatus.Confirmed);
     const inProgress = allOrders.filter(o => o.status === OrderStatus.InKitchen);
-
-    // Calcular tiempo promedio de espera para órdenes pendientes
+    
     let avgWaitTime = 0;
     if (pending.length > 0) {
       const now = new Date().getTime();
@@ -77,7 +76,7 @@ export class GetKitchenQueueUseCase {
         const createdAt = new Date(order.createdAt).getTime();
         return sum + (now - createdAt);
       }, 0);
-      avgWaitTime = Math.floor(totalWaitTime / pending.length / 60000); // convertir a minutos
+      avgWaitTime = Math.floor(totalWaitTime / pending.length / 60000); 
     }
 
     return {

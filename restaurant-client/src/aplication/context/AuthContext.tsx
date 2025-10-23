@@ -22,7 +22,6 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Inicializar repositorio y casos de uso
 const authRepository = new AuthRepositoryImpl();
 const loginUseCase = new LoginUseCase(authRepository);
 const registerUseCase = new RegisterUseCase(authRepository);
@@ -32,8 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Verificar si hay una sesión activa al cargar
+  
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('auth_token');
