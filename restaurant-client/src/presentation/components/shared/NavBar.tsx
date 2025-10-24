@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
-import { TableRestaurant,Flatware, Receipt, Kitchen, Home } from '@mui/icons-material';
+import { TableRestaurant, Receipt, Kitchen, Home } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '@/aplication/context/AuthContext';
 import { useRoleCheck } from '@/aplication/hooks/auth/useRoleCheck';
@@ -58,7 +58,7 @@ const NavBar: React.FC = () => {
         {isAuthenticated && (
           <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>    
 
-          {/*Recordatorio: A futuro agregar vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
+          {/* Recordatorio: A futuro, vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
 
             <Button
               startIcon={<TableRestaurant />}

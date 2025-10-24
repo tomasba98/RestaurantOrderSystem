@@ -145,12 +145,12 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable 
             size="small"
             onClick={handleDeleteTable}
             sx={{
-              backgroundColor: 'red',   // puedes usar 'warning.main' de MUI si quieres paleta
+              backgroundColor: 'red',   
               color: 'white',
               width: 30,
               height: 30,
               '&:hover': {
-                backgroundColor: 'darkred',  // o 'warning.dark'
+                backgroundColor: 'darkred',  
               },
             }}
           >
