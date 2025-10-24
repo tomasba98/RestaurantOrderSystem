@@ -29,7 +29,19 @@ public class ProductController : BaseController
     [HttpGet]
     public async Task<IActionResult> GetAllProducts()
     {
-        var products = await _productService.GetAllProductsAsync();
+            var products = await _productService.GetAllProductsAsync();
+
+        return Ok(products);
+    }
+
+    /// <summary>
+    /// Retrieves a list of available products.
+    /// </summary>
+    /// <returns>An IActionResult containing the list of products.</returns>
+    [HttpGet("available")]
+    public async Task<IActionResult> GetProductsAvailable()
+    {
+        var products = await _productService.GetProductsAvailableAsync();
 
         return Ok(products);
     }
@@ -40,7 +52,7 @@ public class ProductController : BaseController
     /// <param name="productId">The unique identifier of the product.</param>
     /// <returns>An IActionResult containing the product details.</returns>
     [AllowAnonymous]
-    [HttpGet("{productId}")]
+    [HttpGet("{productId:guid}")]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
         try

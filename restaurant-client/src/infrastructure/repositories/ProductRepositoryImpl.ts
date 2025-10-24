@@ -8,10 +8,11 @@ import { apiClient } from '../http/ApiClient';
 import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 
 export class ProductRepositoryImpl implements IProductRepository {
-  private readonly basePath = '/products';
+  private readonly basePath = '/Product';
 
-  async getAll(params?: PaginationParams): Promise<PaginatedResponse<Product>> {
-    return await apiClient.get<PaginatedResponse<Product>>(this.basePath, { params });
+  async getAll(): Promise<Product[]> {
+    //return await apiClient.get<PaginatedResponse<Product>>(this.basePath, { params });
+    return await apiClient.get<Product[]>(this.basePath);
   }
 
   async getById(id: string): Promise<Product> {
@@ -20,8 +21,8 @@ export class ProductRepositoryImpl implements IProductRepository {
   }
 
   async getAvailable(): Promise<Product[]> {
-    const response = await apiClient.get<{ data: Product[] }>(`${this.basePath}/available`);
-    return response.data;
+    const response = await apiClient.get<Product[]>(`${this.basePath}/available`);
+    return response;
   }
 
   async create(data: CreateProductData): Promise<Product> {

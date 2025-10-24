@@ -22,12 +22,19 @@ export interface Table {
     y: number;
     createdAt: string;
   }
-  
+
  export interface HallProps {
     width?: number;
     height?: number;
     tables: Table[];
     setTables: React.Dispatch<React.SetStateAction<Table[]>>;
+    products: Product[];
+    onCreateOrder: (tableId: string, items: OrderDetailItem[]) => Promise<void>;
+    onToggleTableOccupied: (tableId: string) => void;
+    onAddTable: () => void;
+    onUpdateTablePosition: (tableId: string, x: number, y: number) => Promise<void>;
+    onDeleteTable: (tableId: string) => void;
+    loading?: boolean;
   }
 
  export interface DraggableTableProps {

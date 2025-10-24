@@ -302,9 +302,9 @@ const themeDark = createTheme({
       },
       // 3. Define fondos oscuros
       background: {
-          default: '#454545', // El fondo más oscuro (típico de dark mode)
-          paper: '#8A8A8A', // Un poco menos oscuro para cards, modales, etc.
-      },
+          default: '#1b1b1bff', // El fondo más oscuro (típico de dark mode)
+          paper: '#1d1d1dff', // Un poco menos oscuro para cards, modales, etc.
+      },  
       // 4. Ajusta la interacción de las acciones (hover/selected)
       action: {
           hover: 'rgba(255, 255, 255, 0.08)', // Usar blanco con opacidad

@@ -1,24 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Fab, Tooltip, useTheme } from '@mui/material';
+import { Box, Fab, Tooltip } from '@mui/material';
 import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { Add } from '@mui/icons-material';
-import DraggableTable from './DraggableTable';
-import OrderModal from './OrderModal';
 import type { HallProps, Table } from '@/domain/entities/Table';
-import type { Product } from '@/domain/entities/Product';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
+import DraggableTable from '../table/DraggableTable';
+import OrderModal from '../order/OrderModal';
+import OrderCreationDialog from '../order/OrderCreationDialog';
 
-interface ExtendedHallProps extends HallProps {
-  products: Product[];
-  loading?: boolean;
-  onCreateOrder: (tableId: string, items: OrderDetailItem[]) => Promise<void>;
-  onToggleTableOccupied: (tableId: string) => void;
-  onAddTable?: () => void;
-  onUpdateTablePosition?: (tableId: string, x: number, y: number) => void;
-  onDeleteTable?: (tableId: string) => void;
-}
 
-const Hall: React.FC<ExtendedHallProps> = ({
+const Hall: React.FC<HallProps> = ({
   width = 800,
   height = 600,
   tables,
@@ -57,7 +48,7 @@ const Hall: React.FC<ExtendedHallProps> = ({
     );      
   };
 
-  const handleCreateOrder = (table: Table) => {
+    const handleCreateOrder = (table: Table) => {
     setSelectedTable(table);
     setOrderModalOpen(true);
   };
@@ -86,11 +77,11 @@ const Hall: React.FC<ExtendedHallProps> = ({
         sx={{
           position: 'absolute',
           top: 16,
-          left: -180, 
+          left: -160, 
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          backgroundColor: 'rgba(255,255,255,0.9)',
+          backgroundColor: 'rgba(119, 119, 119, 0.9)',
           padding: 2,
           borderRadius: 2,
           boxShadow: 2,
@@ -129,8 +120,7 @@ const Hall: React.FC<ExtendedHallProps> = ({
         sx={{
           width,
           height,
-          backgroundColor: '#F5F5DC',
-          border: '2px solid #DCDCDC',
+          backgroundColor: '#a7a724ff',
           borderRadius: 4,
           position: 'relative',
           overflow: 'hidden',
@@ -174,16 +164,25 @@ const Hall: React.FC<ExtendedHallProps> = ({
       </Box>
 
       {/* Order Modal */}
-      <OrderModal
+      {/* <OrderModal
         open={orderModalOpen}
-        onClose={handleCloseOrderModal}
         table={selectedTable}
         products={products}
+        onClose={handleCloseOrderModal}
         onCreateOrder={handleCreateOrderSubmit}
         loading={loading}
-      />
+      />       */}
+      <OrderCreationDialog
+        open={orderModalOpen}
+        table={selectedTable}
+        products={products}
+        onClose={handleCloseOrderModal}
+        onCreateOrder={handleCreateOrderSubmit}
+        loading={loading}
+      />      
     </Box>
   );
 };
 
 export default Hall;
+

@@ -15,8 +15,9 @@ export interface UpdateProductData {
   isAvailable?: boolean;
 }
 
-export interface IProductRepository {
-  getAll(params?: PaginationParams): Promise<PaginatedResponse<Product>>;
+export interface  IProductRepository {
+  //getAll(params?: PaginationParams): Promise<PaginatedResponse<Product>>; // realizar paginacion a futuro
+  getAll(): Promise<Product[]>;
   getById(id: string): Promise<Product>;
   getAvailable(): Promise<Product[]>;
   create(data: CreateProductData): Promise<Product>;

@@ -1,53 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Snackbar, Alert, Typography, useTheme, CircularProgress } from '@mui/material';
 import Hall from '@/presentation/components/hall/Hall';
 import { useTables } from '@/aplication/hooks/table/useTables';
-import type { Product } from '@/domain/entities/Product';
+import { useProducts } from '@/aplication/hooks/product/useProducts';
+import { useOrders } from '@/aplication/hooks/order/useOrders';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
-
-// Mock products - temporalmente hasta que refactorices productos
-const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Hamburguesa Clásica',
-    price: 12.99,
-    description: 'Carne de res, lechuga, tomate, cebolla y queso',
-    isAvailable: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Pizza Margarita',
-    price: 16.50,
-    description: 'Salsa de tomate, mozzarella y albahaca fresca',
-    isAvailable: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Ensalada César',
-    price: 9.99,
-    description: 'Lechuga romana, pollo, crutones y aderezo césar',
-    isAvailable: true,
-    createdAt: new Date().toISOString(),
-  },
-];
 
 const HallLayout = () => {
   const {
     tables,
-    isLoading,
-    error,
+    isLoading: tablesLoading,
+    error: tablesError,
     setTables,
     createTable,
     updateTablePosition,
     deleteTable,
     toggleTableOccupation,
-    clearError,
+    clearError: clearTablesError,
   } = useTables();
 
-  const [products] = useState<Product[]>(mockProducts);
-  const [orderLoading, setOrderLoading] = useState(false);
+  const {
+    products,
+    isLoading: productsLoading,
+    error: productsError,
+    loadAvailableProducts,
+    clearError: clearProductsError,
+  } = useProducts();
+
+  const {
+    createOrder,
+    isLoading: orderLoading,
+    error: orderError,
+    clearError: clearOrderError,
+  } = useOrders();
+
   const [notification, setNotification] = useState<{
     open: boolean;
     message: string;
@@ -60,34 +46,39 @@ const HallLayout = () => {
 
   const theme = useTheme();
 
+  useEffect(() => {
+    loadAvailableProducts();
+  }, []);
+
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
     setNotification({ open: true, message, severity });
   };
 
   const handleCloseNotification = () => {
     setNotification(prev => ({ ...prev, open: false }));
-    clearError();
+    clearTablesError();
+    clearProductsError();
+    clearOrderError();
   };
 
   const handleCreateOrder = async (tableId: string, items: OrderDetailItem[]) => {
-    setOrderLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
+      const order = await createOrder(tableId, items);
+      
       const table = tables.find(t => t.id === tableId);
       const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-      console.log('Creating order:', { tableId, items });
-
       showNotification(
-        `¡Orden creada exitosamente! Mesa ${table?.number} - ${totalItems} productos`,
+        `¡Orden creada exitosamente! Mesa ${table?.number} - ${totalItems} productos - Total: $${order.totalAmount.toFixed(2)}`,
         'success'
       );
-    } catch (error) {
+
+      if (table && !table.isOccupied) {
+        await toggleTableOccupation(tableId);
+      }
+    } catch (error: any) {
       console.error('Error creating order:', error);
-      showNotification('Error al crear la orden. Intenta de nuevo.', 'error');
-    } finally {
-      setOrderLoading(false);
+      showNotification(error.message || 'Error al crear la orden', 'error');
     }
   };
 
@@ -140,14 +131,14 @@ const HallLayout = () => {
       const table = tables.find(t => t.id === tableId);
       await deleteTable(tableId);
       showNotification(`Mesa ${table?.number} eliminada`, 'success');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting table:', error);
-      showNotification('Error al eliminar la mesa', 'error');
+      showNotification(error.message || 'Error al eliminar la mesa', 'error');
     }
   };
 
-  // Mostrar loading inicial
-  if (isLoading && tables.length === 0) {
+  // Show loading state
+  if ((tablesLoading || productsLoading) && tables.length === 0 && products.length === 0) {
     return (
       <Box
         display="flex"
@@ -159,7 +150,7 @@ const HallLayout = () => {
       >
         <CircularProgress size={60} thickness={4} />
         <Typography variant="body1" color="text.secondary">
-          Cargando mesas...
+          Cargando datos...
         </Typography>
       </Box>
     );
@@ -167,6 +158,7 @@ const HallLayout = () => {
 
   const occupiedTables = tables.filter(table => table.isOccupied).length;
   const totalTables = tables.length;
+  const availableProducts = products.length;
 
   return (
     <Box
@@ -186,7 +178,7 @@ const HallLayout = () => {
           Gestión de Mesas
         </Typography>
         <Typography variant="subtitle1" color="text.secondary">
-          {occupiedTables} de {totalTables} mesas ocupadas
+          {occupiedTables} de {totalTables} mesas ocupadas • {availableProducts} productos disponibles
         </Typography>
       </Box>
 
@@ -207,17 +199,21 @@ const HallLayout = () => {
 
       {/* Notifications */}
       <Snackbar
-        open={notification.open || !!error}
+        open={notification.open || !!tablesError || !!productsError || !!orderError}
         autoHideDuration={6000}
         onClose={handleCloseNotification}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert
           onClose={handleCloseNotification}
-          severity={error ? 'error' : notification.severity}
+          severity={
+            tablesError || productsError || orderError
+              ? 'error'
+              : notification.severity
+          }
           sx={{ width: '100%' }}
         >
-          {error || notification.message}
+          {tablesError || productsError || orderError || notification.message}
         </Alert>
       </Snackbar>
     </Box>

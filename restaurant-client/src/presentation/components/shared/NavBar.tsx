@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
-import { TableRestaurant, Receipt, Kitchen, Home } from '@mui/icons-material';
+import { TableRestaurant,Flatware, Receipt, Kitchen, Home } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '@/aplication/context/AuthContext';
 import { useRoleCheck } from '@/aplication/hooks/auth/useRoleCheck';
@@ -58,7 +58,7 @@ const NavBar: React.FC = () => {
         {isAuthenticated && (
           <Box sx={{ display: 'flex', gap: 1, flexGrow: 1 }}>    
 
-          {/* A futuro, vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
+          {/*Recordatorio: A futuro agregar vistas condicionales en cuanto a permisos. Ej: canTakeOrders, canViewKitchen  */}
 
             <Button
               startIcon={<TableRestaurant />}
@@ -66,7 +66,7 @@ const NavBar: React.FC = () => {
               variant={isActive('/hall') ? 'contained' : 'text'}
               color={isActive('/hall') ? 'primary' : 'inherit'}
             >
-              Mesas
+             Salon
             </Button>
             <Button
               startIcon={<Receipt />}
@@ -83,6 +83,14 @@ const NavBar: React.FC = () => {
               color={isActive('/kitchen') ? 'primary' : 'inherit'}
             >
               Cocina
+            </Button>
+            <Button
+              startIcon={<Flatware  />}
+              onClick={() => navigate('/products')}
+              variant={isActive('/products') ? 'contained' : 'text'}
+              color={isActive('/products') ? 'primary' : 'inherit'}
+            >
+              Platos
             </Button>
           </Box>
         )}

@@ -11,19 +11,17 @@ import ProtectedRoute from './presentation/components/auth/ProtectedRoute';
 import { Roles } from './domain/entities/User';
 import OrdersPage from './presentation/pages/order/OrdersPage';
 import KitchenPage from './presentation/pages/kitchen/KitchenPage';
-
-
+import ProductsPage from './presentation/pages/product/ProductPage';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <AuthProvider>
-      <NavBar />
+      <CssBaseline />
+      <AuthProvider>
+        <NavBar />
         <Routes>
           <Route path="/" element={<ColorPaletteTester />} />
           
-
           <Route path="/login" element={<LoginPage />} />
 
           {/* Gestión de Usuarios - Admin y Manager */}
@@ -32,11 +30,12 @@ function App() {
             element={
               <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
                 <RegisterPage />
-              </ProtectedRoute>} />
+              </ProtectedRoute>
+            } 
+          />
 
-
-           {/* Gestión de Mesas - Admin, Manager y Waiter */}
-           <Route
+          {/* Gestión de Mesas - Admin, Manager y Waiter */}
+          <Route
             path="/hall"
             element={
               <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager, Roles.Waiter]}>
@@ -63,26 +62,38 @@ function App() {
                 <KitchenPage />
               </ProtectedRoute>
             }
-          />        
+          />
 
+          {/* Gestión de Productos - Admin y Manager */}
+          <Route
+            path="/products"
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
+                <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Ruta catch-all para páginas no encontradas */}
-          <Route path="*" element={
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
-                    height: '100vh',
-                    flexDirection: 'column'
-                  }}>
-                    <h1>404 - Página no encontrada</h1>
-                    <p>La página que buscas no existe.</p>
-                  </div>
-                } />
+          <Route 
+            path="*" 
+            element={
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                flexDirection: 'column'
+              }}>
+                <h1>404 - Página no encontrada</h1>
+                <p>La página que buscas no existe.</p>
+              </div>
+            } 
+          />
         </Routes>
-    </AuthProvider>
-  </ThemeProvider>
-  )
+      </AuthProvider>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

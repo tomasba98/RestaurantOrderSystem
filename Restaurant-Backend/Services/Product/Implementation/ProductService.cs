@@ -34,6 +34,13 @@ public class ProductService : IProductService
         return await _productGenericService.FindAllAsync();
     }
 
+    public async Task<IEnumerable<Product>> GetProductsAvailableAsync()
+    {
+        return await _productGenericService
+            .FilterByExpressionLinq(product => product.IsAvailable == true)
+            .ToListAsync();
+    }
+
     public async Task<Product> UpdateProductAsync(Product product)
     {
         await _productGenericService.UpdateAsync(product);

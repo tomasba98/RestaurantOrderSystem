@@ -11,6 +11,8 @@ public interface IProductService
 
     Task<IEnumerable<Product>> GetAllProductsAsync();
 
+    Task<IEnumerable<Product>> GetProductsAvailableAsync();
+
     Task<Product> UpdateProductAsync(Product product);
 
     Task DeleteProductAsync(Guid productId);

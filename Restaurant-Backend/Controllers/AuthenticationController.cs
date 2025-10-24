@@ -13,6 +13,7 @@ namespace Restaurant_Backend.Controllers;
 [Route("api/auth")]
 [ApiController]
 [AllowAnonymous]
+[Authorize]
 public class AuthenticationController : BaseController
 {
     private readonly IAuthenticationService _authenticationService;
