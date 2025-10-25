@@ -1,4 +1,4 @@
-import { useDraggable } from "@dnd-kit/core";
+    import { useDraggable } from "@dnd-kit/core";
 import { Box, Paper, Typography, IconButton, Tooltip } from "@mui/material";
 import { AddShoppingCart, TableRestaurant, Person, Delete } from "@mui/icons-material";
 import type { Table } from "@/domain/entities/Table";

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
-import { TableRestaurant, Receipt, Kitchen, Home } from '@mui/icons-material';
+import { TableRestaurant, Receipt, Kitchen, Home, Flatware } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '@/aplication/context/AuthContext';
 import { useRoleCheck } from '@/aplication/hooks/auth/useRoleCheck';

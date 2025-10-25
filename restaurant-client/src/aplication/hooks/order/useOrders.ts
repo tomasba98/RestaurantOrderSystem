@@ -1,3 +1,4 @@
+// src/aplication/hooks/order/useOrders.ts
 import { useState, useCallback } from 'react';
 import type { Order } from '@/domain/entities/Order';
 import { OrderStatus } from '@/domain/entities/Order';
@@ -5,6 +6,7 @@ import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 import type { PaginationParams } from '@/utils/Pagination';
 import { OrderRepositoryImpl } from '@/infrastructure/repositories/OrderRepositoryImpl';
 import { TableRepositoryImpl } from '@/infrastructure/repositories/TableRepositoryImpl';
+import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
 import { CreateOrderUseCase } from '@/domain/usecases/order/CreateOrderUseCase';
 import { GetOrdersByTableUseCase } from '@/domain/usecases/order/GetOrdersByTableUseCase';
 import { UpdateOrderStatusUseCase } from '@/domain/usecases/order/UpdateOrderStatusUseCase';
@@ -12,6 +14,8 @@ import { CancelOrderUseCase } from '@/domain/usecases/order/CancelOrderUseCase';
 import { GetAllOrdersUseCase } from '@/domain/usecases/order/GetAllOrdersUseCase';
 import { GetKitchenQueueUseCase } from '@/domain/usecases/order/GetkitchenQueueUseCase';
 import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUseCase';
+import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
+import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -21,6 +25,7 @@ export const useOrders = () => {
   
   const orderRepository = new OrderRepositoryImpl();
   const tableRepository = new TableRepositoryImpl();
+  const sessionRepository = new SessionRepositoryImpl();
   
   const createOrderUseCase = new CreateOrderUseCase(orderRepository, tableRepository);
   const getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
@@ -29,6 +34,8 @@ export const useOrders = () => {
   const cancelOrderUseCase = new CancelOrderUseCase(orderRepository);
   const getKitchenQueueUseCase = new GetKitchenQueueUseCase(orderRepository);
   const markOrderReadyUseCase = new MarkOrderReadyUseCase(orderRepository);
+  const startSessionUseCase = new StartSessionUseCase(sessionRepository);
+  const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
 
   // Get all orders
   const loadOrders = useCallback(async (params?: PaginationParams) => {
@@ -66,7 +73,7 @@ export const useOrders = () => {
     }
   }, []);
 
-  // Create new order
+  // Create new order (con gestión automática de sesión)
   const createOrder = useCallback(async (
     tableId: string,
     items: OrderDetailItem[]
@@ -74,9 +81,26 @@ export const useOrders = () => {
     try {
       setIsLoading(true);
       setError(null);
+      
+      // 1. Verificar si existe una sesión activa, si no, crear una
+      let activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+      
+      if (activeSession === null) {
+        console.log('No hay sesión activa, creando nueva sesión para la mesa:', tableId);
+        await startSessionUseCase.execute({ tableId });
+        // Recargar sesiones activas
+        activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+      }
+      
+      console.log('Usando sesión activa:', activeSession.id);
+      
+      // 2. Crear la orden
       const newOrder = await createOrderUseCase.execute(tableId, items);
+      
+      // 3. Actualizar estado local
       setOrders(prev => [newOrder, ...prev]);
       setCurrentOrder(newOrder);
+      
       return newOrder;
     } catch (err: any) {
       const errorMessage = err.message || 'Error al crear la orden';

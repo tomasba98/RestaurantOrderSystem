@@ -1,12 +1,16 @@
+// src/aplication/hooks/table/useTables.ts
 import { useState, useEffect } from 'react';
 import type { Table } from '@/domain/entities/Table';
 import type { CreateTableData } from '@/domain/repositories/ITableRepository';
 import { TableRepositoryImpl } from '@/infrastructure/repositories/TableRepositoryImpl';
+import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
 import { GetAllTablesUseCase } from '@/domain/usecases/table/GetAllTablesUseCase';
 import { CreateTableUseCase } from '@/domain/usecases/table/CreateTableUseCase';
 import { UpdateTablePositionUseCase } from '@/domain/usecases/table/UpdateTablePositionUseCase';
 import { DeleteTableUseCase } from '@/domain/usecases/table/DeleteTableUseCase';
 import { ToggleTableOccupationUseCase } from '@/domain/usecases/table/ToggleTableOccupationUseCase';
+import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
+import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 
 export const useTables = () => {
   const [tables, setTables] = useState<Table[]>([]);
@@ -14,11 +18,15 @@ export const useTables = () => {
   const [error, setError] = useState<string | null>(null);
 
   const tableRepository = new TableRepositoryImpl();
+  const sessionRepository = new SessionRepositoryImpl();
+  
   const getAllTablesUseCase = new GetAllTablesUseCase(tableRepository);
   const createTableUseCase = new CreateTableUseCase(tableRepository);
   const updateTablePositionUseCase = new UpdateTablePositionUseCase(tableRepository);
   const deleteTableUseCase = new DeleteTableUseCase(tableRepository);
   const toggleTableOccupationUseCase = new ToggleTableOccupationUseCase(tableRepository);
+  const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
+  const endSessionUseCase = new EndSessionUseCase(sessionRepository);
 
   
   useEffect(() => {
@@ -89,16 +97,41 @@ export const useTables = () => {
       const table = tables.find(t => t.id === tableId);
       if (!table) throw new Error('Mesa no encontrada');
 
-      const newOccupationStatus = await toggleTableOccupationUseCase.execute(
+      const newOccupationStatus = !table.isOccupied;
+
+      // 1. Actualizar el estado de ocupación de la mesa
+      const updatedStatus = await toggleTableOccupationUseCase.execute(
         tableId,
-        !table.isOccupied
+        newOccupationStatus
       );
 
+      // 2. Si la mesa se está desocupando (de ocupada a libre), finalizar la sesión
+      if (!newOccupationStatus && table.isOccupied) {
+        console.log('Mesa se está desocupando, finalizando sesión...');
+        
+        try {
+          // Buscar sesiones activas de la mesa
+          const activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+          
+          if (activeSession != null) {
+            await endSessionUseCase.execute(activeSession.id);
+            console.log('Sesión finalizada:', activeSession.id);
+          } else {
+            console.log('No hay sesiones activas para finalizar');
+          }
+        } catch (sessionErr: any) {
+          console.error('Error al finalizar sesión:', sessionErr);
+          // No lanzar error, ya que el cambio de ocupación fue exitoso
+        }
+      }
+
+      // 3. Actualizar estado local de la mesa
       setTables(prev =>
         prev.map(t =>
-          t.id === tableId ? { ...t, isOccupied: newOccupationStatus } : t
+          t.id === tableId ? { ...t, isOccupied: updatedStatus } : t
         )
       );
+
     } catch (err: any) {
       setError(err.message || 'Error al cambiar el estado de ocupación');
       throw err;

@@ -9,15 +9,13 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(tableId: string, items: OrderDetailItem[]): Promise<Order> {
-    // Validaciones de negocio
+   
     if (items.length === 0) {
       throw new Error('La orden debe contener al menos un producto');
     }
 
-    // Validar que la mesa existe
     await this.tableRepository.getById(tableId);
-
-    // Validar cantidades
+    
     for (const item of items) {
       if (item.quantity <= 0) {
         throw new Error('Las cantidades deben ser mayores a 0');

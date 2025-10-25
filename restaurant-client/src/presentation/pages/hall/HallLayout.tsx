@@ -63,8 +63,7 @@ const HallLayout = () => {
 
   const handleCreateOrder = async (tableId: string, items: OrderDetailItem[]) => {
     try {
-      const order = await createOrder(tableId, items);
-      
+      const order = await createOrder(tableId, items);        
       const table = tables.find(t => t.id === tableId);
       const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 

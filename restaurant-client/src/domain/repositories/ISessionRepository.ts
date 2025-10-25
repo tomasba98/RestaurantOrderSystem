@@ -9,5 +9,5 @@ export interface ISessionRepository {
   getAll(): Promise<TableSession[]>;
   start(data: CreateSessionData): Promise<TableSession>;
   end(id: string): Promise<void>;
-  getActiveByTable(tableId: string): Promise<TableSession[]>;
+  getActiveByTable(tableId: string): Promise<TableSession>;
 }
