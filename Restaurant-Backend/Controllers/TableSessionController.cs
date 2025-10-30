@@ -75,7 +75,7 @@ public class TableSessionController : BaseController
     /// </summary>
     /// <param name="sessionRequest">The session data to start.</param>
     /// <returns>The created session data.</returns>
-    [Authorize(Roles = "Admin,Manager,Waiter")]
+    [Authorize(Roles = "Admin,Manager,Waiter")] 
     [HttpPost("start")]
     public async Task<IActionResult> StartSession([FromBody] SessionRequest sessionRequest)
     {
@@ -100,7 +100,7 @@ public class TableSessionController : BaseController
     /// <param name="sessionId">The ID of the session to end.</param>
     /// <returns>A confirmation message if successful.</returns>
     [Authorize(Roles = "Admin,Manager,Waiter")]
-    [HttpPatch("{sessionId}/end")]
+    [HttpPatch("end/{sessionId}")]
     public async Task<IActionResult> EndSession(Guid sessionId)
     {     
         try

@@ -85,7 +85,7 @@ export const useOrders = () => {
       // 1. Verificar si existe una sesión activa, si no, crear una
       let activeSession = await getActiveSessionByTableUseCase.execute(tableId);
       
-      if (activeSession === null) {
+      if (!activeSession) {
         console.log('No hay sesión activa, creando nueva sesión para la mesa:', tableId);
         await startSessionUseCase.execute({ tableId });
         // Recargar sesiones activas

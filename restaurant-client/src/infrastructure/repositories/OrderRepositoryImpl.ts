@@ -1,8 +1,5 @@
 import type { Order } from '@/domain/entities/Order';
-import type { 
-  IOrderRepository, 
-  CreateOrderData, 
-} from '@/domain/repositories/IOrderRepository';
+import type {   IOrderRepository,   CreateOrderData, } from '@/domain/repositories/IOrderRepository';
 import { apiClient } from '../http/ApiClient';
 import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 

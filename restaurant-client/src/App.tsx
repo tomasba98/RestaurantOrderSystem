@@ -12,6 +12,7 @@ import { Roles } from './domain/entities/User';
 import OrdersPage from './presentation/pages/order/OrdersPage';
 import KitchenPage from './presentation/pages/kitchen/KitchenPage';
 import ProductsPage from './presentation/pages/product/ProductPage';
+import SessionsPage from './presentation/pages/session/SessionPage';
 
 function App() {
   return (
@@ -70,6 +71,16 @@ function App() {
             element={
               <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
                 <ProductsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Gestión de Productos - Admin y Manager */}
+          <Route
+            path="/sessions"
+            element={
+              <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
+                <SessionsPage />
               </ProtectedRoute>
             }
           />

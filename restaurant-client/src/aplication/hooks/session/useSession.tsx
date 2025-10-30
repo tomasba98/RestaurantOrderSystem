@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react';
 import type { TableSession } from '@/domain/entities/Session';
 import type { CreateSessionData } from '@/domain/repositories/ISessionRepository';
 import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
-import { GetAllSessionsUseCase } from '@/domain/usecases/session/GetAllSessionUseCase';
 import { GetSessionByIdUseCase } from '@/domain/usecases/session/GetSessionByIdUseCase';
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
+import { GetAllSessionsUseCase } from '@/domain/usecases/session/GetAllSessionUseCase';
 
 export const useSession = () => {
   const [sessions, setSessions] = useState<TableSession[]>([]);
@@ -16,7 +16,7 @@ export const useSession = () => {
 
   const sessionRepository = new SessionRepositoryImpl();
   
-  const getAllSessionsUseCase = new GetAllSessionsUseCase(sessionRepository);
+  const getAllSessionsUseCase = new GetAllSessionsUseCase (sessionRepository);
   const getSessionByIdUseCase = new GetSessionByIdUseCase(sessionRepository);
   const startSessionUseCase = new StartSessionUseCase(sessionRepository);
   const endSessionUseCase = new EndSessionUseCase(sessionRepository);

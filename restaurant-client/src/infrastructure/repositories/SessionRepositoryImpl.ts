@@ -3,7 +3,7 @@ import type { CreateSessionData, ISessionRepository } from "@/domain/repositorie
 import { apiClient } from '../http/ApiClient';
 
 export class SessionRepositoryImpl implements ISessionRepository {
-    private readonly basePath = '/Session';
+    private readonly basePath = '/TableSession';
   
     async getAll(): Promise<TableSession[]> {
       return await apiClient.get<TableSession[]>(this.basePath);
@@ -13,15 +13,15 @@ export class SessionRepositoryImpl implements ISessionRepository {
       return await apiClient.get<TableSession>(`${this.basePath}/${id}`);
     }
   
-    async getActiveByTable(id: string): Promise<TableSession[]> {
-      return await apiClient.get<TableSession[]>(`${this.basePath}/${id}`);
+    async getActiveByTable(id: string): Promise<TableSession> {
+      return await apiClient.get<TableSession>(`${this.basePath}/table/${id}`);
     }
   
     async start(data: CreateSessionData): Promise<TableSession> {
-      return await apiClient.post<TableSession>(this.basePath, data);
+      return await apiClient.post<TableSession>(`${this.basePath}/start`, data);
     }  
   
     async end(id: string): Promise<void> {
-      await apiClient.delete(`${this.basePath}/${id}`);
+      await apiClient.delete(`${this.basePath}/end/${id}`);
     }
 }

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Box, Snackbar, Alert, Typography, useTheme, CircularProgress } from '@mui/material';
+import { Box, Snackbar, Alert, Typography, useTheme, CircularProgress, Paper, Chip } from '@mui/material';
+import { AccessTime, CheckCircle } from '@mui/icons-material';
 import Hall from '@/presentation/components/hall/Hall';
 import { useTables } from '@/aplication/hooks/table/useTables';
 import { useProducts } from '@/aplication/hooks/product/useProducts';
 import { useOrders } from '@/aplication/hooks/order/useOrders';
+import { useSession } from '@/aplication/hooks/session/useSession';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 
 const HallLayout = () => {
@@ -34,6 +36,13 @@ const HallLayout = () => {
     clearError: clearOrderError,
   } = useOrders();
 
+  const {
+    sessions,
+    loadSessions,
+    getActiveSessions,
+    getSessionStats,
+  } = useSession();
+
   const [notification, setNotification] = useState<{
     open: boolean;
     message: string;
@@ -48,6 +57,15 @@ const HallLayout = () => {
 
   useEffect(() => {
     loadAvailableProducts();
+    loadSessions();
+  }, []);
+
+  // refresh sesion 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadSessions();
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
@@ -75,6 +93,8 @@ const HallLayout = () => {
       if (table && !table.isOccupied) {
         await toggleTableOccupation(tableId);
       }
+
+      loadSessions();
     } catch (error: any) {
       console.error('Error creating order:', error);
       showNotification(error.message || 'Error al crear la orden', 'error');
@@ -90,6 +110,9 @@ const HallLayout = () => {
         `Mesa ${table?.number} ${newStatus ? 'marcada como ocupada' : 'liberada'}`,
         'info'
       );
+
+      // Reload sessions after toggling occupation
+      loadSessions();
     } catch (error) {
       console.error('Error updating table occupation:', error);
       showNotification('Error al actualizar el estado de la mesa', 'error');
@@ -136,6 +159,24 @@ const HallLayout = () => {
     }
   };
 
+  const getSessionDuration = (sessionId: string): string => {
+    const session = sessions.find(s => s.id === sessionId);
+    if (!session) return '';
+    
+    const start = new Date(session.createdAt);
+    const now = new Date();
+    const durationMs = now.getTime() - start.getTime();
+    const minutes = Math.floor(durationMs / 60000);
+    
+    if (minutes < 60) {
+      return `${minutes} min`;
+    }
+    
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}m`;
+  };
+
   // Show loading state
   if ((tablesLoading || productsLoading) && tables.length === 0 && products.length === 0) {
     return (
@@ -158,6 +199,8 @@ const HallLayout = () => {
   const occupiedTables = tables.filter(table => table.isOccupied).length;
   const totalTables = tables.length;
   const availableProducts = products.length;
+  const activeSessions = getActiveSessions();
+  const sessionStats = getSessionStats();
 
   return (
     <Box
@@ -172,14 +215,67 @@ const HallLayout = () => {
       }}
     >
       {/* Header */}
-      <Box sx={{ mb: 2, textAlign: 'center' }}>
+      <Box sx={{ mb: 2, textAlign: 'center', width: '100%', maxWidth: 1200 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Gestión de Mesas
         </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          {occupiedTables} de {totalTables} mesas ocupadas • {availableProducts} productos disponibles
-        </Typography>
+        <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
+          <Chip 
+            label={`${occupiedTables} de ${totalTables} mesas ocupadas`}
+            color="primary"
+            variant="outlined"
+          />
+          <Chip 
+            label={`${availableProducts} productos disponibles`}
+            color="secondary"
+            variant="outlined"
+          />
+          <Chip 
+            icon={<AccessTime />}
+            label={`${sessionStats.active} sesiones activas`}
+            color="success"
+            variant="outlined"
+          />
+          <Chip 
+            icon={<CheckCircle />}
+            label={`${sessionStats.completed} completadas`}
+            color="default"
+            variant="outlined"
+          />
+        </Box>
       </Box>
+
+      {/* Active Sessions Info */}
+      {activeSessions.length > 0 && (
+        <Paper 
+          elevation={2} 
+          sx={{ 
+            p: 2, 
+            mb: 2, 
+            width: '100%', 
+            maxWidth: 1200,
+            backgroundColor: theme.palette.background.paper 
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Sesiones Activas
+          </Typography>
+          <Box display="flex" gap={2} flexWrap="wrap">
+            {activeSessions.map(session => {
+              const table = tables.find(t => t.id === session.tableId);
+              return (
+                <Chip
+                  key={session.id}
+                  icon={<AccessTime />}
+                  label={`Mesa ${table?.number || '?'}: ${getSessionDuration(session.id)}`}
+                  color="success"
+                  size="small"
+                />
+              );
+            })}
+          </Box>
+        </Paper>
+      )}
 
       {/* Hall Component */}
       <Hall
