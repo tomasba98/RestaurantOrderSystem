@@ -4,7 +4,6 @@ import type { CreateProductData, UpdateProductData } from '@/domain/repositories
 import type { PaginationParams, PaginatedResponse } from '@/utils/Pagination';
 import { ProductRepositoryImpl } from '@/infrastructure/repositories/ProductRepositoryImpl';
 import { CreateProductUseCase } from '@/domain/usecases/product/CreateProductUseCase';
-import { ToggleProductAvailabilityUseCase } from '@/domain/usecases/product/ToggleProductAvailabilityUseCase';
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -15,7 +14,6 @@ export const useProducts = () => {
   const productRepository = new ProductRepositoryImpl();
   
   const createProductUseCase = new CreateProductUseCase(productRepository);
-  const toggleProductAvailabilityUseCase = new ToggleProductAvailabilityUseCase(productRepository);
 
   // Get all products
   const loadProducts = useCallback(async (): Promise<Product[]> => {
@@ -146,7 +144,7 @@ export const useProducts = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const updatedProduct = await toggleProductAvailabilityUseCase.execute(id);
+      const updatedProduct = await productRepository.toggleAvailability(id);
       
       setProducts(prev =>
         prev.map(product => product.id === id ? updatedProduct : product)
@@ -179,12 +177,14 @@ export const useProducts = () => {
 
   // Get available products count
   const getAvailableCount = useCallback((): number => {
-    return products.filter(p => p.isAvailable).length;
+    if (!Array.isArray(products)) return 0;
+    return products.filter(p => p && p.isAvailable).length;
   }, [products]);
 
   // Get unavailable products count
   const getUnavailableCount = useCallback((): number => {
-    return products.filter(p => !p.isAvailable).length;
+    if (!Array.isArray(products)) return 0;
+    return products.filter(p => p && !p.isAvailable).length;
   }, [products]);
 
   // Search products by name

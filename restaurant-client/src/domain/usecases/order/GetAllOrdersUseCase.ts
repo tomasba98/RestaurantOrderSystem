@@ -5,16 +5,14 @@ import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 export class GetAllOrdersUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
-  async execute(params?: PaginationParams): Promise<PaginatedResponse<Order>> {
-    // Parámetros por defecto si no se proporcionan
+  async execute(params?: PaginationParams): Promise<PaginatedResponse<Order>> {    
     const defaultParams: PaginationParams = {
       pageNumber: params?.pageNumber ?? 1,
       pageSize: params?.pageSize ?? 10,
       sortBy: params?.sortBy ?? 'createdAt',
       sortDirection: params?.sortDirection ?? 'desc',
     };
-
-    // Validar parámetros de paginación
+    
     if (defaultParams.pageNumber! < 1) {
       throw new Error('El número de página debe ser mayor o igual a 1');
     }

@@ -155,7 +155,7 @@ public class ProductController : BaseController
     /// <returns>An IActionResult with the updated product or an error message.</returns>
     [Authorize(Roles = "Admin,Manager,Kitchen")]
     [HttpPatch("{productId}/toggle-availability")]
-    public async Task<IActionResult> ToggleProductAvailability(Guid productId, bool productStatus)
+    public async Task<IActionResult> ToggleProductAvailability(Guid productId)
     {       
         try
         {
@@ -163,7 +163,7 @@ public class ProductController : BaseController
             if (product is null)
                 return NotFound("Product not found");
 
-            product.IsAvailable = productStatus;
+            product.IsAvailable = !product.IsAvailable;
 
             var updatedProduct = await _productService.UpdateProductAsync(product);
             var productResponse = _mapper.Map<ProductResponse>(updatedProduct);

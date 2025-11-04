@@ -11,42 +11,34 @@ export class OrderRepositoryImpl implements IOrderRepository {
   }
 
   async getById(id: string): Promise<Order> {
-    const response = await apiClient.get<{ data: Order }>(`${this.basePath}/${id}`);
-    return response.data;
+    return await apiClient.get<Order>(`${this.basePath}/${id}`);    
   }
 
   async getByTable(tableId: string): Promise<Order[]> {
-    const response = await apiClient.get<{ data: Order[] }>(`${this.basePath}/table/${tableId}`);
-    return response.data;
+    return await apiClient.get<Order[]>(`${this.basePath}/table/${tableId}`);    
   }
 
   async getBySession(sessionId: string): Promise<Order[]> {
-    const response = await apiClient.get<{ data: Order[] }>(`${this.basePath}/session/${sessionId}`);
-    return response.data;
+    return await apiClient.get<Order[]>(`${this.basePath}/session/${sessionId}`);    
   }
 
   async create(data: CreateOrderData): Promise<Order> {
-    const response = await apiClient.post<{ data: Order }>(this.basePath, data);
-    return response.data;
+    return await apiClient.post<Order>(this.basePath, data);    
   }
 
   async updateStatus(id: string, status: string): Promise<Order> {
-    const response = await apiClient.patch<{ data: Order }>(`${this.basePath}/${id}/status`, { status });
-    return response.data;
+    return await apiClient.patch<Order>(`${this.basePath}/${id}/status`, { status });    
   }
 
   async cancel(id: string): Promise<Order> {
-    const response = await apiClient.patch<{ data: Order }>(`${this.basePath}/${id}/cancel`);
-    return response.data;
+    return await apiClient.patch<Order>(`${this.basePath}/${id}/cancel`);    
   }
 
   async getKitchenQueue(): Promise<Order[]> {
-    const response = await apiClient.get<{ data: Order[] }>(`${this.basePath}/kitchen/queue`);
-    return response.data;
+    return await apiClient.get<Order[]>(`${this.basePath}/kitchen/queue`);    
   }
 
   async markReady(id: string): Promise<Order> {
-    const response = await apiClient.patch<{ data: Order }>(`${this.basePath}/${id}/ready`);
-    return response.data;
+    return await apiClient.patch<Order>(`${this.basePath}/${id}/ready`);    
   }
 }

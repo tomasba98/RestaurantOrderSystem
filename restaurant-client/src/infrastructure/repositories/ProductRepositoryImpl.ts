@@ -16,23 +16,19 @@ export class ProductRepositoryImpl implements IProductRepository {
   }
 
   async getById(id: string): Promise<Product> {
-    const response = await apiClient.get<{ data: Product }>(`${this.basePath}/${id}`);
-    return response.data;
+    return await apiClient.get<Product>(`${this.basePath}/${id}`);
   }
 
   async getAvailable(): Promise<Product[]> {
-    const response = await apiClient.get<Product[]>(`${this.basePath}/available`);
-    return response;
+    return await apiClient.get<Product[]>(`${this.basePath}/available`);
   }
 
   async create(data: CreateProductData): Promise<Product> {
-    const response = await apiClient.post<{ data: Product }>(this.basePath, data);
-    return response.data;
+    return await apiClient.post<Product>(this.basePath, data);   
   }
 
   async update(id: string, data: UpdateProductData): Promise<Product> {
-    const response = await apiClient.put<{ data: Product }>(`${this.basePath}/${id}`, data);
-    return response.data;
+    return await apiClient.put<Product>(`${this.basePath}/${id}`, data);    
   }
 
   async delete(id: string): Promise<void> {
@@ -40,7 +36,6 @@ export class ProductRepositoryImpl implements IProductRepository {
   }
 
   async toggleAvailability(id: string): Promise<Product> {
-    const response = await apiClient.patch<{ data: Product }>(`${this.basePath}/${id}/toggle-availability`);
-    return response.data;
+    return await apiClient.patch<Product>(`${this.basePath}/${id}/toggle-availability`);
   }
 }
