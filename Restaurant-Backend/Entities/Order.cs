@@ -16,8 +16,10 @@ public class Order : EntityBase
     public required TableSession TableSession { get; set; }
 
     [NotMapped]
-    public decimal TotalAmount => ProductList.Sum(detail => detail.Quantity * detail.Product.Price);
-    public decimal TotalAmountHistory {  get; set; }
+    public decimal TotalAmountSum => ProductList.Sum(detail => detail.Quantity * detail.Product.Price);
+
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal TotalAmount {  get; set; }
 }
 
 public enum OrderStatus

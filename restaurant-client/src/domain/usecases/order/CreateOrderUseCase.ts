@@ -14,7 +14,7 @@ export class CreateOrderUseCase {
       throw new Error('La orden debe contener al menos un producto');
     }
 
-    await this.tableRepository.getById(tableId);
+    //await this.tableRepository.getById(tableId);
     
     for (const item of items) {
       if (item.quantity <= 0) {

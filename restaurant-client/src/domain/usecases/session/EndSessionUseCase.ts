@@ -7,8 +7,6 @@ export class EndSessionUseCase {
     if (!id || id.trim() === '') {
       throw new Error('El ID de la sesión es requerido');
     }
-
-    // Verificar que la sesión existe y está activa
     const session = await this.sessionRepository.getById(id);
     
     if (!session) {

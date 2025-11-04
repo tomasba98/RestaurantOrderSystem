@@ -15,10 +15,7 @@ const NavBar: React.FC = () => {
 
   const { isAuthenticated, user, logout } = auth;
   //onst { canTakeOrders, canViewKitchen } = roleCheck;
-
-  useEffect(() => {
-    console.log(isAuthenticated);
-  })
+  
   const handleLogout = async () => {
     await logout();
     navigate('/login');

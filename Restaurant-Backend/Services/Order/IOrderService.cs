@@ -5,6 +5,7 @@ using Restaurant_Backend.Entities;
 
 public interface IOrderService
 {
+    Task<IEnumerable<Order>> GetAllOrdersAsync();
     Task<Order> CreateOrderAsync(Order order);
 
     Task<Order> UpdateOrderAsync(Order order);

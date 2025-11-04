@@ -38,7 +38,6 @@ const ProductsPage: React.FC = () => {
 
   useEffect(() => {
     loadProducts();
-    console.log(getAvailableCount());
   }, []);
 
   useEffect(() => {

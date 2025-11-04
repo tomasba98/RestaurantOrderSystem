@@ -16,6 +16,7 @@ import { GetKitchenQueueUseCase } from '@/domain/usecases/order/GetkitchenQueueU
 import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUseCase';
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
+import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -35,15 +36,16 @@ export const useOrders = () => {
   const getKitchenQueueUseCase = new GetKitchenQueueUseCase(orderRepository);
   const markOrderReadyUseCase = new MarkOrderReadyUseCase(orderRepository);
   const startSessionUseCase = new StartSessionUseCase(sessionRepository);
+  const endSessionUseCase = new EndSessionUseCase(sessionRepository);
   const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
 
   // Get all orders
-  const loadOrders = useCallback(async (params?: PaginationParams) => {
+  const loadOrders = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getAllOrdersUseCase.execute(params);
-      setOrders(response.items);
+      const response = await getAllOrdersUseCase.execute();
+      setOrders(response);
       return response;
     } catch (err: any) {
       const errorMessage = err.message || 'Error al cargar las órdenes';
@@ -80,30 +82,26 @@ export const useOrders = () => {
   ): Promise<Order> => {
     try {
       setIsLoading(true);
-      setError(null);
-      
-      // 1. Verificar si existe una sesión activa, si no, crear una
+      setError(null);      
       let activeSession = await getActiveSessionByTableUseCase.execute(tableId);
       
       if (!activeSession) {
         console.log('No hay sesión activa, creando nueva sesión para la mesa:', tableId);
         await startSessionUseCase.execute({ tableId });
-        // Recargar sesiones activas
         activeSession = await getActiveSessionByTableUseCase.execute(tableId);
       }
       
       console.log('Usando sesión activa:', activeSession.id);
       
-      // 2. Crear la orden
       const newOrder = await createOrderUseCase.execute(tableId, items);
       
-      // 3. Actualizar estado local
       setOrders(prev => [newOrder, ...prev]);
       setCurrentOrder(newOrder);
       
       return newOrder;
     } catch (err: any) {
       const errorMessage = err.message || 'Error al crear la orden';
+      endSessionUseCase.execute(tableId);
       setError(errorMessage);
       console.error('Error creating order:', err);
       throw err;

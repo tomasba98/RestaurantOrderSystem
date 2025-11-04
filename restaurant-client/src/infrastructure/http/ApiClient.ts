@@ -22,11 +22,13 @@ class ApiClient {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
-        
+  
         if (import.meta.env.DEV) {
-          console.log(`🚀 [${config.method?.toUpperCase()}] ${config.url}`, config.data);
+          const method = config.method?.toUpperCase() ?? 'UNKNOWN';
+          const logData = config.data ? config.data : undefined;
+          console.log(`🚀 [${method}] ${config.url}`, logData);
         }
-        
+  
         return config;
       },
       (error) => {
@@ -34,18 +36,20 @@ class ApiClient {
         return Promise.reject(error);
       }
     );
-
+  
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         if (import.meta.env.DEV) {
-          console.log(`✅ [${response.status}] ${response.config.url}`, response.data);
+          const method = response.config.method?.toUpperCase() ?? 'UNKNOWN';
+          console.log(
+            `✅ [${response.status}] [${method}] ${response.config.url}`, response.data );
         }
         return response;
       },
       (error) => {
         if (error.response) {
           const { status } = error.response;
-          
+  
           switch (status) {
             case 401:
               localStorage.removeItem('auth_token');
@@ -61,8 +65,10 @@ class ApiClient {
               console.error('❌ Internal Server Error');
               break;
           }
+        } else {
+          console.error('❌ Network or unknown error:', error);
         }
-        
+  
         return Promise.reject(error);
       }
     );

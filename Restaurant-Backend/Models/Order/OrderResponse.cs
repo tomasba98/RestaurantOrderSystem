@@ -10,4 +10,6 @@ public class OrderResponse
     public DateTime CreatedAt { get; set; }             
     public OrderStatus Status { get; set; }      
     public List<OrderDetailResponse> ProductList { get; set; } = [];
+
+    public decimal TotalAmount { get; set; }
 }

@@ -4,21 +4,23 @@ import { OrderStatus, type Order } from '../../entities/Order';
 export class MarkOrderReadyUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
+  /**
+   * Marks an order as ready.
+   * @param {string} orderId The ID of the order to mark as ready.
+   * @throws {Error} If the order ID is invalid, the order does not exist, the order is not in the kitchen, or the order has no products.
+   * @returns {Promise<Order>} A promise that resolves with the updated order.
+   */
   async execute(orderId: string): Promise<Order> {
-    // Validate that the ID is not empty
     if (!orderId || orderId.trim() === '') {
       throw new Error('Order ID is required');
     }
 
-    // Get the current order
     const order = await this.orderRepository.getById(orderId);
     
-    // Validate that the order exists
     if (!order) {
       throw new Error(`Order not found with ID: ${orderId}`);
     }
 
-    // Validate that the order is in the correct status
     if (order.status !== OrderStatus.InKitchen) {
       throw new Error(
         `Only orders currently in the kitchen can be marked as ready. ` +
@@ -26,15 +28,12 @@ export class MarkOrderReadyUseCase {
       );
     }
 
-    // Validate that the order has products
     if (!order.productList || order.productList.length === 0) {
       throw new Error('The order has no products');
     }
 
-    // Mark the order as ready
     const updatedOrder = await this.orderRepository.markReady(orderId);
 
-    // Verify that the status was updated correctly
     if (updatedOrder.status !== OrderStatus.Ready) {
       throw new Error('Failed to update order status');
     }

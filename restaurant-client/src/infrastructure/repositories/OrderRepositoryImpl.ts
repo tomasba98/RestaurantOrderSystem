@@ -6,8 +6,8 @@ import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 export class OrderRepositoryImpl implements IOrderRepository {
   private readonly basePath = '/order';
 
-  async getAll(params?: PaginationParams): Promise<PaginatedResponse<Order>> {
-    return await apiClient.get<PaginatedResponse<Order>>(this.basePath, { params });
+  async getAll(): Promise<Order> {
+    return await apiClient.get<Order>(this.basePath);
   }
 
   async getById(id: string): Promise<Order> {

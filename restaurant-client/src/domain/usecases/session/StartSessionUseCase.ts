@@ -11,7 +11,7 @@ export class StartSessionUseCase {
     }
 
     const activeSessions = await this.sessionRepository.getActiveByTable(data.tableId);
-    if (activeSessions != null) {
+    if (activeSessions) {
       throw new Error('Ya existe una sesión activa para esta mesa');
     }
 

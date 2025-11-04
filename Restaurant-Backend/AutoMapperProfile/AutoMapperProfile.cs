@@ -46,21 +46,28 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => src.EndTime))
             .ForMember(dest => dest.Orders, opt => opt.MapFrom(src => src.Orders));
         CreateMap<SessionRequest, TableSession>()
-           .AfterMap((src, dest, ctx) =>
-           {
-               using var scope = _serviceProvider.CreateScope();
-               var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            .AfterMap((src, dest) =>
+            {
+                dest.TableId = src.TableId;
+                dest.Table = null; // opcional, solo para dejarlo claro
+                dest.IsActive = true;
+            });
+        //CreateMap<SessionRequest, TableSession>()
+        //   .AfterMap((src, dest, ctx) =>
+        //   {
+        //       using var scope = _serviceProvider.CreateScope();
+        //       var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-               ctx.ResolveEntity<SessionRequest, TableSession, Table>(
-                   src,
-                   dest,
-                   s => s.TableId,
-                   (d, e) => d.Table = e,
-                   (d, id) => d.TableId = (Guid)id,
-                   dbContext
-               );
-               dest.IsActive = true;
-           });
+        //       ctx.ResolveEntity<SessionRequest, TableSession, Table>(
+        //           src,
+        //           dest,
+        //           s => s.TableId,
+        //           (d, e) => d.Table = e,
+        //           (d, id) => d.TableId = (Guid)id,
+        //           dbContext
+        //       );
+        //       dest.IsActive = true;
+        //   });
 
         //User
         CreateMap<RegisterUserRequest, User>()

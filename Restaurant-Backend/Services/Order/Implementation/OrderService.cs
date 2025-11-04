@@ -13,9 +13,15 @@ public class OrderService : IOrderService
     {
         _orderGenericService = orederGenericService;
     }
+
+    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+    {
+        return await _orderGenericService.FindAllAsync();            
+    }
+
     public async Task<Order> CreateOrderAsync(Order order)
     {
-        order.TotalAmountHistory = order.TotalAmount;
+        order.TotalAmount = order.TotalAmountSum;
         await _orderGenericService.InsertAsync(order);
         return order;
     }

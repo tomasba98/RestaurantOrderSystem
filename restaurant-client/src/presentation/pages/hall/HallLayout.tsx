@@ -81,7 +81,11 @@ const HallLayout = () => {
 
   const handleCreateOrder = async (tableId: string, items: OrderDetailItem[]) => {
     try {
-      const order = await createOrder(tableId, items);        
+      const order = await createOrder(tableId, items);
+
+      if (!order || !order.id) {
+        throw new Error("No se pudo crear la orden correctamente.");
+      }      
       const table = tables.find(t => t.id === tableId);
       const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -110,8 +114,6 @@ const HallLayout = () => {
         `Mesa ${table?.number} ${newStatus ? 'marcada como ocupada' : 'liberada'}`,
         'info'
       );
-
-      // Reload sessions after toggling occupation
       loadSessions();
     } catch (error) {
       console.error('Error updating table occupation:', error);
@@ -213,7 +215,8 @@ const HallLayout = () => {
         backgroundColor: theme.palette.background.default,
         p: 2
       }}
-    >
+    >     
+
       {/* Header */}
       <Box sx={{ mb: 2, textAlign: 'center', width: '100%', maxWidth: 1200 }}>
         <Typography variant="h4" component="h1" gutterBottom>
@@ -291,13 +294,12 @@ const HallLayout = () => {
         onDeleteTable={handleDeleteTable}
         loading={orderLoading}
       />
-
       {/* Notifications */}
       <Snackbar
         open={notification.open || !!tablesError || !!productsError || !!orderError}
         autoHideDuration={6000}
         onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Alert
           onClose={handleCloseNotification}
@@ -311,6 +313,7 @@ const HallLayout = () => {
           {tablesError || productsError || orderError || notification.message}
         </Alert>
       </Snackbar>
+
     </Box>
   );
 };

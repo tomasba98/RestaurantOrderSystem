@@ -64,7 +64,6 @@ const Hall: React.FC<HallProps> = ({
 
   const handleCreateOrderSubmit = async (tableId: string, items: OrderDetailItem[]) => {
     await onCreateOrder(tableId, items);
-    onToggleTableOccupied(tableId);
   };
 
   const handleDeleteTable = (tableId: string) => {

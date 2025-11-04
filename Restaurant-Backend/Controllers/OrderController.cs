@@ -59,6 +59,25 @@ public class OrderController : BaseController
         }
     }
 
+    [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
+    [HttpGet()]
+    public async Task<ActionResult> GetAllOrders()
+    {
+        try
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            return Ok(orders);
+        }
+        catch (OrderNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
     /// <summary>
     /// Retrieves all orders associated with a specific table.
     /// </summary>
@@ -189,6 +208,8 @@ public class OrderController : BaseController
             var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
             if (failed)
                 return NotFound($"Product {missingProductId} not found.");
+
+            order.TotalAmount = order.TotalAmountSum;
 
             var createdOrder = await _orderService.CreateOrderAsync(order);
             var createdOrderResponse = _mapper.Map<OrderResponse>(createdOrder);

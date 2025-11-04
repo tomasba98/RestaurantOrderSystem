@@ -12,7 +12,7 @@ export interface CreateOrderData {
 }
 
 export interface IOrderRepository {
-  getAll(params?: PaginationParams): Promise<PaginatedResponse<Order>>;
+  getAll(): Promise<Order>;
   getById(id: string): Promise<Order>;
   getByTable(tableId: string): Promise<Order[]>;
   getBySession(sessionId: string): Promise<Order[]>;

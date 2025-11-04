@@ -5,33 +5,31 @@ import { OrderStatus } from '../../entities/Order';
 export class GetKitchenQueueUseCase {
   constructor(private orderRepository: IOrderRepository) {}
 
+  /**
+   * Retrieves all orders in the kitchen queue, sorted by priority.
+   * The priority is as follows:
+   * 1. Confirmed orders (waiting to start) come first.
+   * 2. Orders already in the kitchen come next.
+   * 3. Within each group, orders are sorted by creation time (oldest first).
+   * @returns A promise that resolves with an array of orders in the kitchen queue, sorted by priority.
+   */
   async execute(): Promise<Order[]> {
-    // Get all orders in the kitchen queue
     const orders = await this.orderRepository.getKitchenQueue();
     
-    // Filter only relevant orders for the kitchen
-    // Confirmed: Waiting to be processed
-    // InKitchen: Currently being prepared
     const kitchenStatuses = [OrderStatus.Confirmed, OrderStatus.InKitchen];
     
     const filteredOrders = orders.filter(order => 
       kitchenStatuses.includes(order.status)
     );
 
-    // Sort orders by priority:
-    // 1. Confirmed first (waiting to start)
-    // 2. Then the ones already in the kitchen
-    // 3. Within each group, sort by time (oldest first)
     const sortedOrders = filteredOrders.sort((a, b) => {
-      // Priority by status
       if (a.status === OrderStatus.Confirmed && b.status === OrderStatus.InKitchen) {
-        return -1; // a goes first
+        return -1;
       }
       if (a.status === OrderStatus.InKitchen && b.status === OrderStatus.Confirmed) {
-        return 1; // b goes first
-      }
+        return 1; 
+      }      
       
-      // If they have the same status, sort by creation date (oldest first)
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
       return dateA - dateB;

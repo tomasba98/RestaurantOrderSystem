@@ -1,4 +1,3 @@
-// src/aplication/hooks/table/useTables.ts
 import { useState, useEffect } from 'react';
 import type { Table } from '@/domain/entities/Table';
 import type { CreateTableData } from '@/domain/repositories/ITableRepository';
@@ -98,22 +97,17 @@ export const useTables = () => {
       if (!table) throw new Error('Mesa no encontrada');
 
       const newOccupationStatus = !table.isOccupied;
-
-      // 1. Actualizar el estado de ocupación de la mesa
       const updatedStatus = await toggleTableOccupationUseCase.execute(
         tableId,
         newOccupationStatus
       );
 
-      // 2. Si la mesa se está desocupando (de ocupada a libre), finalizar la sesión
       if (!newOccupationStatus && table.isOccupied) {
-        console.log('Mesa se está desocupando, finalizando sesión...');
         
         try {
-          // Buscar sesiones activas de la mesa
           const activeSession = await getActiveSessionByTableUseCase.execute(tableId);
           
-          if (activeSession != null) {
+          if (activeSession) {
             await endSessionUseCase.execute(activeSession.id);
             console.log('Sesión finalizada:', activeSession.id);
           } else {
@@ -121,11 +115,9 @@ export const useTables = () => {
           }
         } catch (sessionErr: any) {
           console.error('Error al finalizar sesión:', sessionErr);
-          // No lanzar error, ya que el cambio de ocupación fue exitoso
         }
       }
 
-      // 3. Actualizar estado local de la mesa
       setTables(prev =>
         prev.map(t =>
           t.id === tableId ? { ...t, isOccupied: updatedStatus } : t
