@@ -22,7 +22,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
   async logout(): Promise<void> {
     try {
       await apiClient.post('/auth/logout');
-      localStorage.removeItem('auth_token');
+      sessionStorage.removeItem('auth_token');
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Error al cerrar sesión');
     }

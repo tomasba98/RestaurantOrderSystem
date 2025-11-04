@@ -3,12 +3,10 @@ import type { IAuthRepository } from "@/domain/repositories/IAuthRepository";
 export class LogoutUseCase {
     constructor(private authRepository: IAuthRepository) {}
 
-    execute(): Promise<void> {
-        
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('auth_user');
+    execute(): Promise<void> {        
 
-        //return this.authRepository.logout();
+        sessionStorage.removeItem('auth_token');
+        
         return Promise.resolve();
     }
 }

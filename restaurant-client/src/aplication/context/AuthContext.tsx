@@ -7,6 +7,14 @@ import { type User, Roles } from '../../domain/entities/User';
 import type { LoginDTO } from '../dto/AuthDTO';
 import type { RegisterData } from '@/domain/repositories/IAuthRepository';
 
+// CAMBIO: Verificación de HTTPS obligatoria en producción
+const isProduction = import.meta.env.PROD;
+const isSecureContext = window.isSecureContext;
+
+if (isProduction && !isSecureContext) {
+  throw new Error('La aplicación debe ejecutarse sobre HTTPS en producción');
+}
+
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -34,13 +42,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('auth_token');
+      const token = sessionStorage.getItem('auth_token');
       if (token) {
         try {
           const currentUser = await authRepository.getProfile();
           setUser(currentUser);
         } catch (error) {
-          localStorage.removeItem('auth_token');
+          sessionStorage.removeItem('auth_token');
         }
       }
       setIsLoading(false);
@@ -53,15 +61,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       setIsLoading(true);
       setError(null);
-      await loginUseCase.execute(credentials);
       
-      const userProfile = await authRepository.getProfile();      
-      localStorage.setItem('auth_user', JSON.stringify(userProfile));
+      await loginUseCase.execute(credentials);
+      const userProfile = await authRepository.getProfile();
       setUser(userProfile);
 
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión');
-      logoutUseCase.execute();
+      await logoutUseCase.execute();
       throw err;
     } finally {
       setIsLoading(false);

@@ -18,15 +18,21 @@ class ApiClient {
   private setupInterceptors(): void {
     this.client.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('auth_token');
+        const token = sessionStorage.getItem('auth_token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
   
         if (import.meta.env.DEV) {
           const method = config.method?.toUpperCase() ?? 'UNKNOWN';
-          const logData = config.data ? config.data : undefined;
-          console.log(`🚀 [${method}] ${config.url}`, logData);
+          const url = config.url;
+          
+          if (url?.includes('/login') || url?.includes('/register')) {
+            console.log(`🚀 [${method}] ${url} [CREDENTIALS HIDDEN]`);
+          } else {
+            const logData = config.data ? config.data : undefined;
+            console.log(`🚀 [${method}] ${url}`, logData);
+          }
         }
   
         return config;
@@ -52,7 +58,7 @@ class ApiClient {
   
           switch (status) {
             case 401:
-              localStorage.removeItem('auth_token');
+              sessionStorage.removeItem('auth_token');
               window.location.href = '/login';
               break;
             case 403:
@@ -99,6 +105,5 @@ class ApiClient {
     return response.data;
   }
 }
-
 
 export const apiClient = new ApiClient(import.meta.env.VITE_API_URL || 'http://localhost:5000/api');

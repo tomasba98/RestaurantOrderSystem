@@ -10,9 +10,9 @@ export class LoginUseCase {
         throw new Error('El nombre de usuario y contraseña son requeridos');
       }        
 
-      const authResponse = await this.authRepository.login(credentials);
-  
-      localStorage.setItem('auth_token', authResponse.token);      
+      const authResponse = await this.authRepository.login(credentials);  
+      
+      sessionStorage.setItem('auth_token', authResponse.token);        
   
       return authResponse;
     } 
