@@ -26,9 +26,11 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.OrderId, opt => opt.Ignore())
             .ForMember(dest => dest.Order, opt => opt.Ignore())
             .ForMember(dest => dest.Product, opt => opt.Ignore());
-        CreateMap<Order, OrderResponse>();
+        CreateMap<Order, OrderResponse>()
+            .ForMember(dest => dest.TableNumber, opt => opt.MapFrom(src => src.Table.Number));
         CreateMap<OrderDetail, OrderDetailResponse>()
-            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description));
 
 
         //Product

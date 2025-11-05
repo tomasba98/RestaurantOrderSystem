@@ -4,6 +4,7 @@ export interface Order {
     status: OrderStatus;
     productList: OrderDetail[];
     tableSessionId: string;
+    tableNumber: string;
     totalAmount: number;
     totalAmountHistory: number;
     createdAt: string;
@@ -13,15 +14,17 @@ export interface Order {
     id: string;
     orderId: string;
     productId: string;
+    productName: string;
+    description: string;
     quantity: number;
     createdAt: string;
   }
-  
+
   export enum OrderStatus {
-    Confirmed = 'Confirmed',
-    InKitchen = 'InKitchen',
-    Ready = 'Ready',
-    Served = 'Served',
-    Paid = 'Paid',
-    Canceled = 'Canceled'
+    Confirmed = 0,
+    InKitchen = 1,
+    Ready = 2,
+    Served = 3,
+    Paid = 4,
+    Canceled = 5
   }

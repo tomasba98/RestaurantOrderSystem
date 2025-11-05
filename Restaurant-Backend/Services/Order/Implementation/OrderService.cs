@@ -16,7 +16,14 @@ public class OrderService : IOrderService
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {
-        return await _orderGenericService.FindAllAsync();            
+        var orders = await _orderGenericService
+            .FilterByExpressionLinq(order => true)
+            .Include(order => order.Table)
+            .Include(order => order.ProductList)
+            .ThenInclude(item => item.Product)
+            .ToListAsync();
+
+        return orders;
     }
 
     public async Task<Order> CreateOrderAsync(Order order)
@@ -36,6 +43,7 @@ public class OrderService : IOrderService
     {
         var order = await _orderGenericService
          .FilterByExpressionLinq(order => order.Id == orderId)
+         .Include(order => order.Table)
          .Include(order => order.ProductList)
          .ThenInclude(item => item.Product)
          .FirstOrDefaultAsync()
@@ -48,6 +56,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableId == tableId )
+            .Include(order => order.Table)
             .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .ToListAsync();
@@ -57,6 +66,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
             .FilterByExpressionLinq(order => order.TableSessionId == tableSessionId)
+            .Include(order => order.Table)
             .Include(order => order.ProductList)
             .ThenInclude(item => item.Product)
             .ToListAsync();
@@ -83,6 +93,7 @@ public class OrderService : IOrderService
     {
         return await _orderGenericService
                         .FilterByExpressionLinq(order => order.Status == status)
+                        .Include(order => order.Table)
                         .Include(order => order.ProductList)
                         .ThenInclude(item => item.Product)
                         .ToListAsync();

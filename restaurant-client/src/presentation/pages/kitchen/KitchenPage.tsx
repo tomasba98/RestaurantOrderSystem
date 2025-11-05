@@ -1,31 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  Chip,
-  CircularProgress,
-  Alert,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  Grid,
-} from '@mui/material';
-
-import {
-  Refresh,
-  Kitchen,
-  CheckCircle,
-  Cancel,
-  Timer,
-  RestaurantMenu,
-} from '@mui/icons-material';
+import {  Box,  Container,  Typography,  Card,  CardContent,  CardActions,  Button,  Chip,  CircularProgress,  Alert,  IconButton,  List,  ListItem,  ListItemText,  Divider,  Grid,} from '@mui/material';
+import {  Refresh,  Kitchen,  CheckCircle,  Cancel,  Timer,  RestaurantMenu,} from '@mui/icons-material';
 
 import { useOrders } from '@/aplication/hooks/order/useOrders';
 import { OrderStatus } from '@/domain/entities/Order';
@@ -121,6 +96,7 @@ const KitchenPage: React.FC = () => {
             <Card
             sx={{
                 height: '100%',
+                width: '300px',
                 display: 'flex',
                 flexDirection: 'column',
                 border: isConfirmed ? '2px solid #ff9800' : 'none',
@@ -130,7 +106,7 @@ const KitchenPage: React.FC = () => {
             <CardContent sx={{ flexGrow: 1 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Typography variant="h6" component="div">
-                    Mesa #{order.tableId.slice(-4)}
+                    Mesa #{order.tableNumber}
                 </Typography>
                 <Chip
                     icon={<Timer fontSize="small" />}
@@ -153,19 +129,39 @@ const KitchenPage: React.FC = () => {
                 <Typography variant="subtitle2" gutterBottom>
                 Productos:
                 </Typography>
-                <List dense>
-                {order.productList.map((item) => (
-                    <ListItem key={item.id} sx={{ px: 0 }}>
+                <List dense disablePadding>
+                  {order.productList.map((item) => (
+                    <ListItem
+                      key={item.id}
+                      disableGutters
+                      sx={{
+                        py: 0,
+                        my: 0,
+                        minHeight: 'unset', // <-- elimina el minHeight impuesto por MUI
+                      }}
+                    >
                     <ListItemText
-                        primary={
-                        <Typography variant="body2">
-                            <strong>{item.quantity}x</strong> Producto {item.productId.slice(-4)}
+                      primary={
+                        <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                          <strong>{item.quantity}x</strong> {item.productName}
                         </Typography>
-                        }
+                      }
+                      secondary={
+                        item.description && (
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: 'block', ml: 4, lineHeight: 1.1 }}
+                          >
+                            {item.description}
+                          </Typography>
+                        )
+                      }
                     />
-                    </ListItem>
+                  </ListItem>
                 ))}
-                </List>
+              </List>
+
 
                 <Divider sx={{ my: 2 }} />
 

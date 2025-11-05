@@ -26,6 +26,11 @@ const OrdersPage: React.FC = () => {
     loadOrders();
   }, []);
 
+  useEffect(() => {
+    console.log('Orders data:', orders);
+    console.log('Orders stats:', getOrderStats());
+  }, [orders]);
+
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
   };
@@ -127,7 +132,7 @@ const OrdersPage: React.FC = () => {
   const filterOrdersByTab = () => {
     switch (currentTab) {
       case 0: // Todas
-        return orders.filter(o => o.status !== OrderStatus.Paid && o.status !== OrderStatus.Canceled);
+        return orders;
       case 1: // Pendientes
         return getOrdersByStatus(OrderStatus.Confirmed);
       case 2: // En Cocina
@@ -268,7 +273,7 @@ const OrdersPage: React.FC = () => {
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                     <Typography variant="h6" component="div">
-                      Mesa #{order.tableId.slice(-4)}
+                      Mesa #{order.tableNumber}
                     </Typography>
                     <Chip
                       icon={getStatusIcon(order.status)}
@@ -298,7 +303,7 @@ const OrdersPage: React.FC = () => {
         {selectedOrder && (
           <>
             <DialogTitle>
-              Orden - Mesa #{selectedOrder.tableId.slice(-4)}
+              Orden - Mesa #{selectedOrder.tableNumber}
             </DialogTitle>
             <DialogContent>
               <Box mb={2}>

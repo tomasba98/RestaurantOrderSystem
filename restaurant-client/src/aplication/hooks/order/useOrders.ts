@@ -1,4 +1,3 @@
-// src/aplication/hooks/order/useOrders.ts
 import { useState, useCallback } from 'react';
 import type { Order } from '@/domain/entities/Order';
 import { OrderStatus } from '@/domain/entities/Order';
@@ -11,7 +10,6 @@ import { CreateOrderUseCase } from '@/domain/usecases/order/CreateOrderUseCase';
 import { GetOrdersByTableUseCase } from '@/domain/usecases/order/GetOrdersByTableUseCase';
 import { UpdateOrderStatusUseCase } from '@/domain/usecases/order/UpdateOrderStatusUseCase';
 import { CancelOrderUseCase } from '@/domain/usecases/order/CancelOrderUseCase';
-import { GetAllOrdersUseCase } from '@/domain/usecases/order/GetAllOrdersUseCase';
 import { GetKitchenQueueUseCase } from '@/domain/usecases/order/GetkitchenQueueUseCase';
 import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUseCase';
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
@@ -29,7 +27,6 @@ export const useOrders = () => {
   const sessionRepository = new SessionRepositoryImpl();
   
   const createOrderUseCase = new CreateOrderUseCase(orderRepository, tableRepository);
-  const getAllOrdersUseCase = new GetAllOrdersUseCase(orderRepository);
   const getOrdersByTableUseCase = new GetOrdersByTableUseCase(orderRepository);
   const updateOrderStatusUseCase = new UpdateOrderStatusUseCase(orderRepository);
   const cancelOrderUseCase = new CancelOrderUseCase(orderRepository);
@@ -44,7 +41,7 @@ export const useOrders = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await getAllOrdersUseCase.execute();
+      const response = await orderRepository.getAll();
       setOrders(response);
       return response;
     } catch (err: any) {
@@ -219,10 +216,10 @@ export const useOrders = () => {
     setCurrentOrder(null);
   }, []);
 
-  // Get orders by status
-  const getOrdersByStatus = useCallback((status: OrderStatus) => {
-    return orders.filter(order => order.status === status);
-  }, [orders]);
+// En useOrders.ts, cambia esta función:
+const getOrdersByStatus = useCallback((status: OrderStatus) => {
+  return orders.filter(order => order.status === status);
+}, [orders]);
 
   // Get order stats
   const getOrderStats = useCallback(() => {

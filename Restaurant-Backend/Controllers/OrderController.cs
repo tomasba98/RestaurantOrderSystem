@@ -10,6 +10,7 @@ using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
 using Restaurant_Backend.Services.User;
 using Microsoft.AspNetCore.Authorization;
+using Restaurant_Backend.Models.OrderDetail;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -66,7 +67,15 @@ public class OrderController : BaseController
         try
         {
             var orders = await _orderService.GetAllOrdersAsync();
-            return Ok(orders);
+            var orderResponses = new List<OrderResponse>();
+
+            foreach (var order in orders)
+            {
+                var mapped = _mapper.Map<OrderResponse>(order);
+                orderResponses.Add(mapped);
+            }
+
+            return Ok(orderResponses);
         }
         catch (OrderNotFoundException ex)
         {
@@ -130,8 +139,8 @@ public class OrderController : BaseController
     /// <param name="status">The status to filter orders by.</param>
     /// <returns>A list of orders matching the specified status.</returns>
     [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
-    [HttpGet("by-status")]
-    public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus([FromQuery] OrderStatus status)
+    [HttpGet("by-status/{status}")]
+    public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrdersByStatus (OrderStatus status)
     {
         try
         {
@@ -205,7 +214,7 @@ public class OrderController : BaseController
             order.TableSessionId = tableSession.Id;
             order.Status = OrderStatus.Confirmed;
 
-            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest.Items);
             if (failed)
                 return NotFound($"Product {missingProductId} not found.");
 
@@ -242,7 +251,7 @@ public class OrderController : BaseController
 
             order.ProductList.Clear();
 
-            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest);
+            var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest.Items);
             if (failed)
                 return NotFound($"Product {missingProductId} not found.");
 
@@ -318,13 +327,13 @@ public class OrderController : BaseController
     /// <param name="order">The order object to populate with product details.</param>
     /// <param name="orderRequest">The request containing product IDs and quantities.</param>
     /// <returns>A tuple indicating whether the operation failed and the ID of a missing product if any.</returns>
-    private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, OrderRequest orderRequest)
+    private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, List<OrderDetailItem> items)
     {
-        var productIds = orderRequest.Items.Select(d => d.ProductId).Distinct();
+        var productIds = items.Select(d => d.ProductId).Distinct();
         var products = await _productService.GetProductListByIdsAsync(productIds);
         var productDict = products.ToDictionary(p => p.Id);
 
-        foreach (var item in orderRequest.Items)
+        foreach (var item in items)
         {
             if (!productDict.TryGetValue(item.ProductId, out var product))
             {

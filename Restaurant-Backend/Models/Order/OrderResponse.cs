@@ -10,6 +10,6 @@ public class OrderResponse
     public DateTime CreatedAt { get; set; }             
     public OrderStatus Status { get; set; }      
     public List<OrderDetailResponse> ProductList { get; set; } = [];
-
+    public string TableNumber { get; set; } = string.Empty;
     public decimal TotalAmount { get; set; }
 }

@@ -14,27 +14,15 @@ export class GetKitchenQueueUseCase {
    * @returns A promise that resolves with an array of orders in the kitchen queue, sorted by priority.
    */
   async execute(): Promise<Order[]> {
-    const orders = await this.orderRepository.getKitchenQueue();
-    
-    const kitchenStatuses = [OrderStatus.Confirmed, OrderStatus.InKitchen];
-    
-    const filteredOrders = orders.filter(order => 
-      kitchenStatuses.includes(order.status)
-    );
 
-    const sortedOrders = filteredOrders.sort((a, b) => {
-      if (a.status === OrderStatus.Confirmed && b.status === OrderStatus.InKitchen) {
-        return -1;
-      }
-      if (a.status === OrderStatus.InKitchen && b.status === OrderStatus.Confirmed) {
-        return 1; 
-      }      
-      
+    const orders = await this.orderRepository.getByStatus(OrderStatus.InKitchen);
+
+    const sortedOrders = orders.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
       return dateA - dateB;
     });
-
+  
     return sortedOrders;
   }
 
@@ -42,7 +30,7 @@ export class GetKitchenQueueUseCase {
    * Get only confirmed orders (waiting to start)
    */
   async getPendingOrders(): Promise<Order[]> {
-    const allOrders = await this.execute();
+    const allOrders = await this.orderRepository.getByStatus(OrderStatus.Confirmed);
     return allOrders.filter(order => order.status === OrderStatus.Confirmed);
   }
 
@@ -63,9 +51,8 @@ export class GetKitchenQueueUseCase {
     inProgress: number;
     avgWaitTime: number; 
   }> {
-    const allOrders = await this.execute();
-    const pending = allOrders.filter(o => o.status === OrderStatus.Confirmed);
-    const inProgress = allOrders.filter(o => o.status === OrderStatus.InKitchen);
+    const pending = await this.orderRepository.getByStatus(OrderStatus.Confirmed);
+    const inProgress = await this.orderRepository.getByStatus(OrderStatus.InKitchen);
     
     let avgWaitTime = 0;
     if (pending.length > 0) {
@@ -78,7 +65,7 @@ export class GetKitchenQueueUseCase {
     }
 
     return {
-      total: allOrders.length,
+      total: pending.length + inProgress.length,
       pending: pending.length,
       inProgress: inProgress.length,
       avgWaitTime,
