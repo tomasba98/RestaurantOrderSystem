@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/integration/2015/1">
+  <ProjectName>Restaurant-Backend</ProjectName>
+  <ProjectLanguage>C#</ProjectLanguage>
+  <ProjectType>Product</ProjectType>
+  <ProjectGuid>236c1245-9ce7-422d-a731-c1a60a31ba3c</ProjectGuid>
+  <FullPath>Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\Restaurant-Backend.csproj</FullPath>
+  <IsExcluded>false</IsExcluded>
+  <AnalysisResultFiles>
+    <AnalysisResultFile Id="FilesToAnalyze" Location="Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\conf\0\FilesToAnalyze.txt" />
+  </AnalysisResultFiles>
+  <AnalysisSettings>
+    <Property Name="sonar.cs.roslyn.reportFilePaths">Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\out\0\Issues.json</Property>
+    <Property Name="sonar.cs.analyzer.projectOutPaths">Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\out\0</Property>
+    <Property Name="sonar.cs.scanner.telemetry">Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\out\0\Telemetry.json</Property>
+  </AnalysisSettings>
+  <Configuration>Debug</Configuration>
+  <Platform>AnyCPU</Platform>
+  <TargetFramework>net8.0</TargetFramework>
+</ProjectInfo>

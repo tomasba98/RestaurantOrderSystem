@@ -1,0 +1,1096 @@
+{
+  "$schema": "http://json.schemastore.org/sarif-1.0.0",
+  "version": "1.0.0",
+  "runs": [
+    {
+      "tool": {
+        "name": "Microsoft (R) Visual C# Compiler",
+        "version": "4.11.0.0",
+        "fileVersion": "4.11.0-3.24365.8 (9e9c7c1d)",
+        "semanticVersion": "4.11.0",
+        "language": "en-US"
+      },
+      "results": [
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'Users' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 23,
+                  "startColumn": 32,
+                  "endLine": 23,
+                  "endColumn": 37
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'Tables' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 24,
+                  "startColumn": 33,
+                  "endLine": 24,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'Orders' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 33,
+                  "endLine": 25,
+                  "endColumn": 39
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'OrderDetails' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 39,
+                  "endLine": 26,
+                  "endColumn": 51
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'Products' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 35,
+                  "endLine": 27,
+                  "endColumn": 43
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'TableSessions' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "suppressionStates": [
+            "suppressedInSource"
+          ],
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 8,
+                  "startColumn": 12,
+                  "endLine": 8,
+                  "endColumn": 24
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Context/AppDbContext.cs",
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 40,
+                  "endLine": 28,
+                  "endColumn": 53
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'Issuer' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Models/Authentication/JwtSettings.cs",
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 19,
+                  "endLine": 5,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Models/Authentication/JwtSettings.cs",
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 19,
+                  "endLine": 5,
+                  "endColumn": 25
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8618",
+          "level": "warning",
+          "message": "Non-nullable property 'SecretKey' must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring the property as nullable.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Models/Authentication/JwtSettings.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 19,
+                  "endLine": 6,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Models/Authentication/JwtSettings.cs",
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 19,
+                  "endLine": 6,
+                  "endColumn": 28
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8625",
+          "level": "warning",
+          "message": "Cannot convert null literal to non-nullable reference type.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/AutoMapperProfile/AutoMapperProfile.cs",
+                "region": {
+                  "startLine": 54,
+                  "startColumn": 30,
+                  "endLine": 54,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS8602",
+          "level": "warning",
+          "message": "Dereference of a possibly null reference.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Program.cs",
+                "region": {
+                  "startLine": 101,
+                  "startColumn": 23,
+                  "endLine": 101,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CS1572",
+          "level": "warning",
+          "message": "XML comment has a param tag for 'orderRequest', but there is no parameter by that name",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/OrderController.cs",
+                "region": {
+                  "startLine": 328,
+                  "startColumn": 22,
+                  "endLine": 328,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 2
+          }
+        },
+        {
+          "ruleId": "CS1573",
+          "level": "warning",
+          "message": "Parameter 'items' has no matching param tag in the XML comment for 'OrderController.TryLoadProductsAsync(Order, List<OrderDetailItem>)' (but other parameters do)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/OrderController.cs",
+                "region": {
+                  "startLine": 330,
+                  "startColumn": 119,
+                  "endLine": 330,
+                  "endColumn": 124
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 4
+          }
+        },
+        {
+          "ruleId": "CS1572",
+          "level": "warning",
+          "message": "XML comment has a param tag for 'productStatus', but there is no parameter by that name",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/ProductController.cs",
+                "region": {
+                  "startLine": 154,
+                  "startColumn": 22,
+                  "endLine": 154,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 2
+          }
+        },
+        {
+          "ruleId": "CS1572",
+          "level": "warning",
+          "message": "XML comment has a param tag for 'tableRequest', but there is no parameter by that name",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableController.cs",
+                "region": {
+                  "startLine": 114,
+                  "startColumn": 22,
+                  "endLine": 114,
+                  "endColumn": 34
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 2
+          }
+        },
+        {
+          "ruleId": "CS1573",
+          "level": "warning",
+          "message": "Parameter 'x' has no matching param tag in the XML comment for 'TableController.UpdatetablePosition(Guid, int, int)' (but other parameters do)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableController.cs",
+                "region": {
+                  "startLine": 118,
+                  "startColumn": 76,
+                  "endLine": 118,
+                  "endColumn": 77
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 4
+          }
+        },
+        {
+          "ruleId": "CS1573",
+          "level": "warning",
+          "message": "Parameter 'y' has no matching param tag in the XML comment for 'TableController.UpdatetablePosition(Guid, int, int)' (but other parameters do)",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableController.cs",
+                "region": {
+                  "startLine": 118,
+                  "startColumn": 83,
+                  "endLine": 118,
+                  "endColumn": 84
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 4
+          }
+        },
+        {
+          "ruleId": "S125",
+          "level": "warning",
+          "message": "Remove this commented out code.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/AutoMapperProfile/AutoMapperProfile.cs",
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 9,
+                  "endLine": 59,
+                  "endColumn": 15
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S125",
+          "level": "warning",
+          "message": "Remove this commented out code.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/OrderController.cs",
+                "region": {
+                  "startLine": 361,
+                  "startColumn": 1,
+                  "endLine": 361,
+                  "endColumn": 6
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2068",
+          "level": "warning",
+          "message": "\"password\" detected here, make sure this is not a hard-coded credential.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/appsettings.json",
+                "region": {
+                  "startLine": 9,
+                  "startColumn": 27,
+                  "endLine": 9,
+                  "endColumn": 107
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S4487",
+          "level": "warning",
+          "message": "Remove this unread private field '_serviceProvider' or refactor the code to use its value.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/AutoMapperProfile/AutoMapperProfile.cs",
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 39,
+                  "endLine": 16,
+                  "endColumn": 55
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S3925",
+          "level": "warning",
+          "message": "Update this implementation of 'ISerializable' to conform to the recommended serialization pattern.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 14,
+                  "endLine": 13,
+                  "endColumn": 35
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 8,
+                  "endLine": 13,
+                  "endColumn": 13
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 13,
+                  "startColumn": 8,
+                  "endLine": 13,
+                  "endColumn": 13
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "0": "Add 'System.SerializableAttribute' attribute on 'OrderNotPaidException' because it implements 'ISerializable'.",
+              "1": "Add a 'protected' constructor 'OrderNotPaidException(SerializationInfo, StreamingContext)'."
+            }
+          }
+        },
+        {
+          "ruleId": "S3925",
+          "level": "warning",
+          "message": "Update this implementation of 'ISerializable' to conform to the recommended serialization pattern.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 14,
+                  "endLine": 7,
+                  "endColumn": 36
+                }
+              }
+            }
+          ],
+          "relatedLocations": [
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 8,
+                  "endLine": 7,
+                  "endColumn": 13
+                }
+              }
+            },
+            {
+              "physicalLocation": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Utils/RestaurantExceptions.cs",
+                "region": {
+                  "startLine": 7,
+                  "startColumn": 8,
+                  "endLine": 7,
+                  "endColumn": 13
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "0": "Add 'System.SerializableAttribute' attribute on 'OrderNotFoundException' because it implements 'ISerializable'.",
+              "1": "Add a 'protected' constructor 'OrderNotFoundException(SerializationInfo, StreamingContext)'."
+            }
+          }
+        },
+        {
+          "ruleId": "S2933",
+          "level": "warning",
+          "message": "Make '_tableSessionService' 'readonly'.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableSessionController.cs",
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 34,
+                  "endLine": 16,
+                  "endColumn": 54
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S2933",
+          "level": "warning",
+          "message": "Make '_tableService' 'readonly'.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableSessionController.cs",
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 27,
+                  "endLine": 18,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S4487",
+          "level": "warning",
+          "message": "Remove this unread private field '_tableService' or refactor the code to use its value.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/TableSessionController.cs",
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 27,
+                  "endLine": 18,
+                  "endColumn": 40
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S4487",
+          "level": "warning",
+          "message": "Remove this unread private field '_orderDetailService' or refactor the code to use its value.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/OrderController.cs",
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 42,
+                  "endLine": 22,
+                  "endColumn": 61
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S4487",
+          "level": "warning",
+          "message": "Remove this unread private field '_tableService' or refactor the code to use its value.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Controllers/OrderController.cs",
+                "region": {
+                  "startLine": 25,
+                  "startColumn": 36,
+                  "endLine": 25,
+                  "endColumn": 49
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S1125",
+          "level": "warning",
+          "message": "Remove the unnecessary Boolean literal(s).",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Services/Table/Implementation/TableService.cs",
+                "region": {
+                  "startLine": 43,
+                  "startColumn": 66,
+                  "endLine": 43,
+                  "endColumn": 71
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S1125",
+          "level": "warning",
+          "message": "Remove the unnecessary Boolean literal(s).",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Services/Table/Implementation/TableService.cs",
+                "region": {
+                  "startLine": 51,
+                  "startColumn": 66,
+                  "endLine": 51,
+                  "endColumn": 71
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S1125",
+          "level": "warning",
+          "message": "Remove the unnecessary Boolean literal(s).",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Services/TableSession/Implementation/TableSessionService.cs",
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 99,
+                  "endLine": 26,
+                  "endColumn": 106
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S5332",
+          "level": "warning",
+          "message": "Using http protocol is insecure. Use https instead.",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Program.cs",
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 25,
+                  "endLine": 33,
+                  "endColumn": 46
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "S1125",
+          "level": "warning",
+          "message": "Remove the unnecessary Boolean literal(s).",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Services/Product/Implementation/ProductService.cs",
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 68,
+                  "endLine": 40,
+                  "endColumn": 75
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1
+          }
+        },
+        {
+          "ruleId": "CA1862",
+          "level": "note",
+          "message": "Prefer the string comparison method overload of 'string.Contains(string)' that takes a 'StringComparison' enum value to perform a case-insensitive comparison, but keep in mind that this might cause subtle changes in behavior, so make sure to conduct thorough testing after applying the suggestion, or if culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'",
+          "locations": [
+            {
+              "resultFile": {
+                "uri": "file:///Y:/PROGRAMACION/RestaurantSystem/Restaurant-Backend/Services/Product/Implementation/ProductService.cs",
+                "region": {
+                  "startLine": 70,
+                  "startColumn": 48,
+                  "endLine": 70,
+                  "endColumn": 98
+                }
+              }
+            }
+          ],
+          "properties": {
+            "warningLevel": 1,
+            "customProperties": {
+              "LeftOffendingMethod": "ToLower",
+              "RightOffendingMethod": "ToLower"
+            }
+          }
+        }
+      ],
+      "rules": {
+        "CA1862": {
+          "id": "CA1862",
+          "shortDescription": "Use the 'StringComparison' method overloads to perform case-insensitive string comparisons",
+          "fullDescription": "Avoid calling 'ToLower', 'ToUpper', 'ToLowerInvariant' and 'ToUpperInvariant' to perform case-insensitive string comparisons because they lead to an allocation. Instead, prefer calling the method overloads of 'Contains', 'IndexOf' and 'StartsWith' that take a 'StringComparison' enum value to perform case-insensitive comparisons. Switching to using an overload that takes a 'StringComparison' might cause subtle changes in behavior, so it's important to conduct thorough testing after applying the suggestion. Additionally, if a culturally sensitive comparison is not required, consider using 'StringComparison.OrdinalIgnoreCase'.",
+          "defaultLevel": "note",
+          "helpUri": "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1862",
+          "properties": {
+            "category": "Performance",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Telemetry",
+              "EnabledRuleInAggressiveMode"
+            ]
+          }
+        },
+        "CS1572": {
+          "id": "CS1572",
+          "shortDescription": "XML comment has a param tag, but there is no parameter by that name",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1572)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS1573": {
+          "id": "CS1573",
+          "shortDescription": "Parameter has no matching param tag in the XML comment (but other parameters do)",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS1573)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS8602": {
+          "id": "CS8602",
+          "shortDescription": "Dereference of a possibly null reference.",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8602)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS8618": {
+          "id": "CS8618",
+          "shortDescription": "Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8618)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "CS8625": {
+          "id": "CS8625",
+          "shortDescription": "Cannot convert null literal to non-nullable reference type.",
+          "defaultLevel": "warning",
+          "helpUri": "https://msdn.microsoft.com/query/roslyn.query?appId=roslyn&k=k(CS8625)",
+          "properties": {
+            "category": "Compiler",
+            "isEnabledByDefault": true,
+            "tags": [
+              "Compiler",
+              "Telemetry"
+            ]
+          }
+        },
+        "S1125": {
+          "id": "S1125",
+          "shortDescription": "Boolean literals should not be redundant",
+          "fullDescription": "Redundant Boolean literals should be removed from expressions to improve readability.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-1125",
+          "properties": {
+            "category": "Minor Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S125": {
+          "id": "S125",
+          "shortDescription": "Sections of code should not be commented out",
+          "fullDescription": "Programmers should not comment out code as it bloats programs and reduces readability.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-125",
+          "properties": {
+            "category": "Major Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S2068": {
+          "id": "S2068",
+          "shortDescription": "Hard-coded credentials are security-sensitive",
+          "fullDescription": "Because it is easy to extract strings from an application source code or binary, credentials should not be hard-coded. This is particularly true for applications that are distributed or that are open-source.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-2068",
+          "properties": {
+            "category": "Blocker Security Hotspot",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S2933": {
+          "id": "S2933",
+          "shortDescription": "Fields that are only assigned in the constructor should be \"readonly\"",
+          "fullDescription": "readonly fields can only be assigned in a class constructor. If a class has a field that’s not marked readonly but is only set in the constructor, it could cause confusion about the field’s intended use. To avoid confusion, such fields should be marked readonly to make their intended use explicit, and to prevent future maintainers from inadvertently changing their use.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-2933",
+          "properties": {
+            "category": "Major Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S3925": {
+          "id": "S3925",
+          "shortDescription": "\"ISerializable\" should be implemented correctly",
+          "fullDescription": "The ISerializable interface is the mechanism to control the type serialization process. If not implemented correctly this could result in an invalid serialization and hard to detect bugs.",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-3925",
+          "properties": {
+            "category": "Major Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "SonarWay"
+            ]
+          }
+        },
+        "S4487": {
+          "id": "S4487",
+          "shortDescription": "Unread \"private\" fields should be removed",
+          "fullDescription": "Private fields only used to store values without reading them later is a case of dead store. So changing the value of such field is useless and most probably indicates a serious error in the code.",
+          "defaultLevel": "note",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-4487",
+          "properties": {
+            "category": "Critical Code Smell",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "TestSourceScope",
+              "SonarWay",
+              "Unnecessary"
+            ]
+          }
+        },
+        "S5332": {
+          "id": "S5332",
+          "shortDescription": "Using clear-text protocols is security-sensitive",
+          "fullDescription": "Clear-text protocols such as ftp, telnet, or http lack encryption of transported data, as well as the capability to build an authenticated connection. It means that an attacker able to sniff traffic from the network can read, modify, or corrupt the transported content. These protocols are not secure as they expose applications to an extensive range of risks:",
+          "defaultLevel": "warning",
+          "helpUri": "https://rules.sonarsource.com/csharp/RSPEC-5332",
+          "properties": {
+            "category": "Critical Security Hotspot",
+            "isEnabledByDefault": true,
+            "tags": [
+              "C#",
+              "MainSourceScope",
+              "SonarWay"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

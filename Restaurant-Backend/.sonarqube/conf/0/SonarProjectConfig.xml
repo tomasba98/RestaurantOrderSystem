@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SonarProjectConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.sonarsource.com/msbuild/analyzer/2021/1">
+  <AnalysisConfigPath>Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\conf\SonarQubeAnalysisConfig.xml</AnalysisConfigPath>
+  <ProjectPath>Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\Restaurant-Backend.csproj</ProjectPath>
+  <FilesToAnalyzePath>Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\conf\0\FilesToAnalyze.txt</FilesToAnalyzePath>
+  <OutPath>Y:\PROGRAMACION\RestaurantSystem\Restaurant-Backend\.sonarqube\out\0</OutPath>
+  <ProjectType>Product</ProjectType>
+  <TargetFramework>net8.0</TargetFramework>
+</SonarProjectConfig>

@@ -1,0 +1,5 @@
+[
+  {
+    "text": "You're using an unsupported version of SonarQube. The next major version release of SonarScanner for .NET will not work with this version. Please upgrade to a newer SonarQube version."
+  }
+]
