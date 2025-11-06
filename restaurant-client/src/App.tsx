@@ -33,9 +33,10 @@ function App() {
               <Route 
                 path="/register" 
                 element={
-                  <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
+                  // Publico por ahora
+                  // <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}> 
                     <RegisterPage />
-                  </ProtectedRoute>
+                  // </ProtectedRoute>
                 } 
               />
 

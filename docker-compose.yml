@@ -30,5 +30,17 @@ services:
       ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=Restaurant;Username=postgres;Password=admin"
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./restaurant-client
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://dotnetapi:4332
+    depends_on:
+      - dotnetapi
+
+
 volumes:
   pgdata:

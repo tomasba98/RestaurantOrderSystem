@@ -27,7 +27,22 @@ public class AuthenticationController : BaseController
         _mapper = mapper;
     }
 
-    [Authorize(Roles = "Admin,Manager")]
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(AccessRequest request)
+    {
+        User? user = await _userService.GetUserByNameAsync(request.UserName);
+
+        if (user is null) return BadRequest("Invalid credentials.");        
+
+        if (!Encrypt.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
+
+        AuthenticationResponse response = _authenticationService.GenerateJwt(user);
+
+        return Ok(response);
+    }
+
+    //[Authorize(Roles = "Admin,Manager")] PUBLICO POR AHORA
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserRequest userRequest)
     {
@@ -88,20 +103,6 @@ public class AuthenticationController : BaseController
     }
 
 
-    [AllowAnonymous]
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(AccessRequest request)
-    {
-        User? user = await _userService.GetUserByNameAsync(request.UserName);
-
-        if (user is null) return BadRequest("Invalid credentials.");        
-
-        if (!Encrypt.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
-
-        AuthenticationResponse response = _authenticationService.GenerateJwt(user);
-
-        return Ok(response);
-    }
 
     [Authorize(Roles = "Admin,Manager")]
     [HttpPatch("{id}")]

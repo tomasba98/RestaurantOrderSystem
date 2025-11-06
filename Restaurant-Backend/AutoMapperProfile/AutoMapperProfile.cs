@@ -51,7 +51,6 @@ public class AutoMapperProfile : Profile
             .AfterMap((src, dest) =>
             {
                 dest.TableId = src.TableId;
-                dest.Table = null; // opcional, solo para dejarlo claro
                 dest.IsActive = true;
             });
         //CreateMap<SessionRequest, TableSession>()
