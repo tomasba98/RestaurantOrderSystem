@@ -45,9 +45,9 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<TEntity>> FindAllAsync()
+    public async Task<IEnumerable<TEntity>> FindAllAsyncReadOnly()
     {
-        return await GenericDao.FindAllAsync();
+        return await GenericDao.FindAllAsyncReadOnly();
     }
 
     public IQueryable<TEntity> FilterByExpressionLinq(Expression<Func<TEntity, bool>> expression)

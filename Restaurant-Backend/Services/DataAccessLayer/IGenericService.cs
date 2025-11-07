@@ -43,7 +43,7 @@ public interface IGenericService<TEntity> where TEntity : EntityBase
     /// Asynchronously retrieves all entities from the database.
     /// </summary>
     /// <returns>A collection of all entities.</returns>
-    Task<IEnumerable<TEntity>> FindAllAsync();
+    Task<IEnumerable<TEntity>> FindAllAsyncReadOnly();
 
     /// <summary>
     /// Retrieves entities that match the specified expression.

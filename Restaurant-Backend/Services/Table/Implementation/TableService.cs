@@ -29,7 +29,7 @@ public class TableService : ITableService
         var tables = await _cache.GetOrCreateAsync("all_tables", async entry =>
         {
             entry.SlidingExpiration = TimeSpan.FromMinutes(10);
-            return await _tableGenericService.FindAllAsync();
+            return await _tableGenericService.FindAllAsyncReadOnly();
         });
 
         return tables ?? [];

@@ -85,11 +85,13 @@ public class GenericDao<TEntity> : IGenericDao<TEntity> where TEntity : EntityBa
         }
     }
     
-    public async Task<IEnumerable<TEntity>> FindAllAsync()
+    public async Task<IEnumerable<TEntity>> FindAllAsyncReadOnly()
     {
         try
         {
-            return await DbSet.ToListAsync();
+            return await DbSet
+                .AsNoTracking()
+                .ToListAsync();
         }
         catch (Exception ex)
         {

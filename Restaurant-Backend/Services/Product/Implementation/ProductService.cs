@@ -37,7 +37,7 @@ public class ProductService : IProductService
         var products = await _cache.GetOrCreateAsync("all_products", async entry =>
         {
             entry.SlidingExpiration = TimeSpan.FromMinutes(10);
-            return await _productGenericService.FindAllAsync();
+            return await _productGenericService.FindAllAsyncReadOnly();
         });
 
         return products ?? [];
