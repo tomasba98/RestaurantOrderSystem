@@ -19,7 +19,25 @@ public class AppDbContext : DbContext
             .HasMany(o => o.ProductList)
             .WithOne(od => od.Order)
             .HasForeignKey(od => od.OrderId)
-            .OnDelete(DeleteBehavior.Cascade); 
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Order>()
+        .HasOne(o => o.TableSession)
+        .WithMany(ts => ts.Orders)
+        .HasForeignKey(o => o.TableSessionId)
+        .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<TableSession>()
+            .HasOne(ts => ts.Table)
+            .WithMany()
+            .HasForeignKey(ts => ts.TableId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        modelBuilder.Entity<OrderDetail>()
+            .HasOne(od => od.Product)
+            .WithMany()
+            .HasForeignKey(od => od.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
     public virtual DbSet<User> Users { get; set; }
