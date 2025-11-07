@@ -11,6 +11,7 @@ using Restaurant_Backend.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Restaurant_Backend.Models.OrderDetail;
 using Restaurant_Backend.Utils.Exceptions;
+using Restaurant_Backend.Utils.Results;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -172,9 +173,11 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
-            if (validationResult != null)
-                return validationResult;
+            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            var session = result.Value;
 
             order.Status = status;
 
@@ -245,9 +248,11 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
-            if (validationResult != null)
-                return validationResult;
+            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            var session = result.Value;
 
             order.ProductList.Clear();
 
@@ -283,9 +288,11 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var validationResult = await ValidateActiveSessionAsync(order!.TableSessionId);
-            if (validationResult != null)
-                return validationResult;
+            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            var session = result.Value;
 
             await _orderService.DeleteOrderAsync(orderId);
             return NoContent(); 
@@ -302,23 +309,30 @@ public class OrderController : BaseController
         {
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-    }       
+    }
 
     /// <summary>
-    /// Validates whether the table session associated with an order is active.
+    /// Validates whether a table session is active before performing an order-related operation.
     /// </summary>
-    /// <param name="tableSessionId">The unique identifier of the table session.</param>
-    /// <returns>An IActionResult if the session is invalid; otherwise, null.</returns>
-    private async Task<IActionResult?> ValidateActiveSessionAsync(Guid tableSessionId)
+    /// <param name="tableSessionId">The unique identifier of the table session to validate.</param>
+    /// <returns>
+    /// A <see cref="Result{TableSession}"/> indicating whether the session is valid:
+    /// <list type="bullet">
+    ///   <item><description><c>Success</c> — if the session exists and is active, including the session object.</description></item>
+    ///   <item><description><c>Failure</c> — if the session does not exist or has ended, including an error message.</description></item>
+    /// </list>
+    /// </returns>
+
+    private async Task<Result<TableSession>> ValidateActiveSessionAsync(Guid tableSessionId)
     {
         var session = await _tableSessionService.GetSessionByIdAsync(tableSessionId);
         if (session is null)
-            return NotFound("Table session not found.");
+            return Result<TableSession>.Failure("Session not found");
 
         if (!session.IsActive)
-            return Conflict("The session of the order has already ended. Modifications are not allowed.");
+            return Result<TableSession>.Failure("The session of the order has already ended. Modifications are not allowed.");
 
-        return null; 
+        return Result<TableSession>.Success(session);
     }
 
     /// <summary>
