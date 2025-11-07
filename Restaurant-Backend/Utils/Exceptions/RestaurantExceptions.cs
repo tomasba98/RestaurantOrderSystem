@@ -1,4 +1,4 @@
-﻿namespace Restaurant_Backend.Utils;
+﻿namespace Restaurant_Backend.Utils.Exceptions;
 
 public class RestaurantExceptions
 {

@@ -102,7 +102,7 @@ public class GenericDao<TEntity> : IGenericDao<TEntity> where TEntity : EntityBa
     {
         try
         {
-            await GetContext.SaveChangesAsync();
+            await GetContext.SaveChangesAsync(CancellationToken.None);
         }
         catch (Exception ex)
         {

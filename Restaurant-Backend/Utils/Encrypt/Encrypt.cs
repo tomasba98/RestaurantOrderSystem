@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Restaurant_Backend.Entities;
 
-namespace Restaurant_Backend.Utils;
+namespace Restaurant_Backend.Utils.Encrypt;
 
 /// <summary>
 /// Utility class for generating JWT tokens.

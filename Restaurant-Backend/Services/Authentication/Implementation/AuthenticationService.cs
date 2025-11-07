@@ -1,8 +1,8 @@
 ﻿namespace Restaurant_Backend.Services.Authentication.Implementation;
 
-using Restaurant_Backend.Utils;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Authentication;
+using Restaurant_Backend.Utils.Encrypt;
 
 public class AuthenticationService : IAuthenticationService
 {

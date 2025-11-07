@@ -2,10 +2,10 @@
 using Restaurant_Backend.Models.Authentication;
 using Restaurant_Backend.Services.Authentication;
 using Restaurant_Backend.Services.User;
-using Restaurant_Backend.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using Restaurant_Backend.Utils.Encrypt;
 
 namespace Restaurant_Backend.Controllers;
 

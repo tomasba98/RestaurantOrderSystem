@@ -1,13 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restaurant_Backend.Entities;
+using Restaurant_Backend.Utils.Context;
 
 namespace Restaurant_Backend.Context;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    private readonly ICurrentUserService _currentUserService;
+    public AppDbContext(DbContextOptions<AppDbContext> options, ICurrentUserService currentUserService) : base(options)
     {
-
+        _currentUserService = currentUserService;
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,4 +28,19 @@ public class AppDbContext : DbContext
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
     public virtual DbSet<Product> Products { get; set; }
     public virtual DbSet<TableSession> TableSessions { get; set; }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken token)
+    {
+        var currentUser = _currentUserService?.UserName ?? "System";
+
+        foreach (var entry in ChangeTracker.Entries<EntityBase>())
+        {
+            if (entry.State == EntityState.Added)
+                entry.Entity.SetCreated(currentUser);
+            else if (entry.State == EntityState.Modified)
+                entry.Entity.SetUpdated(currentUser);
+        }
+
+        return await base.SaveChangesAsync(token);
+    }
 }

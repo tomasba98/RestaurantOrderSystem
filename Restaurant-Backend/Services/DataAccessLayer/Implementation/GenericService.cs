@@ -8,9 +8,11 @@ namespace Restaurant_Backend.Services.DataAccessLayer.Implementation;
 public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : EntityBase
 {
     protected IGenericDao<TEntity> GenericDao;
+    private readonly  DbContext _context;
 
     public GenericService(AppDbContext context)
     {
+        _context = context;
         GenericDao = new GenericDao<TEntity>(context);
     }
 
@@ -28,19 +30,19 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
     public async Task InsertAsync(TEntity entity)
     {
         await GenericDao.InsertAsync(entity);
-        await GenericDao.SaveAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(TEntity entity)
     {
         await GenericDao.DeleteAsync(entity);
-        await GenericDao.SaveAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(TEntity entity)
     {
         await GenericDao.UpdateAsync(entity);
-        await GenericDao.SaveAsync();
+        await _context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<TEntity>> FindAllAsync()

@@ -4,7 +4,7 @@ namespace Restaurant_Backend.Services.Order.Implementation;
 using Microsoft.EntityFrameworkCore;
 using Restaurant_Backend.Entities;
 using Restaurant_Backend.Services.DataAccessLayer;
-using Restaurant_Backend.Utils;
+using Restaurant_Backend.Utils.Exceptions;
 
 public class OrderService : IOrderService
 {
