@@ -3,13 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Restaurant_Backend.Services.Table.Implementation;
 
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant_Backend.Entities;
 public class TableService : ITableService
 {
     private readonly IGenericService<Table> _tableGenericService;
-    public TableService(IGenericService<Table> tableGenericService)
+    private readonly IMemoryCache _cache;
+    public TableService(IGenericService<Table> tableGenericService, IMemoryCache cache)
     {
         _tableGenericService = tableGenericService;
+        _cache = cache;
     }
     public async Task<Table> CreateTableAsync(Table table)
     {
@@ -23,7 +26,13 @@ public class TableService : ITableService
 
     public async Task<IEnumerable<Table>> GetAllTablesAsync()
     {
-        return await _tableGenericService.FindAllAsync();
+        var tables = await _cache.GetOrCreateAsync("all_tables", async entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(10);
+            return await _tableGenericService.FindAllAsync();
+        });
+
+        return tables ?? [];
     }
 
     public async Task<Table> UpdateTableAsync(Table table)

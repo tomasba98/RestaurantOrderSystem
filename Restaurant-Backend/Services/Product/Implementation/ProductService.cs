@@ -4,13 +4,16 @@ using Restaurant_Backend.Services.DataAccessLayer;
 namespace Restaurant_Backend.Services.Product.Implementation;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Restaurant_Backend.Entities;
 public class ProductService : IProductService
 {
     private readonly IGenericService<Product> _productGenericService;
-    public ProductService(IGenericService<Product> productGenericService)
+    private readonly IMemoryCache _cache;
+    public ProductService(IGenericService<Product> productGenericService, IMemoryCache cache)
     {
         _productGenericService = productGenericService;
+        _cache = cache;
     }
     public async Task<Product> CreateProductAsync(Product product)
     {
@@ -31,7 +34,13 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        return await _productGenericService.FindAllAsync();
+        var products = await _cache.GetOrCreateAsync("all_products", async entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(10);
+            return await _productGenericService.FindAllAsync();
+        });
+
+        return products ?? [];
     }
 
     public async Task<IEnumerable<Product>> GetProductsAvailableAsync()

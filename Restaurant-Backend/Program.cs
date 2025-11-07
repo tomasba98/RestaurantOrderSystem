@@ -22,6 +22,7 @@ using Restaurant_Backend.Services.TableSession;
 using Restaurant_Backend.Services.TableSession.Implementation;
 using Restaurant_Backend.Services.User;
 using Restaurant_Backend.Services.User.Implementation;
+using Restaurant_Backend.Utils.Context;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -31,6 +32,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configurar URLs ANTES de build
 builder.WebHost.UseUrls("http://0.0.0.0:4332");
+
+builder.Services.AddHttpContextAccessor();
 
 // Register of interfaces services
 builder.Services.AddScoped<IGenericService<Order>, GenericService<Order>>();
@@ -46,6 +49,7 @@ builder.Services.AddScoped<ITableSessionService, TableSessionService>();
 builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
 builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthenticationService, Restaurant_Backend.Services.Authentication.Implementation.AuthenticationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 
 
@@ -69,7 +73,7 @@ builder.Services.AddScoped<IMapper>(sp =>
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddHttpContextAccessor();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
