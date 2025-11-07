@@ -151,7 +151,6 @@ public class ProductController : BaseController
     /// Toggles the availability status of a product.
     /// </summary>
     /// <param name="productId">The unique identifier of the product.</param>
-    /// <param name="productStatus">The new availability status to apply.</param>
     /// <returns>An IActionResult with the updated product or an error message.</returns>
     [Authorize(Roles = "Admin,Manager,Kitchen")]
     [HttpPatch("{productId}/toggle-availability")]

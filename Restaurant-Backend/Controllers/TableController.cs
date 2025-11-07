@@ -111,7 +111,8 @@ public class TableController : BaseController
     /// Updates an existing table.
     /// </summary>
     /// <param name="tableId">The ID of the table to update.</param>
-    /// <param name="tableRequest">The updated table data.</param>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     /// <returns>The updated table information.</returns>
     [Authorize(Roles = "Admin,Manager,Waiter")]
     [HttpPut("{tableId}/position")]

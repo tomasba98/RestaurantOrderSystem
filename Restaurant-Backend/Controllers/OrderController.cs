@@ -173,7 +173,7 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            var result = await ValidateActiveSessionAsync(order!.TableSessionId);
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -248,7 +248,7 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            var result = await ValidateActiveSessionAsync(order!.TableSessionId);
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -288,7 +288,7 @@ public class OrderController : BaseController
         {
             var order = await _orderService.GetOrderByIdAsync(orderId);
 
-            var result = await ValidateActiveSessionAsync(order.TableSessionId);
+            var result = await ValidateActiveSessionAsync(order!.TableSessionId);
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -339,7 +339,7 @@ public class OrderController : BaseController
     /// Loads the product details into the order from the provided order request.
     /// </summary>
     /// <param name="order">The order object to populate with product details.</param>
-    /// <param name="orderRequest">The request containing product IDs and quantities.</param>
+    /// <param name="items"></param>
     /// <returns>A tuple indicating whether the operation failed and the ID of a missing product if any.</returns>
     private async Task<(bool Failed, Guid? MissingProductId)> TryLoadProductsAsync(Order order, List<OrderDetailItem> items)
     {
