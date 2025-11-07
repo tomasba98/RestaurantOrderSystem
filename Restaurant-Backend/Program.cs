@@ -51,6 +51,9 @@ builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthentic
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+//Memory Cache
+builder.Services.AddMemoryCache();
+
 
 
 // Connection to the database 
