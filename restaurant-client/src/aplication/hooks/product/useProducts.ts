@@ -1,9 +1,8 @@
 import { useState, useCallback } from 'react';
 import type { Product } from '@/domain/entities/Product';
-import type { CreateProductData, UpdateProductData } from '@/domain/repositories/IProductRepository';
-import type { PaginationParams, PaginatedResponse } from '@/utils/Pagination';
-import { ProductRepositoryImpl } from '@/infrastructure/repositories/ProductRepositoryImpl';
+import type { CreateProductData, IProductRepository, UpdateProductData } from '@/domain/repositories/IProductRepository';
 import { CreateProductUseCase } from '@/domain/usecases/product/CreateProductUseCase';
+import { containerDI } from '@/aplication/di/containerDI';
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,9 +10,11 @@ export const useProducts = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const productRepository = new ProductRepositoryImpl();
+  //Repositories
+  const productRepository = containerDI.resolve<IProductRepository>("productRepository"); 
   
-  const createProductUseCase = new CreateProductUseCase(productRepository);
+  //UseCases
+  const createProductUseCase = containerDI.resolve<CreateProductUseCase>("productRepository");
 
   // Get all products
   const loadProducts = useCallback(async (): Promise<Product[]> => {

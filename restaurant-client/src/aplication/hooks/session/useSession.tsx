@@ -1,26 +1,25 @@
 import { useState, useCallback } from 'react';
 import type { TableSession } from '@/domain/entities/Session';
 import type { CreateSessionData } from '@/domain/repositories/ISessionRepository';
-import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
 import { GetSessionByIdUseCase } from '@/domain/usecases/session/GetSessionByIdUseCase';
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { GetAllSessionsUseCase } from '@/domain/usecases/session/GetAllSessionUseCase';
+import { containerDI } from '@/aplication/di/containerDI';
 
 export const useSession = () => {
   const [sessions, setSessions] = useState<TableSession[]>([]);
   const [currentSession, setCurrentSession] = useState<TableSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const sessionRepository = new SessionRepositoryImpl();
   
-  const getAllSessionsUseCase = new GetAllSessionsUseCase (sessionRepository);
-  const getSessionByIdUseCase = new GetSessionByIdUseCase(sessionRepository);
-  const startSessionUseCase = new StartSessionUseCase(sessionRepository);
-  const endSessionUseCase = new EndSessionUseCase(sessionRepository);
-  const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
+  //Use Cases
+  const getAllSessionsUseCase = containerDI.resolve<GetAllSessionsUseCase>("getAllSessionsUseCase");
+  const getSessionByIdUseCase = containerDI.resolve<GetSessionByIdUseCase>("getSessionByIdUseCase");
+  const startSessionUseCase = containerDI.resolve<StartSessionUseCase>("startSessionUseCase");
+  const endSessionUseCase = containerDI.resolve<EndSessionUseCase>("endSessionUseCase");
+  const getActiveSessionByTableUseCase = containerDI.resolve<GetActiveSessionByTableUseCase>("getActiveSessionByTableUseCase");
 
   // Get all sessions
   const loadSessions = useCallback(async () => {

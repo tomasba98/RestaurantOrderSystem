@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Table } from '@/domain/entities/Table';
 import type { CreateTableData } from '@/domain/repositories/ITableRepository';
-import { TableRepositoryImpl } from '@/infrastructure/repositories/TableRepositoryImpl';
-import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
 import { GetAllTablesUseCase } from '@/domain/usecases/table/GetAllTablesUseCase';
 import { CreateTableUseCase } from '@/domain/usecases/table/CreateTableUseCase';
 import { UpdateTablePositionUseCase } from '@/domain/usecases/table/UpdateTablePositionUseCase';
@@ -10,22 +8,21 @@ import { DeleteTableUseCase } from '@/domain/usecases/table/DeleteTableUseCase';
 import { ToggleTableOccupationUseCase } from '@/domain/usecases/table/ToggleTableOccupationUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
+import { containerDI } from '@/aplication/di/containerDI';
 
 export const useTables = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const tableRepository = new TableRepositoryImpl();
-  const sessionRepository = new SessionRepositoryImpl();
   
-  const getAllTablesUseCase = new GetAllTablesUseCase(tableRepository);
-  const createTableUseCase = new CreateTableUseCase(tableRepository);
-  const updateTablePositionUseCase = new UpdateTablePositionUseCase(tableRepository);
-  const deleteTableUseCase = new DeleteTableUseCase(tableRepository);
-  const toggleTableOccupationUseCase = new ToggleTableOccupationUseCase(tableRepository);
-  const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
-  const endSessionUseCase = new EndSessionUseCase(sessionRepository);
+  //UseCases
+  const getAllTablesUseCase = containerDI.resolve<GetAllTablesUseCase>("getAllTablesUseCase");
+  const createTableUseCase = containerDI.resolve<CreateTableUseCase>("createTableUseCase");
+  const updateTablePositionUseCase = containerDI.resolve<UpdateTablePositionUseCase>("updateTablePositionUseCase");
+  const deleteTableUseCase = containerDI.resolve<DeleteTableUseCase>("deleteTableUseCase");
+  const toggleTableOccupationUseCase = containerDI.resolve<ToggleTableOccupationUseCase>("toggleTableOccupationUseCase");
+  const getActiveSessionByTableUseCase = containerDI.resolve<GetActiveSessionByTableUseCase>("getActiveSessionByTableUseCase");
+  const endSessionUseCase = containerDI.resolve<EndSessionUseCase>("endSessionUseCase");
 
   
   useEffect(() => {

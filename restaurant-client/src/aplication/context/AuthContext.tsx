@@ -1,13 +1,13 @@
 import React, { createContext, useState, useEffect, type ReactNode } from 'react';
-import { AuthRepositoryImpl } from '../../infrastructure/repositories/AuthRepositoryImpl';
 import { LoginUseCase } from '../../domain/usecases/auth/LoginUseCase';
 import { RegisterUseCase } from '../../domain/usecases/auth/RegisterUseCase';
 import { LogoutUseCase } from '../../domain/usecases/auth/LogoutUseCase';
 import { type User, Roles } from '../../domain/entities/User';
 import type { LoginDTO } from '../dto/AuthDTO';
-import type { RegisterData } from '@/domain/repositories/IAuthRepository';
+import type { IAuthRepository, RegisterData } from '@/domain/repositories/IAuthRepository';
+import { containerDI } from '../di/containerDI';
 
-// CAMBIO: Verificación de HTTPS obligatoria en producción
+// VERIFICAR HTTPS EN PROD
 const isProduction = import.meta.env.PROD;
 const isSecureContext = window.isSecureContext;
 
@@ -30,10 +30,13 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const authRepository = new AuthRepositoryImpl();
-const loginUseCase = new LoginUseCase(authRepository);
-const registerUseCase = new RegisterUseCase(authRepository);
-const logoutUseCase = new LogoutUseCase(authRepository);
+//REPOSITORIES
+const authRepository = containerDI.resolve<IAuthRepository>("authRepository");
+
+//USE CASES
+const loginUseCase = containerDI.resolve<LoginUseCase>("loginUseCase");
+const registerUseCase = containerDI.resolve<RegisterUseCase>("registerUseCase");
+const logoutUseCase = containerDI.resolve<LogoutUseCase>("logoutUseCase");
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);

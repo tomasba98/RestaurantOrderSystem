@@ -1,11 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Order } from '@/domain/entities/Order';
 import { OrderStatus } from '@/domain/entities/Order';
-import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
-import type { PaginationParams } from '@/utils/Pagination';
-import { OrderRepositoryImpl } from '@/infrastructure/repositories/OrderRepositoryImpl';
-import { TableRepositoryImpl } from '@/infrastructure/repositories/TableRepositoryImpl';
-import { SessionRepositoryImpl } from '@/infrastructure/repositories/SessionRepositoryImpl';
+import type { IOrderRepository, OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 import { CreateOrderUseCase } from '@/domain/usecases/order/CreateOrderUseCase';
 import { GetOrdersByTableUseCase } from '@/domain/usecases/order/GetOrdersByTableUseCase';
 import { UpdateOrderStatusUseCase } from '@/domain/usecases/order/UpdateOrderStatusUseCase';
@@ -15,6 +11,7 @@ import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUse
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
+import { containerDI } from '@/aplication/di/containerDI';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -22,20 +19,19 @@ export const useOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const orderRepository = new OrderRepositoryImpl();
-  const tableRepository = new TableRepositoryImpl();
-  const sessionRepository = new SessionRepositoryImpl();
-  
-  const createOrderUseCase = new CreateOrderUseCase(orderRepository, tableRepository);
-  const getOrdersByTableUseCase = new GetOrdersByTableUseCase(orderRepository);
-  const updateOrderStatusUseCase = new UpdateOrderStatusUseCase(orderRepository);
-  const cancelOrderUseCase = new CancelOrderUseCase(orderRepository);
-  const getKitchenQueueUseCase = new GetKitchenQueueUseCase(orderRepository);
-  const markOrderReadyUseCase = new MarkOrderReadyUseCase(orderRepository);
-  const startSessionUseCase = new StartSessionUseCase(sessionRepository);
-  const endSessionUseCase = new EndSessionUseCase(sessionRepository);
-  const getActiveSessionByTableUseCase = new GetActiveSessionByTableUseCase(sessionRepository);
+  //Repositories
+  const orderRepository = containerDI.resolve<IOrderRepository>("orderRepository");
 
+  //UseCases
+  const createOrderUseCase = containerDI.resolve<CreateOrderUseCase>("createOrderUseCase");
+  const getOrdersByTableUseCase = containerDI.resolve<GetOrdersByTableUseCase>("getOrdersByTableUseCase");
+  const updateOrderStatusUseCase = containerDI.resolve<UpdateOrderStatusUseCase>("updateOrderStatusUseCase");
+  const cancelOrderUseCase = containerDI.resolve<CancelOrderUseCase>("cancelOrderUseCase");
+  const getKitchenQueueUseCase = containerDI.resolve<GetKitchenQueueUseCase>("getKitchenQueueUseCase");
+  const markOrderReadyUseCase = containerDI.resolve<MarkOrderReadyUseCase>("markOrderReadyUseCase");
+  const startSessionUseCase = containerDI.resolve<StartSessionUseCase>("startSessionUseCase");
+  const endSessionUseCase = containerDI.resolve<EndSessionUseCase>("endSessionUseCase");
+  const getActiveSessionByTableUseCase = containerDI.resolve<GetActiveSessionByTableUseCase>("getActiveSessionByTableUseCase");
   // Get all orders
   const loadOrders = useCallback(async () => {
     try {
