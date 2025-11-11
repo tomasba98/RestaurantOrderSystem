@@ -88,7 +88,20 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Add CORS for cross-origin resource sharing.
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins(
+                "http://localhost:5173",
+                "http://localhost:5174"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
 builder.Services.Configure<JwtSettings>(jwtSettingsSection);
@@ -155,6 +168,9 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+//Active CORS
+app.UseCors("AllowFrontend");
+
 //Execute migrations automatically
 using (var scope = app.Services.CreateScope())
 {
@@ -176,15 +192,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// Enable CORS for specified origins.
-app.UseCors(policy =>
-{
-    policy.WithOrigins("http://localhost:5173")
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-});
 
 // app.UseHttpsRedirection(); disable to avoid problems with docker
 

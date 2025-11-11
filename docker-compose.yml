@@ -37,7 +37,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://dotnetapi:4332
+      - VITE_API_URL=http://localhost:4332/api
     depends_on:
       - dotnetapi
 
