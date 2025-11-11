@@ -21,7 +21,7 @@ const LoginPage: React.FC = () => {
 
   useEffect(() => {
     return () => clearError();
-  }, [clearError]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -32,7 +32,7 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-      await login(formData);
+    await login(formData);
   };
 
   return (

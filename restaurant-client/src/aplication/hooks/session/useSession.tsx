@@ -6,7 +6,7 @@ import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCa
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { GetAllSessionsUseCase } from '@/domain/usecases/session/GetAllSessionUseCase';
-import { containerDI } from '@/aplication/di/containerDI';
+import { containerDI } from '@/aplication/di/ContainerDI';
 
 export const useSession = () => {
   const [sessions, setSessions] = useState<TableSession[]>([]);

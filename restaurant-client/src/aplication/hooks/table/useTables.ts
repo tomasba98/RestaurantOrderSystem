@@ -8,7 +8,7 @@ import { DeleteTableUseCase } from '@/domain/usecases/table/DeleteTableUseCase';
 import { ToggleTableOccupationUseCase } from '@/domain/usecases/table/ToggleTableOccupationUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
-import { containerDI } from '@/aplication/di/containerDI';
+import { containerDI } from '@/aplication/di/ContainerDI';
 
 export const useTables = () => {
   const [tables, setTables] = useState<Table[]>([]);

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import type { Product } from '@/domain/entities/Product';
 import type { CreateProductData, IProductRepository, UpdateProductData } from '@/domain/repositories/IProductRepository';
 import { CreateProductUseCase } from '@/domain/usecases/product/CreateProductUseCase';
-import { containerDI } from '@/aplication/di/containerDI';
+import { containerDI } from '@/aplication/di/ContainerDI';
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);

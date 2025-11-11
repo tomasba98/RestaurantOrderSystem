@@ -11,7 +11,7 @@ import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUse
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
 import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
-import { containerDI } from '@/aplication/di/containerDI';
+import { containerDI } from '@/aplication/di/ContainerDI';
 
 export const useOrders = () => {
   const [orders, setOrders] = useState<Order[]>([]);

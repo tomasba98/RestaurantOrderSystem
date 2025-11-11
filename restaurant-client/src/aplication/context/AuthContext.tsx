@@ -5,7 +5,7 @@ import { LogoutUseCase } from '../../domain/usecases/auth/LogoutUseCase';
 import { type User, Roles } from '../../domain/entities/User';
 import type { LoginDTO } from '../dto/AuthDTO';
 import type { IAuthRepository, RegisterData } from '@/domain/repositories/IAuthRepository';
-import { containerDI } from '../di/containerDI';
+import { containerDI } from '../di/ContainerDI';
 
 // VERIFICAR HTTPS EN PROD
 const isProduction = import.meta.env.PROD;
@@ -30,10 +30,10 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-//REPOSITORIES
+//Repositories
 const authRepository = containerDI.resolve<IAuthRepository>("authRepository");
 
-//USE CASES
+//UseCases
 const loginUseCase = containerDI.resolve<LoginUseCase>("loginUseCase");
 const registerUseCase = containerDI.resolve<RegisterUseCase>("registerUseCase");
 const logoutUseCase = containerDI.resolve<LogoutUseCase>("logoutUseCase");
