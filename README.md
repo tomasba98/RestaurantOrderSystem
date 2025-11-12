@@ -40,6 +40,7 @@ docker-compose up --build
 ```
 This starts:
 - **dotnetapi** at `http://localhost:4332`
+- **reactclient** at `http://localhost:5173/`
 - **postgres** at port `5433`
 
 ### Verify
