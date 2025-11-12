@@ -9,6 +9,8 @@ public class TableService : ITableService
 {
     private readonly IGenericService<Table> _tableGenericService;
     private readonly IMemoryCache _cache;
+
+    private const string CacheKey = "all_tables";
     public TableService(IGenericService<Table> tableGenericService, IMemoryCache cache)
     {
         _tableGenericService = tableGenericService;
@@ -17,6 +19,7 @@ public class TableService : ITableService
     public async Task<Table> CreateTableAsync(Table table)
     {
         await _tableGenericService.InsertAsync(table);
+        _cache.Remove(CacheKey);
         return table;
     }
     public async Task<Table?> GetTableByIdAsync(Guid tableId)
@@ -38,12 +41,13 @@ public class TableService : ITableService
     public async Task<Table> UpdateTableAsync(Table table)
     {
         await _tableGenericService.UpdateAsync(table);
+        _cache.Remove(CacheKey);
         return table;
     }                 
     public async Task DeleteTableAsync(Guid tableId)
     {
         Table table = await _tableGenericService.GetByIdAsync(tableId) ?? throw new InvalidOperationException("Product not found.");
-
+        _cache.Remove(CacheKey);
         await _tableGenericService.DeleteAsync(table);
     }                
     public async Task<bool> IsTableAvailableAsync(Guid tableId)
