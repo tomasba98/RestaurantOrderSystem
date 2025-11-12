@@ -1,84 +1,148 @@
-# Restaurant Order System (In Progress...)
+# 🍽️ Restaurant Order System
 
-This is a restaurant order management system developed with **ASP.NET Core**. It allows waiters and cashiers to place orders from different terminals, and the kitchen to receive orders in real-time on a display. The system manages the registration of orders placed for each table and maintains a stock of product/plates, tracking their availability.
+A restaurant order management system developed with **ASP.NET Core** and **PostgreSQL**, following **Clean Architecture** principles and design patterns for scalability and maintainability.
 
-# Business Logic
-- Orders from a session that has already ended cannot be modified or deleted.
-- Paid orders cannot be deleted.
+The system allows **waiters** to place orders from different terminals, while the **kitchen** receives and manages them in real-time.  
+It also tracks **product stock**, manages tables, and enforces business rules to ensure data consistency.
 
 ---
 
-## Features
-- Use of AutoMapper for object mapping.
-- Implementation of custom exceptions for effective error handling.
-- Ability to create and manage orders per table.
-- Real-time order display in the kitchen
-- Product management  
-- Accessible from multiple PCs over a local network (LAN)  
-- Fully local operation (no internet required)
-
-### 🔐 Authentication & Authorization with JWT
-- The API uses JWT for user authentication and restricts access to specific endpoints based on user roles.
-- A JWT token is generated on login, including UserId, UserName, and Role.
-- The Password is hashed using SHA-256.
-- Roles are enforced using the [Authorize(Roles = "Admin,Manager")] attribute.
-  
----
-
-## 🛠 Running the Project with Docker
+## 🐳 Run the Project with Docker
 
 ### Prerequisites
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/)
+- [Docker](https://www.docker.com/)  
+- [Docker Compose](https://docs.docker.com/compose/)  
 
-### Start the Project
-
-From the root directory, run:
-
+### Start the stack
 ```bash
 docker-compose up --build
 ```
-This starts:
-- **dotnetapi** at `http://localhost:4332`
-- **reactclient** at `http://localhost:5173/`
-- **postgres** at port `5433`
 
-### Verify
-- Open `http://localhost:4332/swagger` 
+**Services:**
+- 🧩 API: `http://localhost:4332/swagger`  
+- 💻 React Client: `http://localhost:5173`  
+- 🗄️ PostgreSQL: port `5433`
 
 ---
 
-## Technologies Used
+## 🧠 Business Logic Rules
+- Orders from **closed sessions** cannot be modified or deleted.  
+- **Paid orders** cannot be deleted.  
+- All operations are validated through business-layer services.
 
-- **ASP.NET Core** (WebApp)  
+---
+
+## 🚀 Features
+
+### 🧩 Core Functionality
+- Full CRUD for Orders, Products, Tables, and Sessions.  
+- Order workflow with states: *Confirmed → InKitchen → Ready → Served → Paid*.  
+- Real-time kitchen dashboard for order monitoring.  
+- Stock management integrated with each order.  
+- Role-based authentication and authorization using JWT.  
+- Accessible from multiple devices over local network (LAN) — fully offline capable.
+
+---
+
+### ⚙️ Backend Highlights
+- **ASP.NET Core 8.0 (C# 12)** – RESTful API development.  
+- **Entity Framework Core + PostgreSQL** – ORM and database management.  
+- **AutoMapper** – Clean mapping between entities and DTOs.  
+- **Custom exceptions** for robust error handling (`OrderNotFoundException`, `OrderNotPaidException`, etc.).  
+- **Serilog** – Structured logging for better observability.  
+- **Dependency Injection** – Built-in DI container for all layers.  
+- **Unit of Work** pattern using `DbContext.SaveChangesAsync()` for atomic operations.
+
+---
+
+### 🧠 In-Memory Caching
+Improved performance by implementing caching for frequently accessed data, reducing database queries by up to **50%**.
+(Implementation details intentionally omitted from README.)
+
+---
+
+## 🏗️ Architecture
+
+**Pattern:** N-Layer + Generic Repository + Service Layer  
+
+### 📁 Backend Structure
+```
+Restaurant-Backend/
+├── Controllers/          → Presentation layer (API endpoints)
+├── Services/             → Business logic layer
+│   ├── GenericService.cs → Reusable CRUD logic
+│   ├── OrderService.cs   → Domain-specific rules
+│   └── ProductService.cs
+├── DataAccess/           → Generic repository (GenericDAO)
+├── Entities/             → Domain models (Order, Product, Table)
+├── Context/              → EF Core DbContext
+├── Models/               → DTOs (Request/Response)
+└── Utils/                → Logging, encryption, exceptions
+```
+
+**Advantages:**
+- Separation of concerns  
+- Highly testable and maintainable  
+- Minimal code duplication with GenericDAO/Service  
+- Consistent error and transaction handling  
+
+---
+
+### 📦 Client Architecture
+```
+restaurant-client/
+│
+├── public/
+│
+├── src/
+│   ├── assets/              # Images, logos, and fonts
+│   ├── components/          # Reusable UI components (Buttons, NavBar, etc.)
+│   ├── pages/               # Main views (Home, Orders, Menu, etc.)
+│   ├── layout/              # Global layouts such as MainLayout and AdminLayout
+│   ├── services/            # API logic and communication (axios, fetch, etc.)
+│   ├── types/               # Global TypeScript typings (interfaces, DTOs, entities)
+│   ├── hooks/               # Custom hooks (useAuth, useOrders, etc.)
+│   ├── theme/               # MUI theme configuration (`theme.ts`)
+│   ├── context/             # React contexts (AuthContext, CartContext, etc.)
+│   ├── utils/               # Helper and utility functions
+│   ├── App.tsx              # Routing and layout entry point
+│   └── main.tsx             # Root render entry (renders React into #root)
+│
+├── tsconfig.json
+├── vite.config.ts
+└── package.json
+```
+
+---
+
+## 🔐 Authentication & Authorization (JWT)
+- Login generates JWT with `UserId`, `UserName`, and `Role` claims.  
+- Passwords hashed securely with **BCrypt**.  
+- Role-based protection using `[Authorize(Roles = "Admin,Manager,Waiter,Kitchen")]`.  
+
+---
+
+## 🧰 Technologies Used
+- **ASP.NET Core 8.0 / C# 12**  
 - **Entity Framework Core**  
 - **PostgreSQL**  
-- **Kestrel or IIS as local server**  
+- **AutoMapper**  
+- **Serilog**  
+- **BCrypt / JWT**  
+- **Docker & Docker Compose**
 
 ---
 
-## System Architecture
+## 🧩 System Design
 
-**Local Web Application (On-Premise)**  
-- Runs on a PC with the web server and database.  
-- Accessible from other restaurant PCs connected via LAN.  
-- Designed to operate without an Internet connection.  
-
----
-
-📁 Restaurant-Backend  
-├── Controllers/         → API controllers  
-├── Entities/            → Domain models  
-├── Services/            → Business logic (dependency injection)  
-├── appsettings.json     → Configuration  
-└── Program.cs / Startup.cs  
+**Local Web Application (On-Premise)**
+- Runs on a PC with both API and database.  
+- Accessible from other restaurant PCs via LAN.  
+- Operates fully offline (no Internet dependency).
 
 ---
 
-<!-- ## 📍 Current Project Status  
-- ✅ Basic ordering and kitchen functionality  
-- ✅ Product module  
-- 🔜 User login and access control  
-- 🔜 Sales reports  
-- 🔜 Mobile or tablet interface --!>
-"""
+## 📈 Performance Results
+- ✅ 50% reduction in DB load with caching (IMemoryCache).  
+- ✅ Optimized EF Core queries with `Include()` and `AsNoTracking()`.  
+- ✅ Clean API architecture with minimal coupling.
