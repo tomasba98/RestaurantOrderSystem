@@ -10,9 +10,24 @@ using Restaurant_Backend.Entities;
 public interface IAuthenticationService
 {
     /// <summary>
-    /// Generates a JWT token for the specified user.
+    /// Generates a JWT token containing the user's claims and role information.
     /// </summary>
-    /// <param name="user">The user for whom the JWT token will be generated.</param>
-    /// <returns>An AuthenticationResponse containing the generated JWT token.</returns>
-    AuthenticationResponse GenerateJwt(User user);
+    /// <param name="user">The user entity for whom the token will be generated.</param>
+    /// <returns>A signed JWT token as a string.</returns>
+    string GenerateToken(User user);
+
+    /// <summary>
+    /// Generates a secure hash of the specified value using the BCrypt algorithm.
+    /// </summary>
+    /// <param name="value">The plain text value to hash.</param>
+    /// <returns>The generated BCrypt hash string.</returns>
+    string Hash(string value);
+
+    /// <summary>
+    /// Verifies whether a plain text value matches a given BCrypt hash.
+    /// </summary>
+    /// <param name="plain">The plain text value to verify.</param>
+    /// <param name="hashed">The stored BCrypt hash to compare against.</param>
+    /// <returns><c>true</c> if the plain text value matches the hash; otherwise, <c>false</c>.</returns>
+    bool CheckHash(string plain, string hashed);
 }

@@ -16,6 +16,16 @@ public class TableService : ITableService
         _tableGenericService = tableGenericService;
         _cache = cache;
     }
+    public async Task<IEnumerable<Table>> GetAllTablesAsync()
+    {
+        var tables = await _cache.GetOrCreateAsync("all_tables", async entry =>
+        {
+            entry.SlidingExpiration = TimeSpan.FromMinutes(10);
+            return await _tableGenericService.FindAllAsyncReadOnly();
+        });
+
+        return tables ?? [];
+    }
     public async Task<Table> CreateTableAsync(Table table)
     {
         await _tableGenericService.InsertAsync(table);
@@ -27,16 +37,6 @@ public class TableService : ITableService
         return await _tableGenericService.GetByIdAsync(tableId);
     }
 
-    public async Task<IEnumerable<Table>> GetAllTablesAsync()
-    {
-        var tables = await _cache.GetOrCreateAsync("all_tables", async entry =>
-        {
-            entry.SlidingExpiration = TimeSpan.FromMinutes(10);
-            return await _tableGenericService.FindAllAsyncReadOnly();
-        });
-
-        return tables ?? [];
-    }
 
     public async Task<Table> UpdateTableAsync(Table table)
     {

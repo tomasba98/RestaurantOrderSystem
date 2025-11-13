@@ -5,7 +5,6 @@ using Restaurant_Backend.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using Restaurant_Backend.Utils.Encrypt;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -35,11 +34,11 @@ public class AuthenticationController : BaseController
 
         if (user is null) return BadRequest("Invalid credentials.");        
 
-        if (!Encrypt.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
+        if (!_authenticationService.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
 
-        AuthenticationResponse response = _authenticationService.GenerateJwt(user);
+        string response = _authenticationService.GenerateToken(user);
 
-        return Ok(response);
+        return Ok(new AuthenticationResponse(user.UserName, response));
     }
 
     //[Authorize(Roles = "Admin,Manager")] PUBLICO POR AHORA
@@ -51,7 +50,7 @@ public class AuthenticationController : BaseController
             return BadRequest("Username already in use.");
         }
 
-        string hashPassword = Encrypt.Hash(userRequest.Password);
+        string hashPassword = _authenticationService.Hash(userRequest.Password);
 
         var newUser = _mapper.Map<User>(userRequest);
         newUser.Password = hashPassword;
