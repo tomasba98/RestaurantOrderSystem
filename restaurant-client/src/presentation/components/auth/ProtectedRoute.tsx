@@ -53,15 +53,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     isRoleAuthorized = requiredRoles.includes(user?.role ?? -1);
   }
 
-  //Debug for roles
-  // console.log('🔐 ProtectedRoute Debug:', {
-  //   path: location.pathname,
-  //   isAuthenticated,
-  //   userRole: user?.role,
-  //   requiredRoles,
-  //   isRoleAuthorized,
-  // });
-
   if (!isRoleAuthorized) {
     console.warn(`[ProtectedRoute] Acceso Denegado por Rol. Redirigiendo a /: Roles Requeridos ${requiredRoles}, Rol Usuario ${user?.role}.`);
     return (

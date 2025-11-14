@@ -1,4 +1,4 @@
-import {    Dialog,    DialogTitle,    DialogContent,    DialogActions,    Chip,    Typography,    List,    ListItem,    ListItemText,    Divider,    Box,    Button, IconButton, Select, MenuItem  } from "@mui/material";
+import {    Dialog,    DialogTitle,    DialogContent,    DialogActions,    Chip,    Typography,    List,    ListItem,    ListItemText,    Divider,    Box,  IconButton, Select, MenuItem  } from "@mui/material";
 import {  Close } from "@mui/icons-material";
 import  { type Order, OrderStatus } from "@/domain/entities/Order";
   
@@ -14,11 +14,10 @@ import  { type Order, OrderStatus } from "@/domain/entities/Order";
 
   }
   
-  export default function OrderDetailDialog({
+  export default function OrderDetailCard({
     open,
     order,
     onClose,
-    onCancelOrder,
     onStatusChange,
     getStatusIcon,
     getStatusLabel,

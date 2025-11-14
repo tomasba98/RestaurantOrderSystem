@@ -5,7 +5,7 @@ import type { Product } from '@/domain/entities/Product';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 import type { Table } from '@/domain/entities/Table';
 
-interface OrderCreationDialogProps {
+interface OrderCreationCardProps {
   open: boolean;
   table: Table | null;
   products: Product[];
@@ -19,7 +19,7 @@ interface CartItem extends OrderDetailItem {
   subtotal: number;
 }
 
-const OrderCreationDialog: React.FC<OrderCreationDialogProps> = ({
+const OrderCreationCard: React.FC<OrderCreationCardProps> = ({
   open,
   table,
   products,
@@ -346,4 +346,4 @@ const OrderCreationDialog: React.FC<OrderCreationDialogProps> = ({
   );
 };
 
-export default OrderCreationDialog;
+export default OrderCreationCard;

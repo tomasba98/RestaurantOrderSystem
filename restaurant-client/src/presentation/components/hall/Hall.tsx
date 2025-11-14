@@ -5,8 +5,7 @@ import { Add } from '@mui/icons-material';
 import type { HallProps, Table } from '@/domain/entities/Table';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 import DraggableTable from '../table/DraggableTable';
-import OrderModal from '../order/OrderModal';
-import OrderCreationDialog from '../order/OrderCreationDialog';
+import OrderCreationCard from '../order/OrderCreationCard';
 
 
 const Hall: React.FC<HallProps> = ({
@@ -93,7 +92,7 @@ const Hall: React.FC<HallProps> = ({
               width: 16,
               height: 16,
               borderRadius: '50%',
-              backgroundColor: '#4caf50',
+              backgroundColor: 'black',
             }}
           />
           <Box component="span" sx={{ fontSize: '0.8rem' }}>
@@ -106,7 +105,7 @@ const Hall: React.FC<HallProps> = ({
               width: 16,
               height: 16,
               borderRadius: '50%',
-              backgroundColor: '#ff5252',
+              backgroundColor: '#BF1515',
             }}
           />
           <Box component="span" sx={{ fontSize: '0.8rem' }}>
@@ -162,16 +161,7 @@ const Hall: React.FC<HallProps> = ({
         )}       
       </Box>
 
-      {/* Order Modal */}
-      {/* <OrderModal
-        open={orderModalOpen}
-        table={selectedTable}
-        products={products}
-        onClose={handleCloseOrderModal}
-        onCreateOrder={handleCreateOrderSubmit}
-        loading={loading}
-      />       */}
-      <OrderCreationDialog
+      <OrderCreationCard
         open={orderModalOpen}
         table={selectedTable}
         products={products}

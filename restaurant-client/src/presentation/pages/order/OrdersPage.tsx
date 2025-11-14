@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Typography, Card, CardContent, Grid, Chip, Button, IconButton, CircularProgress, Alert, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Divider, } from '@mui/material';
-import { Refresh, Cancel, CheckCircle, Kitchen, Restaurant, LocalShipping, Receipt, } from '@mui/icons-material';
+import { Box, Container, Typography, Card, CardContent, Grid, Chip, IconButton, CircularProgress, Alert,  Divider, } from '@mui/material';
+import { Refresh, Receipt, } from '@mui/icons-material';
 import { useOrders } from '@/aplication/hooks/order/useOrders';
 import { OrderStatus } from '@/domain/entities/Order';
 import type { Order } from '@/domain/entities/Order';
-import OrderDetailDialog from '@/presentation/components/order/OrderDetailDialog';
+import OrderDetailCard from '@/presentation/components/order/OrderDetailCard';
+import { getStatusBorderColor, getStatusChipColor, getStatusIcon, getStatusLabel } from '@/utils/orderUtils';
 
 const OrdersPage: React.FC = () => {
   const {
@@ -33,11 +34,6 @@ const OrdersPage: React.FC = () => {
       if (updated) setSelectedOrder(updated);
     }
   }, [orders]);
-
-
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(newValue);
-  };
 
   const handleRefresh = () => {
     loadOrders();
@@ -70,59 +66,10 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  const getStatusChipColor = (status: OrderStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
-    switch (status) {
-      case OrderStatus.Confirmed:
-        return 'info';
-      case OrderStatus.InKitchen:
-        return 'warning';
-      case OrderStatus.Ready:
-        return 'success';
-      case OrderStatus.Served:
-        return 'primary';
-      case OrderStatus.Paid:
-        return 'success';
-      case OrderStatus.Canceled:
-        return 'error';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case OrderStatus.Confirmed:
-        return <Receipt fontSize="small" />;
-      case OrderStatus.InKitchen:
-        return <Kitchen fontSize="small" />;
-      case OrderStatus.Ready:
-        return <LocalShipping fontSize="small" />;
-      case OrderStatus.Served:
-        return <Restaurant fontSize="small" />;
-      case OrderStatus.Paid:
-        return <CheckCircle fontSize="small" />;
-      case OrderStatus.Canceled:
-        return <Cancel fontSize="small" />;
-      default:
-        return undefined;
-    }
-  };
-
-  const getStatusLabel = (status: OrderStatus): string => {
-    const labels: Record<OrderStatus, string> = {
-      [OrderStatus.Confirmed]: 'Confirmada',
-      [OrderStatus.InKitchen]: 'En Cocina',
-      [OrderStatus.Ready]: 'Lista',
-      [OrderStatus.Served]: 'Servida',
-      [OrderStatus.Paid]: 'Pagada',
-      [OrderStatus.Canceled]: 'Cancelada',
-    };
-    return labels[status];
-  };
 
   const filterOrdersByTab = () => {
     switch (currentTab) {
-      case 0: // Todas
+      case 0: // All
         return orders;
       case 1:
         return getOrdersByStatus(OrderStatus.Confirmed);
@@ -140,6 +87,8 @@ const OrdersPage: React.FC = () => {
         return orders;
     }
   };
+
+
 
 
   const stats = getOrderStats();
@@ -185,9 +134,7 @@ const OrdersPage: React.FC = () => {
             }}
           >
             <CardContent sx={{ pb: '16px !important' }}>
-              {/* Centra el bloque entero */}
               <Box display="flex" justifyContent="center">
-                {/* Bloque con ancho según contenido */}
                 <Box
                   component="span"
                   sx={{
@@ -197,7 +144,6 @@ const OrdersPage: React.FC = () => {
                     textAlign: 'left'
                   }}
                 >
-                  {/* fila: título + chip */}
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <Typography color="textSecondary" variant="h5">
                       Todas
@@ -205,8 +151,6 @@ const OrdersPage: React.FC = () => {
 
                     <Chip size="small" icon={<Receipt />} label="Todas" />
                   </Box>
-
-                  {/* número alineado al inicio del título */}
                   <Typography variant="h4">
                     {stats.total}
                   </Typography>
@@ -374,84 +318,7 @@ const OrdersPage: React.FC = () => {
 
       </Grid>
 
-      <Divider sx={{ my: 3, opacity: 0.8 }} />
-
-
-      {/* Stats Cards
-      <Grid container spacing={2} mb={3}>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Total Activas
-              </Typography>
-              <Typography variant="h4">{stats.total}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Confirmadas
-              </Typography>
-              <Typography variant="h4">{stats.confirmed}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                En Cocina
-              </Typography>
-              <Typography variant="h4">{stats.inKitchen}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Listas
-              </Typography>
-              <Typography variant="h4">{stats.ready}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Servidas
-              </Typography>
-              <Typography variant="h4">{stats.served}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid  size={{ xs: 12, sm: 6, md: 2}} >
-          <Card>
-            <CardContent>
-              <Typography color="textSecondary" gutterBottom variant="body2">
-                Pagadas
-              </Typography>
-              <Typography variant="h4">{stats.paid}</Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-        <Tabs value={currentTab} onChange={handleTabChange}>
-          <Tab label="Todas" />
-          <Tab label="Pendientes" />
-          <Tab label="En Cocina" />
-          <Tab label="Listas" />
-          <Tab label="Servidas" />
-          <Tab label="Pagadas" />
-          <Tab label="Canceladas" />
-        </Tabs>
-      </Box> */}
+      <Divider sx={{ my: 3, opacity: 0.8 }} />     
 
       {/* Orders Grid */}
       <Grid container spacing={2}>
@@ -466,6 +333,8 @@ const OrdersPage: React.FC = () => {
                 sx={{
                   cursor: 'pointer',
                   transition: 'transform 0.2s',
+                  borderLeft: '4px solid', 
+                  borderLeftColor: getStatusBorderColor(order.status),
                   '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow: 4,
@@ -501,7 +370,7 @@ const OrdersPage: React.FC = () => {
         )}
       </Grid>
 
-      <OrderDetailDialog
+      <OrderDetailCard
         open={dialogOpen}
         order={selectedOrder}
         onClose={handleCloseDialog}

@@ -146,8 +146,8 @@ public class OrderController : BaseController
         try
         {
             var orders = await _orderService.GetOrdersByStatusAsync(status);
-            if (orders is null || !orders.Any())
-                return NotFound("No orders were found with the specified status.");
+            //if (orders is null || !orders.Any())
+            //    return NotFound("No orders were found with the specified status.");
 
             var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
 
