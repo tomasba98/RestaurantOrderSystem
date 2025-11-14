@@ -146,3 +146,6 @@ restaurant-client/
 - ✅ 50% reduction in DB load with caching (IMemoryCache).  
 - ✅ Optimized EF Core queries with `Include()` and `AsNoTracking()`.  
 - ✅ Clean API architecture with minimal coupling.
+
+## LICENSE
+- This project is for evaluation purposes only. See LICENSE for details.
