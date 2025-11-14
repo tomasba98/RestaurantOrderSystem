@@ -3,7 +3,7 @@ import { Box, Card, CardContent, CardActions, Button, Chip, Typography, List, Li
 import { Kitchen, Cancel, Timer, RestaurantMenu, LocalShipping, } from '@mui/icons-material';
 import { OrderStatus } from '@/domain/entities/Order';
 import type { Order } from '@/domain/entities/Order';
-import { getStatusBorderColor } from '@/utils/orderUtils';
+import { getStatusBorderColor } from '@/utils/order/orderUtils';
 
 interface OrderKitchenCardProps {
   order: Order;

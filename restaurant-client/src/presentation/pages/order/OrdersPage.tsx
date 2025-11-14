@@ -5,7 +5,7 @@ import { useOrders } from '@/aplication/hooks/order/useOrders';
 import { OrderStatus } from '@/domain/entities/Order';
 import type { Order } from '@/domain/entities/Order';
 import OrderDetailCard from '@/presentation/components/order/OrderDetailCard';
-import { getStatusBorderColor, getStatusChipColor, getStatusIcon, getStatusLabel } from '@/utils/orderUtils';
+import { getStatusBorderColor, getStatusChipColor, getStatusIcon, getStatusLabel } from '@/utils/order/orderUtils';
 
 const OrdersPage: React.FC = () => {
   const {
