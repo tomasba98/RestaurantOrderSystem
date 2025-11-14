@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {  Box,  Container,  Typography,  Card,  CardContent,  Grid,  Chip,  Button,  IconButton,  CircularProgress,  Alert,  Tabs,  Tab,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  List,  ListItem,  ListItemText,  Divider,} from '@mui/material';
-import {  Refresh,  Cancel,  CheckCircle,  Kitchen,  Restaurant,  LocalShipping,  Receipt,} from '@mui/icons-material';
+import { Box, Container, Typography, Card, CardContent, Grid, Chip, Button, IconButton, CircularProgress, Alert, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Divider, } from '@mui/material';
+import { Refresh, Cancel, CheckCircle, Kitchen, Restaurant, LocalShipping, Receipt, } from '@mui/icons-material';
 import { useOrders } from '@/aplication/hooks/order/useOrders';
 import { OrderStatus } from '@/domain/entities/Order';
 import type { Order } from '@/domain/entities/Order';
+import OrderDetailDialog from '@/presentation/components/order/OrderDetailDialog';
 
 const OrdersPage: React.FC = () => {
   const {
@@ -27,9 +28,12 @@ const OrdersPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Orders data:', orders);
-    console.log('Orders stats:', getOrderStats());
+    if (selectedOrder) {
+      const updated = orders.find(o => o.id === selectedOrder.id);
+      if (updated) setSelectedOrder(updated);
+    }
   }, [orders]);
+
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
@@ -52,7 +56,6 @@ const OrdersPage: React.FC = () => {
   const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      handleCloseDialog();
     } catch (err) {
       console.error('Error updating status:', err);
     }
@@ -67,7 +70,7 @@ const OrdersPage: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: OrderStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+  const getStatusChipColor = (status: OrderStatus): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
     switch (status) {
       case OrderStatus.Confirmed:
         return 'info';
@@ -117,34 +120,27 @@ const OrdersPage: React.FC = () => {
     return labels[status];
   };
 
-  const getNextStatus = (currentStatus: OrderStatus): OrderStatus | null => {
-    const transitions: Record<OrderStatus, OrderStatus | null> = {
-      [OrderStatus.Confirmed]: OrderStatus.InKitchen,
-      [OrderStatus.InKitchen]: OrderStatus.Ready,
-      [OrderStatus.Ready]: OrderStatus.Served,
-      [OrderStatus.Served]: OrderStatus.Paid,
-      [OrderStatus.Paid]: null,
-      [OrderStatus.Canceled]: null,
-    };
-    return transitions[currentStatus];
-  };
-
   const filterOrdersByTab = () => {
     switch (currentTab) {
       case 0: // Todas
         return orders;
-      case 1: // Pendientes
+      case 1:
         return getOrdersByStatus(OrderStatus.Confirmed);
-      case 2: // En Cocina
+      case 2:
         return getOrdersByStatus(OrderStatus.InKitchen);
-      case 3: // Listas
+      case 3:
         return getOrdersByStatus(OrderStatus.Ready);
-      case 4: // Completadas
-        return [...getOrdersByStatus(OrderStatus.Paid), ...getOrdersByStatus(OrderStatus.Canceled)];
+      case 4:
+        return getOrdersByStatus(OrderStatus.Served);
+      case 5:
+        return getOrdersByStatus(OrderStatus.Paid);
+      case 6:
+        return getOrdersByStatus(OrderStatus.Canceled);
       default:
         return orders;
     }
   };
+
 
   const stats = getOrderStats();
   const filteredOrders = filterOrdersByTab();
@@ -159,6 +155,7 @@ const OrdersPage: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
+
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" component="h1">
@@ -175,7 +172,212 @@ const OrdersPage: React.FC = () => {
         </Alert>
       )}
 
-      {/* Stats Cards */}
+      {/* Todas */}
+      <Grid container spacing={2} mb={2}>
+        <Grid size={{ xs: 12 }}>
+          <Card
+            onClick={() => setCurrentTab(0)}
+            sx={{
+              cursor: 'pointer',
+              transition: '0.2s',
+              '&:hover': { transform: 'scale(1.03)', boxShadow: 4 },
+              textAlign: 'center'
+            }}
+          >
+            <CardContent sx={{ pb: '16px !important' }}>
+              {/* Centra el bloque entero */}
+              <Box display="flex" justifyContent="center">
+                {/* Bloque con ancho según contenido */}
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    textAlign: 'left'
+                  }}
+                >
+                  {/* fila: título + chip */}
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <Typography color="textSecondary" variant="h5">
+                      Todas
+                    </Typography>
+
+                    <Chip size="small" icon={<Receipt />} label="Todas" />
+                  </Box>
+
+                  {/* número alineado al inicio del título */}
+                  <Typography variant="h4">
+                    {stats.total}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+
+          </Card>
+        </Grid>
+      </Grid>
+
+
+
+      <Grid container spacing={2} mb={3}>
+
+        {/* Confirmadas */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(1)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  Confirmadas
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.Confirmed)}
+                  label={getStatusLabel(OrderStatus.Confirmed)}
+                  color={getStatusChipColor(OrderStatus.Confirmed)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.confirmed}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* En Cocina */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(2)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  En Cocina
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.InKitchen)}
+                  label={getStatusLabel(OrderStatus.InKitchen)}
+                  color={getStatusChipColor(OrderStatus.InKitchen)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.inKitchen}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Listas */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(3)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  Listas
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.Ready)}
+                  label={getStatusLabel(OrderStatus.Ready)}
+                  color={getStatusChipColor(OrderStatus.Ready)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.ready}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Servidas */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(4)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  Servidas
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.Served)}
+                  label={getStatusLabel(OrderStatus.Served)}
+                  color={getStatusChipColor(OrderStatus.Served)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.served}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Pagadas */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(5)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  Pagadas
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.Paid)}
+                  label={getStatusLabel(OrderStatus.Paid)}
+                  color={getStatusChipColor(OrderStatus.Paid)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.paid}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Canceladas */}
+        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+          <Card
+            onClick={() => setCurrentTab(6)}
+            sx={{ cursor: 'pointer', transition: '0.2s', '&:hover': { transform: 'scale(1.03)', boxShadow: 4 } }}
+          >
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                <Typography color="textSecondary" variant="body2">
+                  Canceladas
+                </Typography>
+
+                <Chip
+                  size="small"
+                  icon={getStatusIcon(OrderStatus.Canceled)}
+                  label={getStatusLabel(OrderStatus.Canceled)}
+                  color={getStatusChipColor(OrderStatus.Canceled)}
+                />
+              </Box>
+
+              <Typography variant="h4">{stats.canceled}</Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+      </Grid>
+
+      <Divider sx={{ my: 3, opacity: 0.8 }} />
+
+
+      {/* Stats Cards
       <Grid container spacing={2} mb={3}>
         <Grid  size={{ xs: 12, sm: 6, md: 2}} >
           <Card>
@@ -239,26 +441,27 @@ const OrdersPage: React.FC = () => {
         </Grid>
       </Grid>
 
-      {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
         <Tabs value={currentTab} onChange={handleTabChange}>
           <Tab label="Todas" />
           <Tab label="Pendientes" />
           <Tab label="En Cocina" />
           <Tab label="Listas" />
-          <Tab label="Completadas" />
+          <Tab label="Servidas" />
+          <Tab label="Pagadas" />
+          <Tab label="Canceladas" />
         </Tabs>
-      </Box>
+      </Box> */}
 
       {/* Orders Grid */}
       <Grid container spacing={2}>
         {filteredOrders.length === 0 ? (
-          <Grid size={{ xs: 12}}>
+          <Grid size={{ xs: 12 }}>
             <Alert severity="info">No hay órdenes en esta categoría</Alert>
           </Grid>
         ) : (
           filteredOrders.map((order) => (
-            <Grid  size={{ xs: 12, sm: 6, md: 2, lg: 3}} key={order.id} >
+            <Grid size={{ xs: 12, sm: 6, md: 2, lg: 3 }} key={order.id} >
               <Card
                 sx={{
                   cursor: 'pointer',
@@ -278,7 +481,7 @@ const OrdersPage: React.FC = () => {
                     <Chip
                       icon={getStatusIcon(order.status)}
                       label={getStatusLabel(order.status)}
-                      color={getStatusColor(order.status)}
+                      color={getStatusChipColor(order.status)}
                       size="small"
                     />
                   </Box>
@@ -298,81 +501,17 @@ const OrdersPage: React.FC = () => {
         )}
       </Grid>
 
-      {/* Order Detail Dialog */}
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        {selectedOrder && (
-          <>
-            <DialogTitle>
-              Orden - Mesa #{selectedOrder.tableNumber}
-            </DialogTitle>
-            <DialogContent>
-              <Box mb={2}>
-                <Chip
-                  icon={getStatusIcon(selectedOrder.status)}
-                  label={getStatusLabel(selectedOrder.status)}
-                  color={getStatusColor(selectedOrder.status)}
-                />
-              </Box>
-              
-              <Typography variant="subtitle2" gutterBottom>
-                Productos:
-              </Typography>
-              <List dense>
-                {selectedOrder.productList.map((item) => (
-                  <ListItem key={item.id}>
-                    <ListItemText
-                      primary={`Producto ${item.productId.slice(-4)}`}
-                      secondary={`Cantidad: ${item.quantity}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-              
-              <Divider sx={{ my: 2 }} />
-              
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="h6">Total:</Typography>
-                <Typography variant="h6" color="primary">
-                  ${selectedOrder.totalAmount.toFixed(2)}
-                </Typography>
-              </Box>
-              
-              <Typography variant="caption" color="text.secondary" display="block" mt={2}>
-                Creada: {new Date(selectedOrder.createdAt).toLocaleString()}
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              {selectedOrder.status !== OrderStatus.Canceled &&
-                selectedOrder.status !== OrderStatus.Paid && (
-                  <Button
-                    onClick={() => handleCancelOrder(selectedOrder.id)}
-                    color="error"
-                    startIcon={<Cancel />}
-                  >
-                    Cancelar Orden
-                  </Button>
-                )}
-              
-              {getNextStatus(selectedOrder.status) && (
-                <Button
-                  onClick={() =>
-                    handleStatusChange(
-                      selectedOrder.id,
-                      getNextStatus(selectedOrder.status)!
-                    )
-                  }
-                  variant="contained"
-                  startIcon={getStatusIcon(getNextStatus(selectedOrder.status)!)}
-                >
-                  {getStatusLabel(getNextStatus(selectedOrder.status)!)}
-                </Button>
-              )}
-              
-              <Button onClick={handleCloseDialog}>Cerrar</Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
+      <OrderDetailDialog
+        open={dialogOpen}
+        order={selectedOrder}
+        onClose={handleCloseDialog}
+        onCancelOrder={handleCancelOrder}
+        onStatusChange={handleStatusChange}
+        getStatusIcon={getStatusIcon}
+        getStatusLabel={getStatusLabel}
+        getStatusChipColor={getStatusChipColor}
+      />
+
     </Container>
   );
 };

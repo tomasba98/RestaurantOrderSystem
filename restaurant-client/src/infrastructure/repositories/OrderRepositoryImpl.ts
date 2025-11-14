@@ -28,8 +28,8 @@ export class OrderRepositoryImpl implements IOrderRepository {
     return await apiClient.post<Order>(this.basePath, data);    
   }
 
-  async updateStatus(id: string, status: string): Promise<Order> {
-    return await apiClient.patch<Order>(`${this.basePath}/${id}/status`, { status });    
+  async updateStatus(id: string, status: OrderStatus): Promise<Order> {
+    return await apiClient.patch<Order>(`${this.basePath}/${id}/status/${status}`);    
   }
 
   async cancel(id: string): Promise<Order> {

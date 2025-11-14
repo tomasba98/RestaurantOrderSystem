@@ -166,8 +166,8 @@ public class OrderController : BaseController
     /// <param name="status">The new status to assign to the order.</param>
     /// <returns>An IActionResult indicating the result of the operation.</returns>
     [Authorize(Roles = "Admin,Manager,Kitchen,Waiter")]
-    [HttpPatch("{orderId}/status")]
-    public async Task<IActionResult> ChangeOrderStatus(Guid orderId, [FromBody] OrderStatus status)
+    [HttpPatch("{orderId}/status/{status}")]
+    public async Task<IActionResult> ChangeOrderStatus(Guid orderId, OrderStatus status)
     {
         try
         {
@@ -182,7 +182,10 @@ public class OrderController : BaseController
             order.Status = status;
 
             await _orderService.UpdateOrderAsync(order);
-            return NoContent();
+
+            var ordersResponse = _mapper.Map<OrderResponse>(order);
+
+            return Ok(ordersResponse);
         }
         catch (OrderNotFoundException ex)
         {

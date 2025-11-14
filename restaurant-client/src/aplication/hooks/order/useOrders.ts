@@ -68,7 +68,7 @@ export const useOrders = () => {
     }
   }, []);
 
-  // Create new order (con gestión automática de sesión)
+  // Create new order
   const createOrder = useCallback(async (
     tableId: string,
     items: OrderDetailItem[]
@@ -117,9 +117,9 @@ export const useOrders = () => {
         prev.map(order => order.id === orderId ? updatedOrder : order)
       );
       
-      if (currentOrder?.id === orderId) {
-        setCurrentOrder(updatedOrder);
-      }
+      setCurrentOrder(prev =>
+        prev?.id === orderId ? updatedOrder : prev
+      );
       
       return updatedOrder;
     } catch (err: any) {
@@ -130,7 +130,7 @@ export const useOrders = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [currentOrder]);
+  }, []);
 
   // Cancel order
   const cancelOrder = useCallback(async (orderId: string): Promise<Order> => {

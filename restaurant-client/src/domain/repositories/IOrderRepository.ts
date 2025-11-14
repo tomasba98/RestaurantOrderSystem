@@ -18,7 +18,7 @@ export interface IOrderRepository {
   getBySession(sessionId: string): Promise<Order[]>;
   getByStatus(status: OrderStatus): Promise<Order[]>;
   create(data: CreateOrderData): Promise<Order>;
-  updateStatus(id: string, status: string): Promise<Order>;
+  updateStatus(id: string, status: OrderStatus): Promise<Order>;
   cancel(id: string): Promise<Order>;
   markReady(id: string): Promise<Order>;
 }
