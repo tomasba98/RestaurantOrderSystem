@@ -1,35 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Chip,
-  Button,
-  IconButton,
-  CircularProgress,
-  Alert,
-  Tabs,
-  Tab,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-} from '@mui/material';
-import {
-  Refresh,
-  TableRestaurant,
-  CheckCircle,
-  AccessTime,
-  Close,
-  Info,
-} from '@mui/icons-material';
+import { Box, Container, Typography, Card, CardContent, Grid, Chip, Button, IconButton, CircularProgress, Alert, Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, List, ListItem, ListItemText, Divider, } from '@mui/material';
+import { Refresh, TableRestaurant, AccessTime, Close, Info, } from '@mui/icons-material';
 import { useSession } from '@/aplication/hooks/session/useSession';
 import { useTables } from '@/aplication/hooks/table/useTables';
 import type { TableSession } from '@/domain/entities/Session';
@@ -90,7 +61,7 @@ const SessionsPage: React.FC = () => {
       try {
         await endSession(selectedSession.id);
         handleCloseEndDialog();
-        loadSessions(); 
+        loadSessions();
       } catch (err) {
         console.error('Error ending session:', err);
       }
@@ -107,11 +78,11 @@ const SessionsPage: React.FC = () => {
     const end = session.endTime ? new Date(session.endTime) : new Date();
     const durationMs = end.getTime() - start.getTime();
     const minutes = Math.floor(durationMs / 60000);
-    
+
     if (minutes < 60) {
       return `${minutes} min`;
     }
-    
+
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return `${hours}h ${remainingMinutes}m`;
@@ -173,6 +144,11 @@ const SessionsPage: React.FC = () => {
               <Typography color="textSecondary" gutterBottom variant="body2">
                 Total Sesiones
               </Typography>
+              <Chip
+                label={'Todas'}
+                color={'default'}
+                size="small"
+              />
               <Typography variant="h4">{stats.total}</Typography>
             </CardContent>
           </Card>
@@ -183,6 +159,11 @@ const SessionsPage: React.FC = () => {
               <Typography color="textSecondary" gutterBottom variant="body2">
                 Sesiones Activas
               </Typography>
+              <Chip
+                label={'Activas'}
+                color={'success'}
+                size="small"
+              />
               <Typography variant="h4">{stats.active}</Typography>
             </CardContent>
           </Card>
@@ -193,6 +174,11 @@ const SessionsPage: React.FC = () => {
               <Typography color="textSecondary" gutterBottom variant="body2">
                 Sesiones Completadas
               </Typography>
+              <Chip
+                label={'Compeltadas'}
+                color={'warning'}
+                size="small"
+              />
               <Typography variant="h4">{stats.completed}</Typography>
             </CardContent>
           </Card>
@@ -221,7 +207,8 @@ const SessionsPage: React.FC = () => {
                 sx={{
                   cursor: 'pointer',
                   transition: 'transform 0.2s',
-                  border: session.isActive ? '2px solid #4caf50' : 'none',
+                  borderLeft: '4px solid',
+                  borderLeftColor: session.isActive ? 'success.main' : 'error.main',
                   '&:hover': {
                     transform: 'translateY(-4px)',
                     boxShadow: 4,
@@ -243,7 +230,7 @@ const SessionsPage: React.FC = () => {
                       size="small"
                     />
                   </Box>
-                  
+
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <AccessTime fontSize="small" color="action" />
                     <Typography variant="body2" color="text.secondary">
@@ -254,7 +241,7 @@ const SessionsPage: React.FC = () => {
                   <Typography variant="caption" color="text.secondary" display="block">
                     Inicio: {new Date(session.createdAt).toLocaleString()}
                   </Typography>
-                  
+
                   {session.endTime && (
                     <Typography variant="caption" color="text.secondary" display="block">
                       Fin: {new Date(session.endTime).toLocaleString()}
@@ -306,7 +293,7 @@ const SessionsPage: React.FC = () => {
                   />
                 </ListItem>
                 <Divider />
-                
+
                 <ListItem>
                   <ListItemText
                     primary="ID de Sesión"
@@ -314,7 +301,7 @@ const SessionsPage: React.FC = () => {
                   />
                 </ListItem>
                 <Divider />
-                
+
                 <ListItem>
                   <ListItemText
                     primary="ID de Mesa"
@@ -322,7 +309,7 @@ const SessionsPage: React.FC = () => {
                   />
                 </ListItem>
                 <Divider />
-                
+
                 <ListItem>
                   <ListItemText
                     primary="Duración"
@@ -330,14 +317,14 @@ const SessionsPage: React.FC = () => {
                   />
                 </ListItem>
                 <Divider />
-                
+
                 <ListItem>
                   <ListItemText
                     primary="Fecha de Inicio"
                     secondary={new Date(selectedSession.createdAt).toLocaleString()}
                   />
                 </ListItem>
-                
+
                 {selectedSession.endTime && (
                   <>
                     <Divider />

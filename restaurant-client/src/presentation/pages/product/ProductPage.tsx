@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {  Box,  Container,  Typography,  Button,  Card,  CardContent,  CardActions,  Grid,  IconButton,  Dialog,  DialogTitle,  DialogContent,  DialogActions,  TextField,  Switch,  FormControlLabel,  Chip,  Alert,  CircularProgress,  InputAdornment,} from '@mui/material';
-import {  Add,  Edit,  Delete,  Search,  Refresh,  Visibility,  VisibilityOff,} from '@mui/icons-material';
+import { Box, Container, Typography, Button, Card, CardContent, CardActions, Grid, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Switch, FormControlLabel, Chip, Alert, CircularProgress, InputAdornment, } from '@mui/material';
+import { Add, Edit, Delete, Search, Refresh, Visibility, VisibilityOff, } from '@mui/icons-material';
 import { useProducts } from '@/aplication/hooks/product/useProducts';
 import type { Product } from '@/domain/entities/Product';
 import type { CreateProductData, UpdateProductData } from '@/domain/repositories/IProductRepository';
@@ -194,7 +194,12 @@ const ProductsPage: React.FC = () => {
         ) : (
           filteredProducts.map((product) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
-              <Card>
+              <Card
+                sx={{
+                  borderLeft: '4px solid',
+                  borderLeftColor: product.isAvailable ? 'success.main' : 'error.main',
+                }}
+              >
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -202,22 +207,22 @@ const ProductsPage: React.FC = () => {
                     </Typography>
                     <Chip
                       label={product.isAvailable ? 'Disponible' : 'No disponible'}
-                      color={product.isAvailable ? 'success' : 'default'}
+                      color={product.isAvailable ? 'success' : 'error'}
                       size="small"
                     />
                   </Box>
-                  
+
                   {product.description && (
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                       {product.description}
                     </Typography>
                   )}
-                  
+
                   <Typography variant="h5" color="primary">
                     ${product.price.toFixed(2)}
                   </Typography>
                 </CardContent>
-                
+
                 <CardActions>
                   <IconButton
                     size="small"
@@ -260,7 +265,7 @@ const ProductsPage: React.FC = () => {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
-            
+
             <TextField
               label="Precio"
               type="number"
@@ -272,7 +277,7 @@ const ProductsPage: React.FC = () => {
                 startAdornment: <InputAdornment position="start">$</InputAdornment>,
               }}
             />
-            
+
             <TextField
               label="Descripción"
               fullWidth
@@ -281,7 +286,7 @@ const ProductsPage: React.FC = () => {
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
-            
+
             <FormControlLabel
               control={
                 <Switch

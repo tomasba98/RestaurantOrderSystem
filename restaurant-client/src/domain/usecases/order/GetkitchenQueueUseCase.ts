@@ -14,13 +14,11 @@ export class GetKitchenQueueUseCase {
    * @returns A promise that resolves with an array of orders in the kitchen queue, sorted by priority.
    */
   async execute(): Promise<Order[]> {
-    // Obtener ambos tipos de órdenes en paralelo
     const [confirmedOrders, inKitchenOrders] = await Promise.all([
       this.orderRepository.getByStatus(OrderStatus.Confirmed),
       this.orderRepository.getByStatus(OrderStatus.InKitchen),
     ]);
 
-    // Ordenar cada grupo por fecha de creación (más antiguas primero)
     const sortByCreationDate = (a: Order, b: Order) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -30,7 +28,6 @@ export class GetKitchenQueueUseCase {
     const sortedConfirmed = confirmedOrders.sort(sortByCreationDate);
     const sortedInKitchen = inKitchenOrders.sort(sortByCreationDate);
 
-    // Prioridad: Confirmed primero, luego InKitchen
     return [...sortedConfirmed, ...sortedInKitchen];
   }
 

@@ -24,13 +24,11 @@ const KitchenPage: React.FC = () => {
 
   // Auto-refresh cada 30 segundos
   useEffect(() => {
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        loadKitchenQueue();
-      }, 30000);
-      return () => clearInterval(interval);
-    }
-  }, [autoRefresh]);
+    if (!autoRefresh) return;
+    
+    const interval = setInterval(loadKitchenQueue, 30000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, loadKitchenQueue]);
 
   const handleRefresh = () => {
     loadKitchenQueue();
