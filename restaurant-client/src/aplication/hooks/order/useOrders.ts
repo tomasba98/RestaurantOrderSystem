@@ -10,7 +10,6 @@ import { GetKitchenQueueUseCase } from '@/domain/usecases/order/GetkitchenQueueU
 import { MarkOrderReadyUseCase } from '@/domain/usecases/order/MarkOrderReadyUseCase';
 import { StartSessionUseCase } from '@/domain/usecases/session/StartSessionUseCase';
 import { GetActiveSessionByTableUseCase } from '@/domain/usecases/session/GetActiveSessionByTableUseCase';
-import { EndSessionUseCase } from '@/domain/usecases/session/EndSessionUseCase';
 import { containerDI } from '@/aplication/di/ContainerDI';
 
 export const useOrders = () => {
@@ -30,8 +29,9 @@ export const useOrders = () => {
   const getKitchenQueueUseCase = containerDI.resolve<GetKitchenQueueUseCase>("getKitchenQueueUseCase");
   const markOrderReadyUseCase = containerDI.resolve<MarkOrderReadyUseCase>("markOrderReadyUseCase");
   const startSessionUseCase = containerDI.resolve<StartSessionUseCase>("startSessionUseCase");
-  const endSessionUseCase = containerDI.resolve<EndSessionUseCase>("endSessionUseCase");
   const getActiveSessionByTableUseCase = containerDI.resolve<GetActiveSessionByTableUseCase>("getActiveSessionByTableUseCase");
+
+  
   // Get all orders
   const loadOrders = useCallback(async () => {
     try {
@@ -68,40 +68,57 @@ export const useOrders = () => {
     }
   }, []);
 
-  // Create new order
   const createOrder = useCallback(async (
     tableId: string,
     items: OrderDetailItem[]
   ): Promise<Order> => {
+    setIsLoading(true);
+    setError(null);
+  
     try {
-      setIsLoading(true);
-      setError(null);      
-      let activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+      let activeSession;
       
-      if (!activeSession) {
-        console.log('No hay sesión activa, creando nueva sesión para la mesa:', tableId);
-        await startSessionUseCase.execute({ tableId });
+      //Try/catch for avoid race condition creating sessions
+      try {
         activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+  
+      } catch (error: any) {
+        if (error.status === 404) {
+          try {
+            activeSession = await startSessionUseCase.execute({ tableId }); 
+
+          } catch (createError: any) {            
+            if (createError.status === 409) {
+              activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+
+            } else {
+              throw createError;
+            }
+          }  
+        } else {          
+          throw error;
+        }
       }
-      
-      console.log('Usando sesión activa:', activeSession.id);
-      
-      const newOrder = await createOrderUseCase.execute(tableId, items);
-      
+  
+      console.log("Sesión activa:", activeSession.id); 
+      const newOrder = await createOrderUseCase.execute(tableId, items);  
       setOrders(prev => [newOrder, ...prev]);
-      setCurrentOrder(newOrder);
+      setCurrentOrder(newOrder);  
       
       return newOrder;
+  
     } catch (err: any) {
-      const errorMessage = err.message || 'Error al crear la orden';
-      endSessionUseCase.execute(tableId);
+      const errorMessage = err.message || "Error al crear la orden";  
       setError(errorMessage);
-      console.error('Error creating order:', err);
+      console.error("Error creating order:", err);  
+
       throw err;
+  
     } finally {
       setIsLoading(false);
     }
   }, []);
+  
 
   // Update status order
   const updateOrderStatus = useCallback(async (
