@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Snackbar, Alert, Typography, useTheme, CircularProgress, Paper, Chip } from '@mui/material';
+import {   Box,   Snackbar,   Alert,   Typography,   useTheme,   CircularProgress,   Paper,   Chip,  useMediaQuery  } from '@mui/material';
 import { AccessTime, CheckCircle } from '@mui/icons-material';
 import Hall from '@/presentation/components/hall/Hall';
 import { useTables } from '@/aplication/hooks/table/useTables';
@@ -51,9 +51,7 @@ const HallLayout = () => {
     open: false,
     message: '',
     severity: 'info',
-  });
-
-  const theme = useTheme();
+  }); 
 
   useEffect(() => {
     loadAvailableProducts();
@@ -198,11 +196,16 @@ const HallLayout = () => {
     );
   }
 
+  const theme = useTheme();    
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
+  const isTablet = useMediaQuery(theme.breakpoints.down('md')); 
   const occupiedTables = tables.filter(table => table.isOccupied).length;
   const totalTables = tables.length;
   const availableProducts = products.length;
   const activeSessions = getActiveSessions();
   const sessionStats = getSessionStats();
+  const hallWidth = isMobile ? window.innerWidth - 32 : isTablet ? 700 : 1000;
+  const hallHeight = isMobile ? 500 : isTablet ? 600 : 700;
 
   return (
     <Box
@@ -213,37 +216,56 @@ const HallLayout = () => {
       minHeight="100vh"
       sx={{
         backgroundColor: theme.palette.background.default,
-        p: 2
+        p: isMobile ? 1 : 2 
       }}
     >     
 
       {/* Header */}
-      <Box sx={{ mb: 2, textAlign: 'center', width: '100%', maxWidth: 1200 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
+      <Box sx={{ 
+        mb: isMobile ? 1 : 2, 
+        textAlign: 'center', 
+        width: '100%', 
+        maxWidth: 1200,
+        px: isMobile ? 1 : 0  
+      }}>
+        <Typography 
+          variant={isMobile ? 'h5' : 'h4'}  
+          component="h1" 
+          gutterBottom
+        >
           Gestión de Mesas
         </Typography>
-        <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
+        <Box 
+          display="flex" 
+          justifyContent="center" 
+          gap={isMobile ? 0.5 : 2} 
+          flexWrap="wrap"
+        >
           <Chip 
-            label={`${occupiedTables} de ${totalTables} mesas ocupadas`}
+            label={`${occupiedTables}/${totalTables} mesas`} 
             color="primary"
             variant="outlined"
+            size={isMobile ? 'small' : 'medium'}  
           />
           <Chip 
-            label={`${availableProducts} productos disponibles`}
+            label={`${availableProducts} productos`} 
             color="secondary"
             variant="outlined"
+            size={isMobile ? 'small' : 'medium'}  
           />
           <Chip 
-            icon={<AccessTime />}
-            label={`${sessionStats.active} sesiones activas`}
+            icon={<AccessTime fontSize={isMobile ? 'small' : 'medium'} />} 
+            label={`${sessionStats.active} activas`} 
             color="success"
             variant="outlined"
+            size={isMobile ? 'small' : 'medium'}
           />
           <Chip 
-            icon={<CheckCircle />}
-            label={`${sessionStats.completed} completadas`}
+            icon={<CheckCircle fontSize={isMobile ? 'small' : 'medium'} />}  
+            label={`${sessionStats.completed} ok`} 
             color="default"
             variant="outlined"
+            size={isMobile ? 'small' : 'medium'} 
           />
         </Box>
       </Box>
@@ -253,17 +275,24 @@ const HallLayout = () => {
         <Paper 
           elevation={2} 
           sx={{ 
-            p: 2, 
-            mb: 2, 
+            p: isMobile ? 1.5 : 2, 
+            mb: isMobile ? 1 : 2, 
             width: '100%', 
             maxWidth: 1200,
             backgroundColor: theme.palette.background.paper 
           }}
         >
-          <Typography variant="h6" gutterBottom>
+          <Typography 
+            variant={isMobile ? 'subtitle1' : 'h6'}  
+            gutterBottom
+          >
             Sesiones Activas
           </Typography>
-          <Box display="flex" gap={2} flexWrap="wrap">
+          <Box 
+            display="flex" 
+            gap={isMobile ? 0.5 : 2}  
+            flexWrap="wrap"
+          >
             {activeSessions.map(session => {
               const table = tables.find(t => t.id === session.tableId);
               return (
@@ -280,26 +309,41 @@ const HallLayout = () => {
         </Paper>
       )}
 
-      {/* Hall Component */}
-      <Hall
-        width={1000}
-        height={700}
-        tables={tables}
-        setTables={setTables}
-        products={products}
-        onCreateOrder={handleCreateOrder}
-        onToggleTableOccupied={handleToggleTableOccupied}
-        onAddTable={handleAddTable}
-        onUpdateTablePosition={handleUpdateTablePosition}
-        onDeleteTable={handleDeleteTable}
-        loading={orderLoading}
-      />
+      {/* Hall Component */}     
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 1200,
+          overflowX: isMobile ? 'auto' : 'visible',  
+          overflowY: 'visible',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Hall
+          width={hallWidth}  
+          height={hallHeight} 
+          tables={tables}
+          setTables={setTables}
+          products={products}
+          onCreateOrder={handleCreateOrder}
+          onToggleTableOccupied={handleToggleTableOccupied}
+          onAddTable={handleAddTable}
+          onUpdateTablePosition={handleUpdateTablePosition}
+          onDeleteTable={handleDeleteTable}
+          loading={orderLoading}
+        />
+      </Box>
+
       {/* Notifications */}
       <Snackbar
         open={notification.open || !!tablesError || !!productsError || !!orderError}
         autoHideDuration={6000}
         onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ 
+          vertical: 'bottom', 
+          horizontal: isMobile ? 'center' : 'right' 
+        }}
       >
         <Alert
           onClose={handleCloseNotification}
