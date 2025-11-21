@@ -169,7 +169,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 //Active CORS
-app.UseCors("AllowFrontend");
+
 
 //Execute migrations automatically
 using (var scope = app.Services.CreateScope())
@@ -193,8 +193,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); disable to avoid problems with docker
 
+//Middlewares
+app.UseExceptionHandler("/error");
+app.UseRouting();
+// app.UseHttpsRedirection(); disable to avoid problems with docker
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
