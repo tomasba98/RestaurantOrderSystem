@@ -72,7 +72,6 @@ docker-compose up --build
 
 ## 🧠 In-Memory Caching
 - **Performance optimization** by caching frequently accessed results, reducing DB load by up to **50%**.
-"""
 
 ---
 
