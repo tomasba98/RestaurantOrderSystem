@@ -34,7 +34,7 @@ docker-compose up --build
 
 ## 🚀 Features
 
-"""### 🧩 Core Functionality
+### 🧩 Core Functionality
 - **Full CRUD** for Orders, Products, Tables, and Sessions.
 - **Order workflow with states**: Confirmed → InKitchen → Ready → Served → Paid.
 - **Real-time kitchen dashboard** for order monitoring.
