@@ -35,29 +35,43 @@ docker-compose up --build
 ## 🚀 Features
 
 ### 🧩 Core Functionality
-- Full CRUD for Orders, Products, Tables, and Sessions.  
-- Order workflow with states: *Confirmed → InKitchen → Ready → Served → Paid*.  
-- Real-time kitchen dashboard for order monitoring.  
-- Stock management integrated with each order.  
-- Role-based authentication and authorization using JWT.  
-- Accessible from multiple devices over local network (LAN) — fully offline capable.
+- **Full CRUD** for Orders, Products, Tables, and Sessions.
+- **Order workflow with states**: Confirmed → InKitchen → Ready → Served → Paid.
+- **Real-time kitchen dashboard** for order monitoring.
+- **Stock management** integrated with each order.
+- **Role-based authentication** and authorization using JWT.
 
 ---
 
-### ⚙️ Backend Highlights
-- **ASP.NET Core 8.0 (C# 12)** – RESTful API development.  
-- **Entity Framework Core + PostgreSQL** – ORM and database management.  
-- **AutoMapper** – Clean mapping between entities and DTOs.  
-- **Custom exceptions** for robust error handling (`OrderNotFoundException`, `OrderNotPaidException`, etc.).  
-- **Serilog** – Structured logging for better observability.  
-- **Dependency Injection** – Built-in DI container for all layers.  
-- **Unit of Work** pattern using `DbContext.SaveChangesAsync()` for atomic operations.
+## 🎨 Frontend Highlights
+- **React + TypeScript** with clean architecture and decoupled components.
+- **useCallback / useMemo** to avoid unnecessary re-renders and improve performance.
+- **Custom Hooks** to separate UI from business logic.
+- **Clean Architecture + Dependency Injection** separating UI, domain, and data layers.
+- **Use Cases** implementing business logic independently from UI.
+- **Context API** for authentication with **role validation**.
+- **Drag & Drop components** (e.g., DraggableTable) for enhanced UX.
 
 ---
 
-### 🧠 In-Memory Caching
-Improved performance by implementing caching for frequently accessed data, reducing database queries by up to **50%**.
-(Implementation details intentionally omitted from README.)
+## ⚙️ Backend Highlights
+- **ASP.NET Core 8.0 (C# 12)** for RESTful API development.
+- **Entity Framework Core + PostgreSQL** for ORM and database access.
+- **Repository Pattern** using generic interfaces: IGenericDao<TEntity>, IGenericService<TEntity>.
+- **Layered architecture**: Controllers → Services → DataAccess.
+- **LINQ clean queries** for more readable data access.
+- **Eager loading** with Include() and ThenInclude().
+- **AsNoTracking()** for optimized read-only queries.
+- **IMemoryCache** for in-memory caching and reduced DB load.
+- **Cascade / Restrict deletion rules** depending on relationships.
+- **Custom Exceptions** (OrderNotFoundException, OrderNotPaidException, etc.).
+- **Serilog** for structured logging.
+- **Unit of Work** with DbContext.SaveChangesAsync().
+
+---
+
+## 🧠 In-Memory Caching
+- **Performance optimization** by caching frequently accessed results, reducing DB load by up to **50%**.
 
 ---
 
