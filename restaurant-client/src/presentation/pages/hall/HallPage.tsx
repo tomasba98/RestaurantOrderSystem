@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
-import {   Box,   Snackbar,   Alert,   Typography,   useTheme,   CircularProgress,   Paper,   Chip,  useMediaQuery  } from '@mui/material';
+import {
+  Box,
+  Snackbar,
+  Alert,
+  Typography,
+  useTheme,
+  CircularProgress,
+  Paper,
+  Chip,
+  useMediaQuery
+} from '@mui/material';
 import { AccessTime, CheckCircle } from '@mui/icons-material';
 import Hall from '@/presentation/components/hall/Hall';
 import { useTables } from '@/aplication/hooks/table/useTables';
@@ -9,6 +19,11 @@ import { useSession } from '@/aplication/hooks/session/useSession';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 
 const HallLayout = () => {
+  // ✅ TODOS LOS HOOKS AL INICIO - ANTES DE CUALQUIER LÓGICA
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   const {
     tables,
     isLoading: tablesLoading,
@@ -51,14 +66,14 @@ const HallLayout = () => {
     open: false,
     message: '',
     severity: 'info',
-  }); 
+  });
 
+  // ✅ Effects después de todos los hooks de estado
   useEffect(() => {
     loadAvailableProducts();
     loadSessions();
   }, []);
 
-  // refresh sesion 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       loadSessions();
@@ -66,6 +81,8 @@ const HallLayout = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // ✅ AHORA SÍ, DESPUÉS DE TODOS LOS HOOKS, PUEDES HACER RETURNS CONDICIONALES
+  
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
     setNotification({ open: true, message, severity });
   };
@@ -83,7 +100,7 @@ const HallLayout = () => {
 
       if (!order || !order.id) {
         throw new Error("No se pudo crear la orden correctamente.");
-      }      
+      }
       const table = tables.find(t => t.id === tableId);
       const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -162,16 +179,16 @@ const HallLayout = () => {
   const getSessionDuration = (sessionId: string): string => {
     const session = sessions.find(s => s.id === sessionId);
     if (!session) return '';
-    
+
     const start = new Date(session.createdAt);
     const now = new Date();
     const durationMs = now.getTime() - start.getTime();
     const minutes = Math.floor(durationMs / 60000);
-    
+
     if (minutes < 60) {
       return `${minutes} min`;
     }
-    
+
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return `${hours}h ${remainingMinutes}m`;
@@ -196,9 +213,6 @@ const HallLayout = () => {
     );
   }
 
-  const theme = useTheme();    
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-  const isTablet = useMediaQuery(theme.breakpoints.down('md')); 
   const occupiedTables = tables.filter(table => table.isOccupied).length;
   const totalTables = tables.length;
   const availableProducts = products.length;
@@ -216,81 +230,80 @@ const HallLayout = () => {
       minHeight="100vh"
       sx={{
         backgroundColor: theme.palette.background.default,
-        p: isMobile ? 1 : 2 
+        p: isMobile ? 1 : 2
       }}
-    >     
-
+    >
       {/* Header */}
-      <Box sx={{ 
-        mb: isMobile ? 1 : 2, 
-        textAlign: 'center', 
-        width: '100%', 
+      <Box sx={{
+        mb: isMobile ? 1 : 2,
+        textAlign: 'center',
+        width: '100%',
         maxWidth: 1200,
-        px: isMobile ? 1 : 0  
+        px: isMobile ? 1 : 0
       }}>
-        <Typography 
-          variant={isMobile ? 'h5' : 'h4'}  
-          component="h1" 
+        <Typography
+          variant={isMobile ? 'h5' : 'h4'}
+          component="h1"
           gutterBottom
         >
           Gestión de Mesas
         </Typography>
-        <Box 
-          display="flex" 
-          justifyContent="center" 
-          gap={isMobile ? 0.5 : 2} 
+        <Box
+          display="flex"
+          justifyContent="center"
+          gap={isMobile ? 0.5 : 2}
           flexWrap="wrap"
         >
-          <Chip 
-            label={`${occupiedTables}/${totalTables} mesas`} 
+          <Chip
+            label={`${occupiedTables}/${totalTables} mesas`}
             color="primary"
             variant="outlined"
-            size={isMobile ? 'small' : 'medium'}  
+            size={isMobile ? 'small' : 'medium'}
           />
-          <Chip 
-            label={`${availableProducts} productos`} 
+          <Chip
+            label={`${availableProducts} productos`}
             color="secondary"
             variant="outlined"
-            size={isMobile ? 'small' : 'medium'}  
+            size={isMobile ? 'small' : 'medium'}
           />
-          <Chip 
-            icon={<AccessTime fontSize={isMobile ? 'small' : 'medium'} />} 
-            label={`${sessionStats.active} activas`} 
+          <Chip
+            icon={<AccessTime fontSize={isMobile ? 'small' : 'medium'} />}
+            label={`${sessionStats.active} activas`}
             color="success"
             variant="outlined"
             size={isMobile ? 'small' : 'medium'}
           />
-          <Chip 
-            icon={<CheckCircle fontSize={isMobile ? 'small' : 'medium'} />}  
-            label={`${sessionStats.completed} ok`} 
+          <Chip
+            icon={<CheckCircle fontSize={isMobile ? 'small' : 'medium'} />}
+            label={`${sessionStats.completed} ok`}
             color="default"
             variant="outlined"
-            size={isMobile ? 'small' : 'medium'} 
+            size={isMobile ? 'small' : 'medium'}
           />
         </Box>
       </Box>
 
       {/* Active Sessions Info */}
       {activeSessions.length > 0 && (
-        <Paper 
-          elevation={2} 
-          sx={{ 
-            p: isMobile ? 1.5 : 2, 
-            mb: isMobile ? 1 : 2, 
-            width: '100%', 
+        <Paper
+          elevation={2}
+          sx={{
+            p: isMobile ? 1.5 : 2,
+            mb: isMobile ? 1 : 2,
+            width: '100%',
             maxWidth: 1200,
-            backgroundColor: theme.palette.background.paper 
+            backgroundColor: theme.palette.background.paper
           }}
         >
-          <Typography 
-            variant={isMobile ? 'subtitle1' : 'h6'}  
+          <Typography
+            variant={isMobile ? 'subtitle1' : 'h6'}
             gutterBottom
           >
             Sesiones Activas
           </Typography>
-          <Box 
-            display="flex" 
-            gap={isMobile ? 0.5 : 2}  
+          <Box
+            display="flex"
+            gap={isMobile ? 0.5 : 2}
             flexWrap="wrap"
           >
             {activeSessions.map(session => {
@@ -309,20 +322,20 @@ const HallLayout = () => {
         </Paper>
       )}
 
-      {/* Hall Component */}     
+      {/* Hall Component */}
       <Box
         sx={{
           width: '100%',
           maxWidth: 1200,
-          overflowX: isMobile ? 'auto' : 'visible',  
+          overflowX: isMobile ? 'auto' : 'visible',
           overflowY: 'visible',
           display: 'flex',
           justifyContent: 'center',
         }}
       >
         <Hall
-          width={hallWidth}  
-          height={hallHeight} 
+          width={hallWidth}
+          height={hallHeight}
           tables={tables}
           setTables={setTables}
           products={products}
@@ -340,9 +353,9 @@ const HallLayout = () => {
         open={notification.open || !!tablesError || !!productsError || !!orderError}
         autoHideDuration={6000}
         onClose={handleCloseNotification}
-        anchorOrigin={{ 
-          vertical: 'bottom', 
-          horizontal: isMobile ? 'center' : 'right' 
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: isMobile ? 'center' : 'right'
         }}
       >
         <Alert
@@ -357,7 +370,6 @@ const HallLayout = () => {
           {tablesError || productsError || orderError || notification.message}
         </Alert>
       </Snackbar>
-
     </Box>
   );
 };
