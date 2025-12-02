@@ -5,6 +5,7 @@ using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Product;
 using Restaurant_Backend.Services.Product;
 using Restaurant_Backend.Services.User;
+using Serilog;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -59,13 +60,17 @@ public class ProductController : BaseController
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product is null)
+            {
+                Log.Warning("Product not found: {ProductId}", productId);
                 return NotFound("Product not found");
+            }
 
             return Ok(product);
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving product: {ProductId}", productId);
             return StatusCode(500, "An error ocurred while retrieving the product.");
         }
         
@@ -89,8 +94,9 @@ public class ProductController : BaseController
 
             return CreatedAtAction(nameof(GetProductById), new { productId = createdProduct.Id }, createdProductResponse);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error creating product");
             return StatusCode(500, "An error ocurred while creating the product.");
         }
     }
@@ -109,7 +115,10 @@ public class ProductController : BaseController
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product is null)
+            {
+                Log.Warning("Product not found while updating: {ProductId}", productId);
                 return NotFound("Product not found");
+            }
 
             product.Price = productRequest.Price;
             product.Name = productRequest.Name;
@@ -123,6 +132,7 @@ public class ProductController : BaseController
         }
         catch (Exception ex) 
         {
+            Log.Error(ex, "Error updating product: {ProductId}", productId);
             return StatusCode(500, $"Error updating product: {ex.Message}");
         }
     }
@@ -143,6 +153,7 @@ public class ProductController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error deleting product: {ProductId}", productId);
             return StatusCode(500, $"Error deleting product: {ex.Message}");
         }
     }
@@ -160,7 +171,10 @@ public class ProductController : BaseController
         {
             var product = await _productService.GetProductByIdAsync(productId);
             if (product is null)
+            {
+                Log.Warning("Product not found while toggling availability: {ProductId}", productId);
                 return NotFound("Product not found");
+            }
 
             product.IsAvailable = !product.IsAvailable;
 
@@ -171,6 +185,7 @@ public class ProductController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error toggling product availability: {ProductId}", productId);
             return StatusCode(500, $"Error toogling the product availability: {ex.Message}");
         }
     }

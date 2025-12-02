@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Restaurant_Backend.Models.OrderDetail;
 using Restaurant_Backend.Utils.Exceptions;
 using Restaurant_Backend.Utils.Results;
+using Serilog;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -53,10 +54,12 @@ public class OrderController : BaseController
         }
         catch (OrderNotFoundException ex)
         {
+            Log.Warning(ex, "Order not found: {OrderId}", orderId);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving order: {OrderId}", orderId);
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
@@ -80,10 +83,12 @@ public class OrderController : BaseController
         }
         catch (OrderNotFoundException ex)
         {
+            Log.Warning(ex, "Orders not found while retrieving all orders");
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving all orders");
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
@@ -101,12 +106,16 @@ public class OrderController : BaseController
         {
             var tableOrders = await _orderService.GetTableOrdersAsync(tableId);
             if (tableOrders is null || !tableOrders.Any())
+            {
+                Log.Warning("No orders found for table: {TableId}", tableId);
                 return NotFound("No orders were found for the specified table.");
+            }
 
             return Ok(tableOrders);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving orders for table: {TableId}", tableId);
             return StatusCode(500, $"An error occurred while retrieving the orders for the table: {ex.Message}");
         }
     }
@@ -124,12 +133,16 @@ public class OrderController : BaseController
         {
             var sessionOrders = await _orderService.GetSessionOrdersAsync(sessionId);
             if (sessionOrders is null || !sessionOrders.Any())
+            {
+                Log.Warning("No orders found for session: {SessionId}", sessionId);
                 return NotFound("No orders were found for the specified session.");
+            }
 
             return Ok(sessionOrders);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving orders for session: {SessionId}", sessionId);
             return StatusCode(500, $"An error occurred while retrieving the orders for the session: {ex.Message}");
         }
     }
@@ -155,6 +168,7 @@ public class OrderController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving orders by status: {Status}", status);
             return StatusCode(500, $"An error occurred while retrieving orders by status: {ex.Message}");
         }
     }
@@ -183,16 +197,23 @@ public class OrderController : BaseController
 
             await _orderService.UpdateOrderAsync(order);
 
+            if (status == OrderStatus.Paid)
+            {
+                Log.Information("Order {OrderId} marked as PAID. Amount: {Amount}", orderId, order.TotalAmount);
+            }
+
             var ordersResponse = _mapper.Map<OrderResponse>(order);
 
             return Ok(ordersResponse);
         }
         catch (OrderNotFoundException ex)
         {
+            Log.Warning(ex, "Order not found while changing status: {OrderId}", orderId);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error changing order status: {OrderId} to {Status}", orderId, status);
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
@@ -211,7 +232,10 @@ public class OrderController : BaseController
             var tableSession = await _tableSessionService.GetActiveSessionByTableIdAsync(orderRequest.TableId);
 
             if (tableSession is null)
+            {
+                Log.Warning("No active session found for table: {TableId}", orderRequest.TableId);
                 return NotFound("No active session for this table");
+            }
 
             var order = _mapper.Map<Order>(orderRequest);
             order.Table = tableSession.Table;
@@ -222,7 +246,10 @@ public class OrderController : BaseController
 
             var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest.Items);
             if (failed)
+            {
+                Log.Warning("Product not found while creating order for table: {TableId}. ProductId: {ProductId}", orderRequest.TableId, missingProductId);
                 return NotFound($"Product {missingProductId} not found.");
+            }
 
             order.TotalAmount = order.TotalAmountSum;
 
@@ -233,6 +260,7 @@ public class OrderController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error creating order for table: {TableId}", orderRequest.TableId);
             return StatusCode(500, $"An error ocurred while creating the order: {ex.Message}");
         }
     }
@@ -261,7 +289,10 @@ public class OrderController : BaseController
 
             var (failed, missingProductId) = await TryLoadProductsAsync(order, orderRequest.Items);
             if (failed)
+            {
+                Log.Warning("Product not found while updating order: {OrderId}. ProductId: {ProductId}", orderId, missingProductId);
                 return NotFound($"Product {missingProductId} not found.");
+            }
 
             var updatedOrder = await _orderService.UpdateOrderAsync(order);
             var orderResponse = _mapper.Map<OrderRequest>(updatedOrder);
@@ -270,10 +301,12 @@ public class OrderController : BaseController
         }
         catch (OrderNotFoundException ex)
         {
+            Log.Warning(ex, "Order not found while updating: {OrderId}", orderId);
             return NotFound(ex.Message);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error updating order: {OrderId}", orderId);
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }

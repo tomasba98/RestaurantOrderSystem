@@ -5,6 +5,7 @@ using Restaurant_Backend.Entities;
 using Restaurant_Backend.Models.Table;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.User;
+using Serilog;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -38,6 +39,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving all tables");
             return StatusCode(500, $"An error occurred while retrieving all the tables: {ex.Message}");
         }
     }
@@ -58,6 +60,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving table: {TableId}", tableId);
             return StatusCode(500, $"An error occurred while retrieving the table: {ex.Message}");
         }
     }
@@ -78,6 +81,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving available tables");
             return StatusCode(500, $"An error occurred while retrieving available tables: {ex.Message}");
         }
     }
@@ -100,8 +104,9 @@ public class TableController : BaseController
 
             return CreatedAtAction(nameof(GetTableById), new { tableId = createdTable.Id }, createdTableResponse);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error creating table");
             return StatusCode(500, "An error ocurred while creating the table.");
         }
     }
@@ -122,7 +127,10 @@ public class TableController : BaseController
         {
             var existingtable = await _tableService.GetTableByIdAsync(tableId);
             if (existingtable is null)
+            {
+                Log.Warning("Table not found while updating position: {TableId}", tableId);
                 return NotFound("table not found");
+            }
 
             existingtable.X = x;
             existingtable.Y = y;
@@ -134,6 +142,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error updating table position: {TableId}", tableId);
             return StatusCode(500, $"Error updating table: {ex.Message}");
         }
     }
@@ -155,6 +164,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error deleting table: {TableId}", tableId);
             return StatusCode(500, $"Error deleting table: {ex.Message}");
         }
     }
@@ -173,7 +183,10 @@ public class TableController : BaseController
         {
             var existingtable = await _tableService.GetTableByIdAsync(tableId);
             if (existingtable is null)
+            {
+                Log.Warning("Table not found while setting occupation: {TableId}", tableId);
                 return NotFound("table not found");
+            }
 
             existingtable.IsOccupied = isOccupied;
 
@@ -184,6 +197,7 @@ public class TableController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error setting table occupation: {TableId}", tableId);
             return StatusCode(500, $"Error toggling the occupation of the table: {ex.Message}");
         }
     }

@@ -6,6 +6,7 @@ using Restaurant_Backend.Models.TableSession;
 using Restaurant_Backend.Services.Table;
 using Restaurant_Backend.Services.TableSession;
 using Restaurant_Backend.Services.User;
+using Serilog;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -37,7 +38,10 @@ public class TableSessionController : BaseController
         {
             var session = await _tableSessionService.GetSessionByIdAsync(sessionId);
             if (session is null)
+            {
+                Log.Warning("Session not found: {SessionId}", sessionId);
                 return NotFound("Session not found");
+            }
 
             var sessionResponse = _mapper.Map<SessionResponse>(session);
 
@@ -46,6 +50,7 @@ public class TableSessionController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving session: {SessionId}", sessionId);
             return StatusCode(500, $"An error ocurred while closing the session: {ex.Message}");
         }
     }
@@ -66,6 +71,7 @@ public class TableSessionController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving all active sessions");
             return StatusCode(500, $"An error occurred while retrieving the active sessions: {ex.Message}");
         }
     }
@@ -88,8 +94,9 @@ public class TableSessionController : BaseController
 
             return CreatedAtAction(nameof(GetSessionById), new { sessionId = createdSession.Id }, createdSessionResponse);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Log.Error(ex, "Error starting session for table: {TableId}", sessionRequest.TableId);
             return StatusCode(500, "An error ocurred while creating the product.");
         }
     }
@@ -112,6 +119,7 @@ public class TableSessionController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error closing session: {SessionId}", sessionId);
             return StatusCode(500, $"Error closing the session: {ex.Message}");
         }
     }
@@ -132,6 +140,7 @@ public class TableSessionController : BaseController
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Error retrieving active session for table: {TableId}", tableId);
             return StatusCode(500, $"An error occurred while retrieving the active sessions of the table: {ex.Message}");
         }
     }    

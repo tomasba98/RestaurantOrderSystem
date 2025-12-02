@@ -46,19 +46,96 @@ public class AppDbContext : DbContext
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
     public virtual DbSet<Product> Products { get; set; }
     public virtual DbSet<TableSession> TableSessions { get; set; }
+    public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken token)
     {
         var currentUser = _currentUserService?.UserName ?? "System";
-
+        var auditEntries = new List<AuditLog>();
+        
         foreach (var entry in ChangeTracker.Entries<EntityBase>())
         {
+            if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                continue;
+
+            var auditLog = new AuditLog
+            {
+                Id = Guid.NewGuid(),
+                UserName = currentUser,
+                EntityName = entry.Entity.GetType().Name,
+                EntityId = entry.Entity.Id,
+                Timestamp = DateTime.UtcNow
+            };
+
             if (entry.State == EntityState.Added)
+            {
                 entry.Entity.SetCreated(currentUser);
+                auditLog.Action = "CREATE";
+                auditLog.NewValues = SerializeEntity(entry);
+                auditEntries.Add(auditLog);
+            }
             else if (entry.State == EntityState.Modified)
+            {
                 entry.Entity.SetUpdated(currentUser);
+                auditLog.Action = "UPDATE";
+
+                var modifiedProperties = GetModifiedProperties(entry);
+                if (modifiedProperties.Any())
+                {
+                    auditLog.OldValues = System.Text.Json.JsonSerializer.Serialize(
+                        modifiedProperties.ToDictionary(x => x.Key, x => x.Value.OldValue)
+                    );
+                    auditLog.NewValues = System.Text.Json.JsonSerializer.Serialize(
+                        modifiedProperties.ToDictionary(x => x.Key, x => x.Value.NewValue)
+                    );
+                    auditEntries.Add(auditLog);
+                }
+            }
+            else if (entry.State == EntityState.Deleted)
+            {
+                auditLog.Action = "DELETE";
+                auditLog.OldValues = SerializeEntity(entry);
+                auditEntries.Add(auditLog);
+            }
         }
 
-        return await base.SaveChangesAsync(token);
+        var result = await base.SaveChangesAsync(token);
+
+        if (auditEntries.Any())
+        {
+            AuditLogs.AddRange(auditEntries);
+            await base.SaveChangesAsync(token);
+        }
+
+        return result;
+    }
+
+    private string SerializeEntity(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
+    {
+        var excludedProperties = new[] { "Password", "CreatedAt", "UpdatedAt", "CreatedBy", "UpdatedBy" };
+
+        var properties = entry.CurrentValues.Properties
+            .Where(p => !p.IsShadowProperty() && !excludedProperties.Contains(p.Name))
+            .ToDictionary(
+                p => p.Name,
+                p => entry.CurrentValues[p]?.ToString() ?? "null"
+            );
+
+        return System.Text.Json.JsonSerializer.Serialize(properties);
+    }
+
+    private Dictionary<string, (string OldValue, string NewValue)> GetModifiedProperties(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
+    {
+        var excludedProperties = new[] { "Password", "CreatedAt", "UpdatedAt", "CreatedBy", "UpdatedBy" };
+
+        return entry.Properties
+            .Where(p => p.IsModified && !p.Metadata.IsShadowProperty() && !excludedProperties.Contains(p.Metadata.Name))
+            .ToDictionary(
+                p => p.Metadata.Name,
+                p => (
+                    OldValue: p.OriginalValue?.ToString() ?? "null",
+                    NewValue: p.CurrentValue?.ToString() ?? "null"
+                )
+            );
     }
 }

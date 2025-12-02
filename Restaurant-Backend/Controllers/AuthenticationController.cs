@@ -5,6 +5,7 @@ using Restaurant_Backend.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using Serilog;
 
 namespace Restaurant_Backend.Controllers;
 
@@ -32,12 +33,21 @@ public class AuthenticationController : BaseController
     {
         User? user = await _userService.GetUserByNameAsync(request.UserName);
 
-        if (user is null) return BadRequest("Invalid credentials.");        
+        if (user is null)
+        {
+            Log.Warning("Failed login attempt for username: {UserName}", request.UserName);
+            return BadRequest("Invalid credentials.");
+        }
 
-        if (!_authenticationService.CheckHash(request.Password, user.Password)) return BadRequest("Invalid credentials.");        
+        if (!_authenticationService.CheckHash(request.Password, user.Password))
+        {
+            Log.Warning("Failed login attempt (wrong password) for username: {UserName}", request.UserName);
+            return BadRequest("Invalid credentials.");
+        }
+
+        Log.Information("User {UserName} logged in successfully", user.UserName);
 
         string response = _authenticationService.GenerateToken(user);
-
         return Ok(new AuthenticationResponse(user.UserName, response));
     }
 
@@ -51,13 +61,19 @@ public class AuthenticationController : BaseController
         }
 
         string hashPassword = _authenticationService.Hash(userRequest.Password);
-
         var newUser = _mapper.Map<User>(userRequest);
         newUser.Password = hashPassword;
 
         bool result = await _userService.CreateUserAsync(newUser);
 
-        return result ? Ok() : BadRequest("Something went wrong.");
+        if (!result)
+        {
+            Log.Error("Failed to create user {UserName}", userRequest.UserName);
+            return BadRequest("Something went wrong.");
+        }
+
+        Log.Information("User registered: {UserName} ({Role})", newUser.UserName, newUser.Role);
+        return Ok();
     }
 
     [HttpPost("verify")]
@@ -90,7 +106,11 @@ public class AuthenticationController : BaseController
 
         User? user = await _userService.GetUserByIdAsync((Guid)userId);
 
-        if (user is null) return NotFound();
+        if (user is null)
+        {
+            Log.Warning("User not found in profile: {UserId}", userId);
+            return NotFound();
+        }
 
         return Ok(new
         {
@@ -108,7 +128,11 @@ public class AuthenticationController : BaseController
     public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserRequest request)
     {
         var user = await _userService.GetUserByIdAsync(id);
-        if (user == null) return NotFound();
+        if (user == null)
+        {
+            Log.Warning("User not found while updating: {UserId}", id);
+            return NotFound();
+        }
 
 
         user.FirstName = request.FirstName ?? user.FirstName;

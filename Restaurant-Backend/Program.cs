@@ -1,9 +1,7 @@
-using AutoMapper;
+ï»¿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Restaurant_Backend.AutoMapperProfile;
 using Restaurant_Backend.Context;
 using Restaurant_Backend.Entities;
@@ -23,184 +21,219 @@ using Restaurant_Backend.Services.TableSession.Implementation;
 using Restaurant_Backend.Services.User;
 using Restaurant_Backend.Services.User.Implementation;
 using Restaurant_Backend.Utils.Context;
+using Serilog;
+using Serilog.Events;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
+//
+// CONFIGURE SERILOG BEFORE CREATING THE HOST
+// ------------------------------------------------------------
+// This ensures logger is available during application startup,
+// including boot errors, configuration failures, dependency injection, etc.
+//
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .WriteTo.File(
+        path: "logs/restaurant-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+    )
+    .CreateLogger();
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Configurar URLs ANTES de build
-builder.WebHost.UseUrls("http://0.0.0.0:4332");
-
-builder.Services.AddHttpContextAccessor();
-
-// Register of interfaces services
-builder.Services.AddScoped<IGenericService<Order>, GenericService<Order>>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<IGenericService<OrderDetail>, GenericService<OrderDetail>>();
-builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
-builder.Services.AddScoped<IGenericService<Product>, GenericService<Product>>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IGenericService<Table>, GenericService<Table>>();
-builder.Services.AddScoped<ITableService, TableService>();
-builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
-builder.Services.AddScoped<ITableSessionService, TableSessionService>();
-builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
-builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthenticationService, Restaurant_Backend.Services.Authentication.Implementation.AuthenticationService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-//Memory Cache
-builder.Services.AddMemoryCache();
-
-
-
-// Connection to the database 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Configura AutoMapper con inyección de dependencias
-builder.Services.AddSingleton<AutoMapper.IConfigurationProvider>(sp =>
+try
 {
-    var config = new MapperConfiguration(cfg =>
+    Log.Information("Starting Restaurant Backend API");
+
+    //
+    // CREATE HOST BUILDER
+    // ------------------------------------------------------------
+    // Serilog is injected into the hosting pipeline here.
+    //
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog();
+
+    // Allow external connections (for Docker, reverse proxies, etc.)
+    builder.WebHost.UseUrls("http://0.0.0.0:4332");
+
+    // HTTP context accessor (required for getting user info)
+    builder.Services.AddHttpContextAccessor();
+
+
+    //
+    // REGISTER APPLICATION SERVICES
+    // ------------------------------------------------------------
+    // Dependency Injection configuration
+    //
+    builder.Services.AddScoped<IGenericService<Order>, GenericService<Order>>();
+    builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<IGenericService<OrderDetail>, GenericService<OrderDetail>>();
+    builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
+    builder.Services.AddScoped<IGenericService<Product>, GenericService<Product>>();
+    builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<IGenericService<Table>, GenericService<Table>>();
+    builder.Services.AddScoped<ITableService, TableService>();
+    builder.Services.AddScoped<IGenericService<TableSession>, GenericService<TableSession>>();
+    builder.Services.AddScoped<ITableSessionService, TableSessionService>();
+    builder.Services.AddScoped<IGenericService<User>, GenericService<User>>();
+    builder.Services.AddScoped<Restaurant_Backend.Services.Authentication.IAuthenticationService,Restaurant_Backend.Services.Authentication.Implementation.AuthenticationService>();
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+    builder.Services.AddMemoryCache();
+
+    //
+    // Database connection
+    //
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    //
+    // AutoMapper configuration
+    //
+    builder.Services.AddSingleton<AutoMapper.IConfigurationProvider>(sp =>
     {
-        cfg.AddProfile(new AutoMapperProfile(sp));
-    });
-    return config;
-});
-
-builder.Services.AddScoped<IMapper>(sp =>
-    new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
-
-// Add services to the container.
-builder.Services.AddControllers();
-
-
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
-});
-
-// Add CORS for cross-origin resource sharing.
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy
-            .WithOrigins(
-                "http://localhost:5173",
-                "http://localhost:5174"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-    });
-});
-
-var jwtSettingsSection = builder.Configuration.GetSection("Jwt");
-builder.Services.Configure<JwtSettings>(jwtSettingsSection);
-
-var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
-
-
-// Configure JWT-based authentication.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings!.Issuer,
-        ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-        RoleClaimType = ClaimTypes.Role
-    };
-});
-
-builder.Services.AddAuthorization();
-
-// Configure Swagger documentation.
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = builder.Configuration["Swagger:Title"],
-        Version = builder.Configuration["Swagger:Version"],
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile(new AutoMapperProfile(sp));
+        });
+        return config;
     });
 
-    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    builder.Services.AddScoped<IMapper>(sp =>
+        new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    //
+    // Controllers and API setup
+    //
+    builder.Services.AddControllers();
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
     {
-        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        c.IncludeXmlComments(xmlPath);
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    //
+    // CORS policy for frontend access
+    //
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+    });
+
+    //
+    // JWT Authentication configuration
+    //
+    var jwtSettingsSection = builder.Configuration.GetSection("Jwt");
+    builder.Services.Configure<JwtSettings>(jwtSettingsSection);
+    var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
+
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        },
-                        Scheme = "oauth2",
-                        Name = "Bearer",
-                        In = ParameterLocation.Header
-                    },
-                    new List<string>()
-                }
-            });
-});
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtSettings!.Issuer,
+                ValidateAudience = false,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(jwtSettings.Key)
+                ),
+                RoleClaimType = ClaimTypes.Role
+            };
+        });
 
-var app = builder.Build();
-
-//Active CORS
+    builder.Services.AddAuthorization();
 
 
-//Execute migrations automatically
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    try
+    //
+    // BUILD APPLICATION
+    // ------------------------------------------------------------
+    //
+    var app = builder.Build();
+
+
+    //
+    // APPLY DATABASE MIGRATIONS AUTOMATICALLY
+    // ------------------------------------------------------------
+    //
+    using (var scope = app.Services.CreateScope())
     {
-        context.Database.Migrate();
-        Console.WriteLine("Database migrated successfully");
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        try
+        {
+            context.Database.Migrate();
+            Log.Information("Database migrated successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error applying database migrations");
+        }
     }
-    catch (Exception ex)
+
+
+    //
+    // MIDDLEWARE PIPELINE
+    // ------------------------------------------------------------
+    //
+    if (app.Environment.IsDevelopment())
     {
-        Console.WriteLine($"Error migrating database: {ex.Message}");
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
-}
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+    // Global error handler
+    app.UseExceptionHandler("/error");
+
+    // Logs every HTTP request with execution time
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.MessageTemplate =
+            "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+    });
+
+    app.UseRouting();
+    //app.UseHttpsRedirection(); // Disabled for Docker compatibility
+
+    app.UseCors("AllowFrontend");
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+
+    //
+    // START APPLICATION
+    // ------------------------------------------------------------
+    //
+    app.Run();
+}
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    Log.Fatal(ex, "Application failed to start");
 }
-
-
-//Middlewares
-app.UseExceptionHandler("/error");
-app.UseRouting();
-// app.UseHttpsRedirection(); disable to avoid problems with docker
-app.UseCors("AllowFrontend");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
