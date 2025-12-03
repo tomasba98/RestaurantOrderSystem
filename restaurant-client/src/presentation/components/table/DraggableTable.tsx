@@ -1,6 +1,6 @@
 import React, { memo, useCallback } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { Box, Paper, Typography, IconButton, Tooltip } from "@mui/material";
+import { Box, Paper, Typography, IconButton, Tooltip, useTheme, Chip } from "@mui/material";
 import { AddShoppingCart, TableRestaurant, Person, Delete } from "@mui/icons-material";
 import type { Table } from "@/domain/entities/Table";
 
@@ -12,6 +12,7 @@ interface DraggableTableProps {
 }
 
 function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable }: DraggableTableProps) {
+  const theme = useTheme();
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id: table.id });
 
   const style: React.CSSProperties = {
@@ -45,9 +46,14 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable 
 
   return (
     <div style={style}>
-      <div ref={setNodeRef} {...listeners} {...attributes} style={{ width: "100%", height: "100%", cursor: "move" }}>
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        style={{ width: "100%", height: "100%", cursor: "move" }}
+      >
         <Paper
-          elevation={6}
+          elevation={3}
           sx={{
             width: "100%",
             height: "100%",
@@ -69,6 +75,9 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable 
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              gap: 0.5,
+              px: 1.5,
+              textAlign: "center",
             }}
           >
             <TableRestaurant sx={{ fontSize: 20, mb: 0.5 }} />

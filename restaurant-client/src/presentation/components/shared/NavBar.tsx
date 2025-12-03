@@ -60,7 +60,7 @@ const NavBar: React.FC = () => {
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-          Restaurant System
+        Comanda<span style={{ color: '#785F60' }}>Go</span>
         </Typography>
         <IconButton onClick={() => toggleDrawer(false)}>
           <CloseIcon />
@@ -188,11 +188,19 @@ const NavBar: React.FC = () => {
               mr: isMobile ? 0 : 4,
               cursor: 'pointer',
               fontWeight: 'bold',
+              fontSize: isMobile ? '1.5rem' : '2rem',
             }}
             onClick={() => navigate('/')}
           >
-            Restaurant System
+            Comanda
+            <Typography
+              component="span"
+              sx={{ color: '#785F60', fontSize: isMobile ? '1.5rem' : '2rem' }}
+            >
+              Go
+            </Typography>
           </Typography>
+
 
           {/* Navigation Links - Desktop */}
           {!isMobile && isAuthenticated && (

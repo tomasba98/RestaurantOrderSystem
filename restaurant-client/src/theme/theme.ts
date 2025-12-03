@@ -4,7 +4,7 @@ import type { Shadows } from '@mui/material/styles';
 const defaultTheme = createTheme();
 
 const themeLight = createTheme({
-     palette: {
+  palette: {
     primary: {
       main: '#785F60', 
       light: '#A38B8C',
@@ -172,8 +172,18 @@ const themeLight = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 8, 
-          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)', 
+          borderRadius: 12,
+          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)',
+          transition: 'box-shadow 0.2s ease, transform 0.15s ease',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 16,
+          boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.06)',
+          transition: 'box-shadow 0.2s ease, transform 0.15s ease',
         },
       },
     },

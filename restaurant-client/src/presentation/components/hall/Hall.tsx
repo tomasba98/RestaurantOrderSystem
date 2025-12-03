@@ -123,7 +123,7 @@ const Hall: React.FC<HallProps> = ({
           position: 'relative',
           overflow: 'hidden',
           backgroundImage: `
-            radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+            radial-gradient(circle at 25% 25%, rgba(7, 7, 7, 0.1) 2px, transparent 2px),
             radial-gradient(circle at 75% 75%, rgba(0,0,0,0.05) 1px, transparent 1px)
           `,
           backgroundSize: '50px 50px',
