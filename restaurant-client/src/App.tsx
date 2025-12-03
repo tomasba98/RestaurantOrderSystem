@@ -1,9 +1,9 @@
 // App.jsx
-import theme from './theme/theme';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { Routes, Route } from 'react-router-dom';
 import ColorPaletteTester from './presentation/components/ColorPaletteTester';
 import { AuthProvider } from './aplication/context/AuthContext';
+import { ThemeProvider } from './aplication/context/ThemeContext';
 import NavBar from './presentation/components/shared/NavBar';
 import ProtectedRoute from './presentation/components/auth/ProtectedRoute';
 import { Roles } from './domain/entities/User';
@@ -20,7 +20,7 @@ const KitchenPage = lazy(() => import('./presentation/pages/kitchen/KitchenPage'
 
 export default function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <CssBaseline />
       <AuthProvider>
         <ErrorBoundary>

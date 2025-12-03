@@ -72,10 +72,10 @@ function DraggableTable({ table, onCreateOrder, onToggleOccupied, onDeleteTable 
             }}
           >
             <TableRestaurant sx={{ fontSize: 20, mb: 0.5 }} />
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", color: "white" }}>
               Mesa {table.number}
             </Typography>
-            <Typography variant="caption" sx={{ fontSize: "0.7rem", opacity: 0.9 }}>
+            <Typography variant="caption" sx={{ fontSize: "0.7rem", opacity: 0.9, color: "white" }}>
               {table.isOccupied ? "Ocupada" : "Libre"}
             </Typography>
           </Box>

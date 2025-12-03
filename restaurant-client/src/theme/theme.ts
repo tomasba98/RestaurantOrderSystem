@@ -528,4 +528,5 @@ const themeDark = createTheme({
   },
 });
 
-export default themeDark;
+export { themeLight, themeDark };
+export default themeLight;

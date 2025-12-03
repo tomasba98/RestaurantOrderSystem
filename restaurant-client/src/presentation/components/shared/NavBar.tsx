@@ -1,12 +1,14 @@
 import React, { useContext, useState } from 'react';
-import {  AppBar,  Toolbar,  Typography,  Button,  Box,  IconButton,  Drawer,  List,  ListItem,  ListItemButton,  ListItemIcon,  ListItemText,  Divider,  useTheme,  useMediaQuery,} from '@mui/material';
-import {  TableRestaurant,  Receipt,  Kitchen,  Home,  Flatware,  PeopleAlt,  Menu as MenuIcon,  Close as CloseIcon,  Logout,} from '@mui/icons-material';
+import {  AppBar,  Toolbar,  Typography,  Button,  Box,  IconButton,  Drawer,  List,  ListItem,  ListItemButton,  ListItemIcon,  ListItemText,  Divider,  useTheme,  useMediaQuery,  Tooltip,} from '@mui/material';
+import {  TableRestaurant,  Receipt,  Kitchen,  Home,  Flatware,  PeopleAlt,  Menu as MenuIcon,  Close as CloseIcon,  Logout,  Brightness4,  Brightness7,} from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '@/aplication/context/AuthContext';
+import { ThemeContext } from '@/aplication/context/ThemeContext';
 import { useRoleCheck } from '@/aplication/hooks/auth/useRoleCheck';
 
 const NavBar: React.FC = () => {
   const auth = useContext(AuthContext);
+  const themeContext = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -17,6 +19,7 @@ const NavBar: React.FC = () => {
   if (!auth) return null;
 
   const { isAuthenticated, user, logout } = auth;
+  const { mode, toggleTheme } = themeContext || { mode: 'light', toggleTheme: () => {} };
 
   const handleLogout = async () => {
     await logout();
@@ -111,6 +114,15 @@ const NavBar: React.FC = () => {
             <Divider sx={{ my: 1 }} />
 
             <ListItem disablePadding>
+              <ListItemButton onClick={toggleTheme}>
+                <ListItemIcon>
+                  {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                </ListItemIcon>
+                <ListItemText primary={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'} />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
               <ListItemButton onClick={handleLogout}>
                 <ListItemIcon>
                   <Logout color="error" />
@@ -120,11 +132,21 @@ const NavBar: React.FC = () => {
             </ListItem>
           </>
         ) : (
-          <ListItem disablePadding>
-            <ListItemButton onClick={() => handleNavigate('/login')}>
-              <ListItemText primary="Iniciar sesión" />
-            </ListItemButton>
-          </ListItem>
+          <>
+            <ListItem disablePadding>
+              <ListItemButton onClick={toggleTheme}>
+                <ListItemIcon>
+                  {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                </ListItemIcon>
+                <ListItemText primary={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => handleNavigate('/login')}>
+                <ListItemText primary="Iniciar sesión" />
+              </ListItemButton>
+            </ListItem>
+          </>
         )}
       </List>
     </Box>
@@ -194,6 +216,11 @@ const NavBar: React.FC = () => {
             <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
               {isAuthenticated && user ? (
                 <>
+                  <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
+                    <IconButton onClick={toggleTheme} color="inherit">
+                      {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                    </IconButton>
+                  </Tooltip>
                   <Box sx={{ textAlign: 'right' }}>
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                       {user.userName}
@@ -207,27 +234,41 @@ const NavBar: React.FC = () => {
                   </Button>
                 </>
               ) : (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/login')}
-                >
-                  Iniciar sesión
-                </Button>
+                <>
+                  <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
+                    <IconButton onClick={toggleTheme} color="inherit">
+                      {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                    </IconButton>
+                  </Tooltip>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/login')}
+                  >
+                    Iniciar sesión
+                  </Button>
+                </>
               )}
             </Box>
           )}
 
           {/* Mobile */}
           {isMobile && !isAuthenticated && (
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={() => navigate('/login')}
-            >
-              Login
-            </Button>
+            <>
+              <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
+                <IconButton onClick={toggleTheme} color="inherit" sx={{ mr: 1 }}>
+                  {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+                </IconButton>
+              </Tooltip>
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => navigate('/login')}
+              >
+                Login
+              </Button>
+            </>
           )}
         </Toolbar>
       </AppBar>
