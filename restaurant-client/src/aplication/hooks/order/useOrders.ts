@@ -76,48 +76,35 @@ export const useOrders = () => {
     setError(null);
   
     try {
-      let activeSession;
-      
-      //Try/catch for avoid race condition creating sessions
-      try {
-        activeSession = await getActiveSessionByTableUseCase.execute(tableId);
+      let activeSession = await getActiveSessionByTableUseCase.execute(tableId);
   
-      } catch (error: any) {
-        if (error.status === 404) {
-          try {
-            activeSession = await startSessionUseCase.execute({ tableId }); 
-
-          } catch (createError: any) {            
-            if (createError.status === 409) {
-              activeSession = await getActiveSessionByTableUseCase.execute(tableId);
-
-            } else {
-              throw createError;
-            }
-          }  
-        } else {          
-          throw error;
-        }
+      if (!activeSession) {
+        console.log("No hay sesión activa, creando nueva sesión para la mesa:", tableId);
+        await startSessionUseCase.execute({ tableId });
+        activeSession = await getActiveSessionByTableUseCase.execute(tableId);
       }
   
-      console.log("Sesión activa:", activeSession.id); 
-      const newOrder = await createOrderUseCase.execute(tableId, items);  
+      console.log("Sesión activa:", activeSession.id);
+  
+      const newOrder = await createOrderUseCase.execute(tableId, items);
+  
       setOrders(prev => [newOrder, ...prev]);
-      setCurrentOrder(newOrder);  
-      
+      setCurrentOrder(newOrder);
+  
       return newOrder;
   
     } catch (err: any) {
-      const errorMessage = err.message || "Error al crear la orden";  
+      const errorMessage = err.message || "Error al crear la orden";
       setError(errorMessage);
-      console.error("Error creating order:", err);  
-
+      console.error("Error creating order:", err);
+  
       throw err;
   
     } finally {
       setIsLoading(false);
     }
   }, []);
+  
   
 
   // Update status order

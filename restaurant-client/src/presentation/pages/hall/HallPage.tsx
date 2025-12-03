@@ -19,7 +19,6 @@ import { useSession } from '@/aplication/hooks/session/useSession';
 import type { OrderDetailItem } from '@/domain/repositories/IOrderRepository';
 
 const HallLayout = () => {
-  // ✅ TODOS LOS HOOKS AL INICIO - ANTES DE CUALQUIER LÓGICA
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -68,10 +67,9 @@ const HallLayout = () => {
     severity: 'info',
   });
 
-  // ✅ Effects después de todos los hooks de estado
   useEffect(() => {
     loadAvailableProducts();
-    loadSessions();
+    loadSessions();    
   }, []);
 
   useEffect(() => {
@@ -81,7 +79,6 @@ const HallLayout = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ AHORA SÍ, DESPUÉS DE TODOS LOS HOOKS, PUEDES HACER RETURNS CONDICIONALES
   
   const showNotification = (message: string, severity: 'success' | 'error' | 'info' = 'info') => {
     setNotification({ open: true, message, severity });
@@ -179,21 +176,21 @@ const HallLayout = () => {
   const getSessionDuration = (sessionId: string): string => {
     const session = sessions.find(s => s.id === sessionId);
     if (!session) return '';
-
+  
     const start = new Date(session.createdAt);
     const now = new Date();
     const durationMs = now.getTime() - start.getTime();
     const minutes = Math.floor(durationMs / 60000);
-
+  
     if (minutes < 60) {
       return `${minutes} min`;
     }
-
+  
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return `${hours}h ${remainingMinutes}m`;
   };
-
+  
   // Show loading state
   if ((tablesLoading || productsLoading) && tables.length === 0 && products.length === 0) {
     return (
