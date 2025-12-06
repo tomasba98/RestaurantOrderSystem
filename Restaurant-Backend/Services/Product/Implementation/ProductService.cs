@@ -10,6 +10,7 @@ public class ProductService : IProductService
 {
     private readonly IGenericService<Product> _productGenericService;
     private readonly IMemoryCache _cache;
+    private const string CacheKey = "all_products";
     public ProductService(IGenericService<Product> productGenericService, IMemoryCache cache)
     {
         _productGenericService = productGenericService;
@@ -18,6 +19,7 @@ public class ProductService : IProductService
     public async Task<Product> CreateProductAsync(Product product)
     {
         await _productGenericService.InsertAsync(product);
+        _cache.Remove(CacheKey);
         return product;
     }
     public async Task<Product?> GetProductByIdAsync(Guid productId)
@@ -34,7 +36,7 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        var products = await _cache.GetOrCreateAsync("all_products", async entry =>
+        var products = await _cache.GetOrCreateAsync(CacheKey, async entry =>
         {
             entry.SlidingExpiration = TimeSpan.FromMinutes(10);
             return await _productGenericService.FindAllAsyncReadOnly();
@@ -53,13 +55,14 @@ public class ProductService : IProductService
     public async Task<Product> UpdateProductAsync(Product product)
     {
         await _productGenericService.UpdateAsync(product);
+        _cache.Remove(CacheKey);
         return product;
     }
 
     public async Task DeleteProductAsync(Guid productId)
     {
         Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
-        
+        _cache.Remove(CacheKey);
         await _productGenericService.DeleteAsync(product);        
     }
 
@@ -84,7 +87,7 @@ public class ProductService : IProductService
     {
         Product? product = await _productGenericService.GetByIdAsync(productId) ?? throw new InvalidOperationException("Product not found.");
         product.IsAvailable = isAvailable;
-
+        _cache.Remove(CacheKey);
         await _productGenericService.UpdateAsync(product);
     }
 

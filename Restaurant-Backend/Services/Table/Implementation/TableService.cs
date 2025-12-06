@@ -9,7 +9,6 @@ public class TableService : ITableService
 {
     private readonly IGenericService<Table> _tableGenericService;
     private readonly IMemoryCache _cache;
-
     private const string CacheKey = "all_tables";
     public TableService(IGenericService<Table> tableGenericService, IMemoryCache cache)
     {
@@ -18,7 +17,7 @@ public class TableService : ITableService
     }
     public async Task<IEnumerable<Table>> GetAllTablesAsync()
     {
-        var tables = await _cache.GetOrCreateAsync("all_tables", async entry =>
+        var tables = await _cache.GetOrCreateAsync(CacheKey, async entry =>
         {
             entry.SlidingExpiration = TimeSpan.FromMinutes(10);
             return await _tableGenericService.FindAllAsyncReadOnly();

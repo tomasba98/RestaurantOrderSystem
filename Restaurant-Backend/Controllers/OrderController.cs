@@ -159,8 +159,8 @@ public class OrderController : BaseController
         try
         {
             var orders = await _orderService.GetOrdersByStatusAsync(status);
-            //if (orders is null || !orders.Any())
-            //    return NotFound("No orders were found with the specified status.");
+            if (orders is null || !orders.Any())
+                return NotFound("No orders were found with the specified status.");
 
             var ordersResponse = _mapper.Map<IEnumerable<OrderResponse>>(orders);
 
@@ -358,7 +358,6 @@ public class OrderController : BaseController
     ///   <item><description><c>Failure</c> — if the session does not exist or has ended, including an error message.</description></item>
     /// </list>
     /// </returns>
-
     private async Task<Result<TableSession>> ValidateActiveSessionAsync(Guid tableSessionId)
     {
         var session = await _tableSessionService.GetSessionByIdAsync(tableSessionId);

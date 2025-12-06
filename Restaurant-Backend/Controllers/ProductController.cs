@@ -25,8 +25,7 @@ public class ProductController : BaseController
     /// <summary>
     /// Retrieves a list of all products.
     /// </summary>
-    /// <returns>An IActionResult containing the list of products.</returns>
-    
+    /// <returns>An IActionResult containing the list of products.</returns>    
     [HttpGet]
     public async Task<IActionResult> GetAllProducts()
     {
