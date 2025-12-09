@@ -35,38 +35,53 @@ docker-compose up --build
 ## 🚀 Features
 
 ### 🧩 Core Functionality
-- **Full CRUD** for Orders, Products, Tables, and Sessions.
-- **Order workflow with states**: Confirmed → InKitchen → Ready → Served → Paid.
-- **Real-time kitchen dashboard** for order monitoring.
-- **Stock management** integrated with each order.
-- **Role-based authentication** and authorization using JWT.
+- **Complete CRUD** for Orders (with OrderDetails), Products, Tables, Sessions, and User Management.
+- **Order workflow with states**: Confirmed → InKitchen → Ready → Served → Paid (or Canceled).
+- **Real-time kitchen dashboard** for live order monitoring.
+- **Role-based authentication** with JWT authorization.
+- **User profile management** and token validation.
 
 ---
 
-## 🎨 Frontend Highlights
-- **React + TypeScript** with clean architecture and decoupled components.
-- **useCallback / useMemo** to avoid unnecessary re-renders and improve performance.
-- **Custom Hooks** to separate UI from business logic.
-- **Clean Architecture + Dependency Injection** separating UI, domain, and data layers.
-- **Use Cases** implementing business logic independently from UI.
-- **Context API** for authentication with **role validation**.
-- **Drag & Drop components** (e.g., DraggableTable) for enhanced UX.
+## 🎨 Frontend Architecture
+- **React + TypeScript** with Clean Architecture and strict separation of UI, domain, and data layers.
+- **Custom Dependency Injection container (ContainerDI)** for binding repositories and use cases.
+- **Domain-driven Use Cases** encapsulating business logic independently from UI.
+- **Custom Hooks** for domain logic isolation (e.g., `useAuth`, `useRoleCheck`, `useOrders`).
+- **Authentication Context** with role validation.
+- **Theme Context** supporting light/dark mode with localStorage persistence.
+- **ProtectedRoute** for route-level authorization control.
+- **Global Error Boundary** for graceful error fallback.
+- **Axios interceptors** for automatic token handling and global error interception.
+- **Drag & Drop interactions** using @dnd-kit for enhanced UX.
 
 ---
 
-## ⚙️ Backend Highlights
+## ⚙️ Backend Architecture
 - **ASP.NET Core 8.0 (C# 12)** for RESTful API development.
-- **Entity Framework Core + PostgreSQL** for ORM and database access.
-- **Repository Pattern** using generic interfaces: IGenericDao<TEntity>, IGenericService<TEntity>.
+- **Entity Framework Core + PostgreSQL** with Repository Pattern and generic interfaces.
 - **Layered architecture**: Controllers → Services → DataAccess.
-- **LINQ clean queries** for more readable data access.
-- **Eager loading** with Include() and ThenInclude().
-- **AsNoTracking()** for optimized read-only queries.
-- **IMemoryCache** for in-memory caching and reduced DB load.
-- **Cascade / Restrict deletion rules** depending on relationships.
-- **Custom Exceptions** (OrderNotFoundException, OrderNotPaidException, etc.).
-- **Serilog** for structured logging.
-- **Unit of Work** with DbContext.SaveChangesAsync().
+- **BaseController** pattern for shared controller functionality.
+- **Optimized LINQ queries** with `Include`, `ThenInclude`, and `AsNoTracking`.
+- **IMemoryCache** for reducing DB load on frequent queries.
+- **Custom domain exceptions** (e.g., `OrderNotFoundException`, `OrderNotPaidException`).
+- **Serilog** for structured logging with request tracking and performance metrics.
+- **Unit of Work** using `DbContext.SaveChangesAsync()`.
+- **AutoMapper** for clean entity-to-DTO mapping.
+- **Audit logging** for all entity changes with user tracking.
+- **EntityBase** with automatic fields (`CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy`).
+- **CurrentUserService** exposing authenticated user context.
+- **Global error handler** with centralized exception logging.
+- **CORS configuration** for frontend integration.
+- **Automatic database migrations** on startup.
+
+---
+
+## 🐳 Infrastructure
+- **Docker & Docker Compose** for full containerization.
+- **Separate Dockerfiles** for backend and frontend.
+- **PostgreSQL container** with health checks.
+- **Multi-service orchestration** with dependency management.
 
 ---
 
