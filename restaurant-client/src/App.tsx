@@ -4,7 +4,6 @@ import { Routes, Route } from 'react-router-dom';
 import ColorPaletteTester from './presentation/components/ColorPaletteTester';
 import { AuthProvider } from './aplication/context/AuthContext';
 import { ThemeProvider } from './aplication/context/ThemeContext';
-import NavBar from './presentation/components/shared/NavBar';
 import ProtectedRoute from './presentation/components/auth/ProtectedRoute';
 import { Roles } from './domain/entities/User';
 import { ErrorBoundary } from './presentation/components/error/ErrorBoundary';
@@ -12,6 +11,7 @@ import { Suspense, lazy } from 'react';
 import SessionsPage from './presentation/pages/session/SessionPage';
 import RegisterPage from './presentation/pages/auth/RegisterPage';
 import LoginPage from './presentation/pages/auth/LoginPage';
+import { NavBar } from './presentation/components/NavBar/NavBar';
 
 const ProductsPage = lazy(() => import('./presentation/pages/product/ProductPage'));
 const HallLayout = lazy(() => import('./presentation/pages/hall/HallPage'));

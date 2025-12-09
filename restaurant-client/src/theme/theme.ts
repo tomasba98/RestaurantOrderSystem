@@ -4,7 +4,7 @@ import type { Shadows } from '@mui/material/styles';
 const defaultTheme = createTheme();
 
 const themeLight = createTheme({
-  palette: {
+     palette: {
     primary: {
       main: '#785F60', 
       light: '#A38B8C',
