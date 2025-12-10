@@ -3,11 +3,11 @@ import { LoginUseCase } from '../../domain/usecases/auth/LoginUseCase';
 import { RegisterUseCase } from '../../domain/usecases/auth/RegisterUseCase';
 import { LogoutUseCase } from '../../domain/usecases/auth/LogoutUseCase';
 import { type User, Roles } from '../../domain/entities/User';
-import type { LoginDTO } from '../dto/AuthDTO';
-import type { IAuthRepository, RegisterData } from '@/domain/repositories/IAuthRepository';
+import type { LoginDTO, RegisterDTO } from '../dto/UserDTO';
+import type { IAuthRepository } from '@/domain/repositories/IAuthRepository';
 import { containerDI } from '../di/ContainerDI';
 
-// VERIFICAR HTTPS EN PROD
+
 const isProduction = import.meta.env.PROD;
 const isSecureContext = window.isSecureContext;
 
@@ -21,7 +21,7 @@ interface AuthContextType {
   isLoading: boolean;
   error: string | null;
   login: (credentials: LoginDTO) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  register: (data: RegisterDTO) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
   hasRole: (roles: Roles) => boolean;
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const register = async (data: RegisterData) => {
+  const register = async (data: RegisterDTO) => {
     try {
       setIsLoading(true);
       setError(null);

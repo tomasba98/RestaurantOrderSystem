@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { type User, Roles } from '@/domain/entities/User';
-import type { CreateUserData } from '@/domain/repositories/IUserRepository';
+import type { RegisterDTO } from '@/aplication/dto/UserDTO';
 
 export type DialogMode = 'create' | 'edit';
 
-const INITIAL_FORM_DATA: CreateUserData = {
+const INITIAL_FORM_DATA: RegisterDTO = {
   userName: '',
   email: '',
   password: '',
+  confirmPassword: '',
   firstName: '',
   lastName: '',
   role: Roles.Waiter,
@@ -17,7 +18,7 @@ export const useUserDialog = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState<DialogMode>('create');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [formData, setFormData] = useState<CreateUserData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState<RegisterDTO>(INITIAL_FORM_DATA);
   const [error, setError] = useState<string | null>(null); // Para errores específicos del formulario
 
   const handleOpenCreateDialog = () => {
@@ -31,12 +32,11 @@ export const useUserDialog = () => {
     setError(null);
     setDialogMode('edit');
     setSelectedUser(user);
-    // Cargar datos del usuario existente, dejando la contraseña vacía
     setFormData({
       userName: user.userName,
       email: user.email,
-      password: '', // Importante: no precargar la contraseña
-      firstName: (user as any).firstName || '', // Asumiendo que pueden faltar en la entidad
+      password: '', 
+      firstName: (user as any).firstName || '', 
       lastName: (user as any).lastName || '',
       role: user.role,
     });
@@ -60,14 +60,11 @@ export const useUserDialog = () => {
   };
 
   return {
-    // Estado
     openDialog,
     dialogMode,
     selectedUser,
     formData,
-    error,
-    
-    // Handlers
+    error,    
     handleOpenCreateDialog,
     handleOpenEditDialog,
     handleCloseDialog,

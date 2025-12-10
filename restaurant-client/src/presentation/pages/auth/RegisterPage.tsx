@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {  Box,  Card,  CardContent,  TextField,  Button,  Typography,  Alert,  InputAdornment,  IconButton,  Container,  Avatar,  MenuItem,} from '@mui/material';
 import {  Visibility,  VisibilityOff,  RestaurantMenu,  Person,  Lock,  Email,} from '@mui/icons-material';
-import type { RegisterData } from '@/domain/repositories/IAuthRepository';
 import { Roles } from '@/domain/entities/User';
 import { useAuth } from '@/aplication/hooks/auth/useAuth';
+import type { RegisterDTO } from '@/aplication/dto/UserDTO';
 
 
 
@@ -12,7 +12,7 @@ const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  const [formData, setFormData] = useState<RegisterData>({
+  const [formData, setFormData] = useState<RegisterDTO>({
     userName: '',
     email: '',
     password: '',

@@ -1,18 +1,9 @@
+import type { RegisterDTO } from '@/aplication/dto/UserDTO';
 import type { User } from '../entities/User';
 
 export interface LoginCredentials {
   userName: string;
   password: string;
-}
-
-export interface RegisterData {
-  userName: string;
-  firstName: string;
-  lastName: string;
-  role: number;
-  email: string;
-  password: string;
-  confirmPassword: string
 }
 
 export interface AuthResponse {
@@ -22,7 +13,7 @@ export interface AuthResponse {
 
 export interface IAuthRepository {
   login(credentials: LoginCredentials): Promise<AuthResponse>;
-  register(data: RegisterData): Promise<AuthResponse>;
+  register(data: RegisterDTO): Promise<AuthResponse>;
   logout(): Promise<void>;
   getProfile(): Promise<User>;
   verifyToken(token: string): Promise<boolean>;

@@ -1,6 +1,3 @@
-// UserDialog.tsx
-
-import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, 
   Button, TextField, FormControl, InputLabel, Select, MenuItem, Alert,
@@ -17,15 +14,15 @@ import {
 } from '@mui/icons-material';
 
 import { Roles } from '@/domain/entities/User';
-import type { CreateUserData } from '@/domain/repositories/IUserRepository';
 import type { DialogMode } from '@/aplication/hooks/user/useUserDialog';
 import { roleLabels } from '@/utils/user/roleUtils';
 import { Grid } from '@mui/system';
+import type { RegisterDTO } from '@/aplication/dto/UserDTO';
 
 interface UserDialogProps {
   open: boolean;
   mode: DialogMode;
-  formData: CreateUserData;
+  formData: RegisterDTO;
   formError: string | null;
   onClose: () => void;
   onSubmit: () => Promise<void>;
@@ -46,10 +43,16 @@ const UserDialog: React.FC<UserDialogProps> = ({
   
   const isCreate = mode === 'create';
   
+  const passwordMatchError = isCreate && formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword;
+
+  const isPasswordValid = isCreate 
+    ? formData.password.length >= 6 && !passwordMatchError 
+    : true; 
+
   const roleOptions = Object.values(Roles)
     .filter((value) => typeof value === 'number') as Roles[];
 
-  const isSubmitDisabled = !formData.userName || !formData.email || (isCreate && (!formData.password || formData.password.length < 6));
+  const isSubmitDisabled = !formData.userName || !formData.email || (isCreate && (!formData.password || formData.password.length < 6 || passwordMatchError));
 
   return (
     <Dialog 
@@ -77,10 +80,9 @@ const UserDialog: React.FC<UserDialogProps> = ({
           </Alert>
         )}
 
-        {/* Grid Container Principal */}
-        <Grid container spacing={3}>
-          
-          {/* Sección Datos de Cuenta */}
+
+        <Grid container spacing={3}>          
+
           <Grid size={{ xs: 12 }}>
             <Typography variant="subtitle2" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.75rem' }}>
               Datos de la Cuenta
@@ -167,7 +169,31 @@ const UserDialog: React.FC<UserDialogProps> = ({
             />
           </Grid>
 
-          {/* Sección Información Personal */}
+          {isCreate ? <Grid size={{ xs: 12 }}>
+            <TextField
+              label={'Confirmar Contraseña'}
+              placeholder={''}
+              type="password"
+              fullWidth
+              required={isCreate}
+              name="confirmPassword"
+              value={formData.confirmPassword || ''}
+              onChange={onChange}
+              helperText={
+                passwordMatchError 
+                  ? 'Las contraseñas no coinciden.' 
+                  : 'Mínimo 6 caracteres' 
+              }
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid> : <> </>}
+
           <Grid size={{ xs: 12 }}>
             <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 1, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.75rem' }}>
               Información Personal

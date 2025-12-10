@@ -1,6 +1,7 @@
 import type { User } from '@/domain/entities/User';
-import type {  AuthResponse,  IAuthRepository,  LoginCredentials,  RegisterData} from '@/domain/repositories/IAuthRepository';
+import type {  AuthResponse,  IAuthRepository,  LoginCredentials} from '@/domain/repositories/IAuthRepository';
 import { apiClient } from '../http/ApiClient';
+import type { RegisterDTO } from '@/aplication/dto/UserDTO';
 
 export class AuthRepositoryImpl implements IAuthRepository {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -11,7 +12,7 @@ export class AuthRepositoryImpl implements IAuthRepository {
     }
   }
 
-  async register(data: RegisterData): Promise<AuthResponse> {
+  async register(data: RegisterDTO): Promise<AuthResponse> {
     try {
       return await apiClient.post<AuthResponse>('/auth/register', data);
     } catch (error: any) {
