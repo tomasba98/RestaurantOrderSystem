@@ -17,6 +17,7 @@ const ProductsPage = lazy(() => import('./presentation/pages/product/ProductPage
 const HallLayout = lazy(() => import('./presentation/pages/hall/HallPage'));
 const OrdersPage = lazy(() => import('./presentation/pages/order/OrdersPage'));
 const KitchenPage = lazy(() => import('./presentation/pages/kitchen/KitchenPage'));
+const UserPage = lazy(() => import('./presentation/pages/user/UserPage'));
 
 export default function App() {
   return (
@@ -91,6 +92,16 @@ export default function App() {
                 element={
                   <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
                     <SessionsPage />
+                  </ProtectedRoute>
+                }
+              />
+
+               {/* Usuarios */}
+               <Route
+                path="/users"
+                element={
+                  <ProtectedRoute requiredRoles={[Roles.Admin, Roles.Manager]}>
+                    <UserPage />
                   </ProtectedRoute>
                 }
               />

@@ -3,7 +3,9 @@ export interface User {
     userName: string;    
     email: string;
     role: Roles;
-    createdAt: string;    
+    createdAt: string;
+    firstName: string;
+    lastName: string;    
     updatedAt: Date;
   }
 

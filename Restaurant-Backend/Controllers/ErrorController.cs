@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [ApiController]
 public class ErrorController : ControllerBase
 {

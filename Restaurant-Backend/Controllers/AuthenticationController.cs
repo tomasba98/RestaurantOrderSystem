@@ -119,31 +119,7 @@ public class AuthenticationController : BaseController
             user.Role,
             user.CreatedAt
         });
-    }
-
-
-
-    [Authorize(Roles = "Admin,Manager")]
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserRequest request)
-    {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
-        {
-            Log.Warning("User not found while updating: {UserId}", id);
-            return NotFound();
-        }
-
-
-        user.FirstName = request.FirstName ?? user.FirstName;
-        user.LastName = request.LastName ?? user.LastName;
-        user.Email = request.Email ?? user.Email;
-        user.Role = request.Role ?? user.Role;
-
-        await _userService.UpdateUserAsync(user);
-
-        return Ok();
-    }
+    }  
 
 }
 

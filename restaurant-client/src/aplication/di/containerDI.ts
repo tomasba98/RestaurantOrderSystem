@@ -23,6 +23,7 @@ import { ToggleTableOccupationUseCase } from '@/domain/usecases/table/ToggleTabl
 import { GetSessionByIdUseCase } from '@/domain/usecases/session/GetSessionByIdUseCase';
 import { GetAllSessionsUseCase } from '@/domain/usecases/session/GetAllSessionUseCase';
 import { CreateProductUseCase } from '@/domain/usecases/product/CreateProductUseCase';
+import { UserRepositoryImpl } from '@/infrastructure/repositories/UserRepositoryImpl';
 
 class ContainerDI{
     private singletons = new Map<string, any>();
@@ -53,6 +54,7 @@ containerDI.register("tableRepository", () => new TableRepositoryImpl());
 containerDI.register("sessionRepository", () => new SessionRepositoryImpl());
 containerDI.register("productRepository", () => new ProductRepositoryImpl());
 containerDI.register("authRepository", () => new AuthRepositoryImpl());
+containerDI.register("userRepository", () => new UserRepositoryImpl());
 
 // ---------- USE CASES REGISTER ----------
 

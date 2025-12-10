@@ -1,4 +1,3 @@
-import type { PaginatedResponse, PaginationParams } from '@/utils/Pagination';
 import type { Order, OrderStatus } from '../entities/Order';
 
 export interface OrderDetailItem {

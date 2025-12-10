@@ -63,6 +63,6 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
         CreateMap<UpdateUserRequest, User>()
             .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
-
+        CreateMap<User, UserResponse>();
     }
 }

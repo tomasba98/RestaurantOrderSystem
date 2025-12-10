@@ -7,6 +7,9 @@ using Restaurant_Backend.Entities;
 /// </summary>
 public interface IUserService
 {
+    Task<IEnumerable<User>> GetAllUserAsync();
+    Task DeleteUserAsync(Guid userId);
+
     /// <summary>
     /// Creates a new user entity.
     /// </summary>
