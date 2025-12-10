@@ -10,6 +10,8 @@ export const roleLabels: Record<Roles, string> = {
 
 export const getRoleLabel = (role: Roles): string => roleLabels[role] || 'Usuario';
 
+
+
 export const roleColors: Record<Roles, ChipProps['color']> = {
   [Roles.Admin]: 'error',
   [Roles.Manager]: 'success',
@@ -18,6 +20,8 @@ export const roleColors: Record<Roles, ChipProps['color']> = {
 };
 
 export const getRoleColor = (role: Roles): ChipProps['color'] => roleColors[role] || 'default';
+
+
 
 const avatarRoleColors: Record<Roles, string> = {
   [Roles.Admin]: 'error.main',

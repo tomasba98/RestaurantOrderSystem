@@ -1,9 +1,10 @@
-import type { AuthResponse, IAuthRepository, RegisterData } from "@/domain/repositories/IAuthRepository";
+import type { RegisterDTO } from "@/aplication/dto/UserDTO";
+import type { AuthResponse, IAuthRepository } from "@/domain/repositories/IAuthRepository";
 
 export class RegisterUseCase {
     constructor(private authRepository: IAuthRepository) {}
 
-    execute(credentials: RegisterData): Promise<AuthResponse> {
+    execute(credentials: RegisterDTO): Promise<AuthResponse> {
 
         if (!credentials.userName || !credentials.password) {
             throw new Error('El nombre de usuario y contraseña son requeridos');
