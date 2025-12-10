@@ -54,6 +54,7 @@ public class UserService : IUserService
         try
         {
             await _userGenericService.InsertAsync(userEntity);
+            _cache.Remove(CacheKey);
             return true;
         }
         catch
@@ -80,6 +81,7 @@ public class UserService : IUserService
     public async Task<User> UpdateUserAsync(User user)
     {
         await _userGenericService.UpdateAsync(user);
+        _cache.Remove(CacheKey);
         return user;
     }
 
