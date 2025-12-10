@@ -1,3 +1,4 @@
+import { getRoleAvatarColor } from "@/utils/user/roleUtils";
 import { Avatar, Box, Typography, Chip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
@@ -31,7 +32,7 @@ export function UserInfo({ user }: Props) {
         sx={{ 
           width: 36, 
           height: 36,
-          bgcolor: theme.palette.primary.main,
+          bgcolor: getRoleAvatarColor(user.role),
           fontSize: '0.875rem',
           fontWeight: 600,
         }}
